@@ -6,6 +6,17 @@
 
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 
+/*!
+ * Allocates tilling in FLAG - harmonic space.
+ *
+ * \param[out]  kappa_ln Kernel functions for the wavelets.
+ * \param[out]  kappa0_ln Kernel for the scaling function.
+ * \param[in]  B_l Wavelet parameter for angular harmonic space.
+ * \param[in]  B_n Wavelet parameter for radial harmonic space.
+ * \param[in]  L Angular harmonic band-limit.
+ * \param[in]  N Radial harmonic band-limit.
+ * \retval none
+ */
 void b3let_allocate_tilling(double **kappa_ln, double **kappa0_ln, int B_l, int B_n, int L, int N)
 {
 	int J_l = s2let_j_max(L, B_l);
@@ -14,9 +25,22 @@ void b3let_allocate_tilling(double **kappa_ln, double **kappa0_ln, int B_l, int 
 	*kappa0_ln = (double*)calloc( L * N, sizeof(double));
 }
 
+/*!
+ * Allocates tilling in FLAG - harmonic space.
+ *
+ * \param[out]  kappa_ln Kernel functions for the wavelets.
+ * \param[out]  kappa0_ln Kernel for the scaling function.
+ * \param[in]  B_l Wavelet parameter for angular harmonic space.
+ * \param[in]  B_n Wavelet parameter for radial harmonic space.
+ * \param[in]  L Angular harmonic band-limit.
+ * \param[in]  N Radial harmonic band-limit.
+ * \param[in]  J_min_l First wavelet scale to be used in angular space.
+ * \param[in]  J_min_n First wavelet scale to be used in radial space.
+ * \retval none
+ */
 void b3let_tilling(double *kappa_ln, double *kappa0_ln, int B_l, int B_n, int L, int N, int J_min_l, int J_min_n)
 {
-	int l, m, n, jl, jn;
+	int l, n, jl, jn;
 	int J_l = s2let_j_max(L, B_l);
 	int J_n = s2let_j_max(N, B_n);
 
@@ -75,6 +99,19 @@ void b3let_tilling(double *kappa_ln, double *kappa0_ln, int B_l, int B_n, int L,
 	free(phi2_n);
 }
 
+/*!
+ * Checks exactness of the FLAG - harmonic tilling.
+ *
+ * \param[in]  kappa_ln Kernel functions for the wavelets.
+ * \param[in]  kappa0_ln Kernel for the scaling function.
+ * \param[in]  B_l Wavelet parameter for angular harmonic space.
+ * \param[in]  B_n Wavelet parameter for radial harmonic space.
+ * \param[in]  L Angular harmonic band-limit.
+ * \param[in]  N Radial harmonic band-limit.
+ * \param[in]  J_min_l First wavelet scale to be used in angular space.
+ * \param[in]  J_min_n First wavelet scale to be used in radial space.
+ * \retval Achieved accuracy (should be lower than e-12).
+ */
 double b3let_check_identity(double *kappa_ln, double *kappa0_ln, int B_l, int B_n, int L, int N, int J_min_l, int J_min_n)
 {
 	int jl, jn, l, n;

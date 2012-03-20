@@ -60,9 +60,32 @@ void b3let_random_flmn(complex double *flmn, int L, int N, int seed)
 	}
 }
 
+void b3let_random_flmn_real(complex double *flmn, int L, int N, int seed)
+{
+	int en, el, m, msign, i, i_op, offset;
+	int flmsize = ssht_flm_size(L);
+
+	for (en=0; en<N; en++) {
+		offset = en * flmsize;
+		for (el=0; el<L; el++) {
+    		m = 0;
+    		ssht_sampling_elm2ind(&i, el, m);
+    		flmn[offset+i] = (2.0*ran2_dp(seed) - 1.0);
+    		for (m=1; m<=el; m++) {
+      			ssht_sampling_elm2ind(&i, el, m);
+      			flmn[offset+i] = (2.0*ran2_dp(seed) - 1.0) + I * (2.0*ran2_dp(seed) - 1.0);
+      			ssht_sampling_elm2ind(&i_op, el, -m);
+      			msign = m & 1;
+     			msign = 1 - msign - msign; // (-1)^m
+     	 		flmn[offset+i_op] = msign * conj(flmn[offset+i]);
+    		}
+ 		}
+ 	}
+}
+
 void b3let_tilling_test(int B_l, int B_n, int L, int N, int J_min_l, int J_min_n)
 {		
-	double kl, kn;
+	//double kl, kn;
 	double *kappa_ln, *kappa0_ln;
 	b3let_allocate_tilling(&kappa_ln, &kappa0_ln, B_l, B_n, L, N);
 	
@@ -126,15 +149,17 @@ void b3let_wav_lm_test(int B_l, int B_n, int L, int N, int J_min_l, int J_min_n,
 		(time_end - time_start) / (double)CLOCKS_PER_SEC);
 
 
+	/*
 	int n, l, m;
 	for (n = 0; n < N; n++){
 		for (l = 0; l < L; l++){
 	    	for (m = -l; m <= l ; m++){
 		    	int ind = n*L*L + l*l + l + m;
-				//printf("(l,m,n) = (%i,%i,%i) - f_scal_lmn = (%f,%f)\n",l,m,n,creal(f_scal_lmn[ind]),cimag(f_scal_lmn[ind]));
+				printf("(l,m,n) = (%i,%i,%i) - f_scal_lmn = (%f,%f)\n",l,m,n,creal(f_scal_lmn[ind]),cimag(f_scal_lmn[ind]));
 	   		}
 	   	}
 	}
+	*/
 
 	time_start = clock();
 	b3let_wav_synthesis_lmn(flmn_rec, f_wav_lmn, f_scal_lmn, wav_lmn, scal_lmn, B_l, B_n, L, N, J_min_l, J_min_n);
@@ -142,6 +167,7 @@ void b3let_wav_lm_test(int B_l, int B_n, int L, int N, int J_min_l, int J_min_n,
 	printf("  - Wavelet synthesis  : %4.4f seconds\n", 
 		(time_end - time_start) / (double)CLOCKS_PER_SEC);
 
+	/*
 	for (n = 0; n < N; n++){
 		for (l = 0; l < L; l++){
 	    	for (m = -l; m <= l ; m++){
@@ -151,6 +177,7 @@ void b3let_wav_lm_test(int B_l, int B_n, int L, int N, int J_min_l, int J_min_n,
 	   		}
 	   	}
 	}
+	*/
 
 	printf("  - Maximum abs error  : %6.5e\n", 
 		maxerr_cplx(flmn, flmn_rec, L*L*N));
@@ -168,9 +195,6 @@ void b3let_wav_lm_test(int B_l, int B_n, int L, int N, int J_min_l, int J_min_n,
 void b3let_wav_test(int B_l, int B_n, int L, int N, int J_min_l, int J_min_n, int seed)
 {
 	clock_t time_start, time_end;
-	int l, m, n;
-	int spin = 0;
-	int verbosity = 0;
 	int J_l = s2let_j_max(L, B_l);
 	int J_n = s2let_j_max(N, B_n);
 
@@ -211,14 +235,81 @@ void b3let_wav_test(int B_l, int B_n, int L, int N, int J_min_l, int J_min_n, in
 	printf("  - Maximum abs error  : %6.5e\n", 
 		maxerr_cplx(flmn, flmn_rec, L*L*N));
 	
+	/*
+	int l, m, n;
 	for (n = 0; n < N; n++){
 		for (l = 0; l < L; l++){
 			for (m = -l; m <= l ; m++){
 		    	int ind = n*L*L+l*l+l+m;
-				//printf("(l,m,n) = (%i,%i,%i) - flmn = (%f,%f) - rec = (%f,%f)\n",l,m,n,creal(flmn[ind]),cimag(flmn[ind]),creal(flmn_rec[ind]),cimag(flmn_rec[ind]));
+				printf("(l,m,n) = (%i,%i,%i) - flmn = (%f,%f) - rec = (%f,%f)\n",l,m,n,creal(flmn[ind]),cimag(flmn[ind]),creal(flmn_rec[ind]),cimag(flmn_rec[ind]));
 	    	}
 	    }
 	}
+	*/
+	
+	free(f);
+	free(f_rec);
+	free(f_wav);
+	free(f_scal);
+}
+
+void b3let_wav_real_test(int B_l, int B_n, int L, int N, int J_min_l, int J_min_n, int seed)
+{
+	clock_t time_start, time_end;
+	int J_l = s2let_j_max(L, B_l);
+	int J_n = s2let_j_max(N, B_n);
+
+	complex *flmn, *flmn_rec;
+	double *f, *f_rec;
+	flag_allocate_flmn(&flmn, L, N);
+	flag_allocate_flmn(&flmn_rec, L, N);
+	flag_allocate_f_real(&f, L, N);
+	flag_allocate_f_real(&f_rec, L, N);
+
+	b3let_random_flmn_real(flmn, L, N, seed);
+
+	flag_synthesis_real(f, flmn, L, N);
+
+	double *f_wav, *f_scal;
+	f_wav = (double*)calloc( (J_l+1) * L * (2*L-1) * (J_n+1) * N, sizeof(double));
+	f_scal = (double*)calloc( L * (2*L-1) * N, sizeof(double));
+
+	time_start = clock();
+	b3let_wav_analysis_real(f_wav, f_scal, f, B_l, B_n, L, N, J_min_l, J_min_n);
+	time_end = clock();
+	printf("  - Wavelet analysis   : %4.4f seconds\n", 
+		(time_end - time_start) / (double)CLOCKS_PER_SEC);
+
+	time_start = clock();
+	b3let_wav_synthesis_real(f_rec, f_wav, f_scal, B_l, B_n, L, N, J_min_l, J_min_n);
+	time_end = clock();
+	printf("  - Wavelet synthesis  : %4.4f seconds\n", 
+		(time_end - time_start) / (double)CLOCKS_PER_SEC);
+
+	/*
+	printf("  - Maximum abs error  : %6.5e\n", 
+		maxerr_cplx(f, f_rec, L*(2*L-1)*N));
+	for (n = 0; n < L*(2*L-1)*N; n++){
+		printf("f[%i] = (%f,%f) - rec = (%f,%f)\n",n,creal(f[n]),cimag(f[n]),creal(f_rec[n]),cimag(f_rec[n]));
+	}
+	*/
+
+	flag_analysis_real(flmn_rec, f_rec, L, N);
+
+	printf("  - Maximum abs error  : %6.5e\n", 
+		maxerr_cplx(flmn, flmn_rec, L*L*N));
+	
+	/*
+	int l, m, n;
+	for (n = 0; n < N; n++){
+		for (l = 0; l < L; l++){
+			for (m = -l; m <= l ; m++){
+		    	int ind = n*L*L+l*l+l+m;
+				printf("(l,m,n) = (%i,%i,%i) - flmn = (%f,%f) - rec = (%f,%f)\n",l,m,n,creal(flmn[ind]),cimag(flmn[ind]),creal(flmn_rec[ind]),cimag(flmn_rec[ind]));
+	    	}
+	    }
+	}
+	*/
 	
 	free(f);
 	free(f_rec);
@@ -231,10 +322,10 @@ int main(int argc, char *argv[])
 
 	const int L = 32;
 	const int N = 32;
-	const int B_l = 3;
-	const int B_n = 2;
-	const int J_min_l = 1;
-	const int J_min_n = 3;
+	const int B_l = 2;
+	const int B_n = 3;
+	const int J_min_l = 4;
+	const int J_min_n = 1;
 	const int seed = (int)(10000.0*(double)clock()/(double)CLOCKS_PER_SEC);
 
 	printf("==========================================================\n");
@@ -249,6 +340,9 @@ int main(int argc, char *argv[])
 	printf("----------------------------------------------------------\n");
 	printf("> Testing axisymmetric wavelets in pixel space...\n");
 	b3let_wav_test(B_l, B_n, L, N, J_min_l, J_min_n, seed);
+	printf("----------------------------------------------------------\n");
+	printf("> Testing real axisymmetric wavelets in pixel space...\n");
+	b3let_wav_real_test(B_l, B_n, L, N, J_min_l, J_min_n, seed);
 	printf("==========================================================\n");
 	
 	return 0;		

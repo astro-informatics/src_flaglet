@@ -14,6 +14,8 @@ void b3let_wav_synthesis_lmn(complex double *flmn, const complex double *f_wav_l
  	
 void b3let_wav_analysis(complex double *f_wav, complex double *f_scal, const complex double *f, int B_l, int B_n, int L, int N, int J_min_l, int J_min_n);
 void b3let_wav_synthesis(complex double *f, const complex double *f_wav, const complex double *f_scal, int B_l, int B_n, int L, int N, int J_min_l, int J_min_n);
+void b3let_wav_analysis_real(double *f_wav, double *f_scal, const double *f, int B_l, int B_n, int L, int N, int J_min_l, int J_min_n);
+void b3let_wav_synthesis_real(double *f, const double *f_wav, const double *f_scal, int B_l, int B_n, int L, int N, int J_min_l, int J_min_n);
 
 int jjlmn2ind(int jl, int jn, int l, int m, int n, int J_l, int J_n, int L, int N);
 int lmn2ind(int l, int m, int n, int L);
