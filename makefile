@@ -48,6 +48,9 @@ $(B3LETOBJ)/%.o: %.c
 .PHONY: default
 default: lib test tidy
 
+.PHONY: all
+all: lib test tidy
+
 .PHONY: lib
 lib: $(B3LETLIB)/lib$(B3LETLIBN).a
 $(B3LETLIB)/lib$(B3LETLIBN).a: $(B3LETOBJS)
@@ -57,10 +60,12 @@ $(B3LETLIB)/lib$(B3LETLIBN).a: $(B3LETOBJS)
 lib: $(B3LETBIN)/b3let_test
 $(B3LETBIN)/b3let_test: $(B3LETOBJ)/b3let_test.o $(B3LETLIB)/lib$(B3LETLIBN).a
 	$(CC) $(OPT) $< -o $(B3LETBIN)/b3let_test $(LDFLAGS)
+	$(B3LETBIN)/b3let_test
 
 .PHONY: clean
 clean:	tidy
 	rm -f $(B3LETLIB)/lib$(B3LETLIBN).a
+	rm -f $(B3LETBIN)/b3let_test
 
 .PHONY: tidy
 tidy:
