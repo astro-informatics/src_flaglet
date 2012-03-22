@@ -17,7 +17,7 @@
  * \param[in]  N Radial harmonic band-limit.
  * \retval none
  */
-void b3let_allocate_tilling(double **kappa_ln, double **kappa0_ln, int B_l, int B_n, int L, int N)
+void b3let_axisym_allocate_tilling(double **kappa_ln, double **kappa0_ln, int B_l, int B_n, int L, int N)
 {
 	int J_l = s2let_j_max(L, B_l);
 	int J_n = s2let_j_max(N, B_n);
@@ -38,7 +38,7 @@ void b3let_allocate_tilling(double **kappa_ln, double **kappa0_ln, int B_l, int 
  * \param[in]  J_min_n First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_tilling(double *kappa_ln, double *kappa0_ln, int B_l, int B_n, int L, int N, int J_min_l, int J_min_n)
+void b3let_axisym_tilling(double *kappa_ln, double *kappa0_ln, int B_l, int B_n, int L, int N, int J_min_l, int J_min_n)
 {
 	int l, n, jl, jn;
 	int J_l = s2let_j_max(L, B_l);
@@ -112,7 +112,7 @@ void b3let_tilling(double *kappa_ln, double *kappa0_ln, int B_l, int B_n, int L,
  * \param[in]  J_min_n First wavelet scale to be used in radial space.
  * \retval Achieved accuracy (should be lower than e-12).
  */
-double b3let_check_identity(double *kappa_ln, double *kappa0_ln, int B_l, int B_n, int L, int N, int J_min_l, int J_min_n)
+double b3let_axisym_check_identity(double *kappa_ln, double *kappa0_ln, int B_l, int B_n, int L, int N, int J_min_l, int J_min_n)
 {
 	int jl, jn, l, n;
 	int J_l = s2let_j_max(L, B_l);
