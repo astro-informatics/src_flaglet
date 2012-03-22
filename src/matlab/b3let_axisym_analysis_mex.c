@@ -3,7 +3,6 @@
 // Boris Leistedt & Jason McEwen
 
 #include <b3let.h>
-#include <s2let.h>
 #include "mex.h"
 
 /**
@@ -20,12 +19,11 @@
 void mexFunction( int nlhs, mxArray *plhs[],
                   int nrhs, const mxArray *prhs[])
 {
-  printf("Starting routine\n");
   int t, p, n, i, j, f_m, f_n, reality;
   int B_l, B_n, L, N, J_min_l, J_min_n;
   double *f_wav_real, *f_scal_real, *f_real, *f_wav_imag, *f_scal_imag, *f_imag;
-  complex double *f_wav = NULL, *f_scal = NULL, *f = NULL;
-  double *f_wav_r = NULL, *f_scal_r = NULL, *f_r = NULL;
+  complex double *f_wav, *f_scal, *f;
+  double *f_wav_r, *f_scal_r, *f_r;
   int iin = 0, iout = 0;
 
   // Check number of arguments
@@ -44,7 +42,6 @@ void mexFunction( int nlhs, mxArray *plhs[],
     mexErrMsgIdAndTxt("b3let_axisym_analysis_mex:InvalidInput:reality",
           "Reality flag must be logical.");
   reality = mxIsLogicalScalarTrue(prhs[iin]);
-  printf("Reality : %i\n",reality);
 
   // Parse input dataset f
   iin = 0;
@@ -54,8 +51,6 @@ void mexFunction( int nlhs, mxArray *plhs[],
   }
   f_m = mxGetM(prhs[iin]);
   f_n = mxGetN(prhs[iin]); 
-  printf("f_m = %i\n", f_m);
-  printf("f_n = %i\n", f_n);
   f_real = mxGetPr(prhs[iin]);
   int f_is_complex = mxIsComplex(prhs[iin]);
   if(reality){
@@ -72,7 +67,6 @@ void mexFunction( int nlhs, mxArray *plhs[],
         f[t*f_n + p] = f_real[p*f_m + t] 
           + I * (f_is_complex ? f_imag[p*f_m + t] : 0.0);
   }
-  printf("Done input \n");
 
   // Parse angular wavelet parameter B_l
   iin = 1;
@@ -157,7 +151,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
           "First scale J_min_l must be positive integer.");
 
   // Compute ultimate scale J_max
-  int J_l = s2let_j_max(L, B_l);
+  int J_l = ceil(log(L) / log(B_l));
 
 
   if( J_min_l > J_l+1 ) {
@@ -180,33 +174,23 @@ void mexFunction( int nlhs, mxArray *plhs[],
           "First scale J_min_n must be positive integer.");
 
   // Compute ultimate scale J_max
-  int J_n = s2let_j_max(N, B_n);
+  int J_n = ceil(log(N) / log(B_n));
 
   if( J_min_n > J_n+1 ) {
     mexErrMsgIdAndTxt("b3let_axisym_analysis_mex:InvalidInput:J_min_n",
           "First scale J_min_n must be larger than that!");
   }
 
-  printf("J_l = %i\n", J_l);
-  printf("J_n = %i\n", J_n);
-  printf("L = %i\n", L);
-  printf("N = %i\n", N);
-  printf("J_min_l = %i\n", J_min_l);
-  printf("J_min_n = %i\n", J_min_n);
-  printf("J_l = %i\n", J_l);
-  printf("J_n = %i\n", J_n);
-
   // Perform wavelet transform in harmonic space and then FLAG reconstruction.
   if(reality){
     f_wav_r = (double*)calloc( (J_l+1) * L * (2*L-1) * (J_n+1) * N, sizeof(double));
-    f_scal_r = (double*)calloc( L * (2*L-1), sizeof(double));
+    f_scal_r = (double*)calloc( L * (2*L-1) * N, sizeof(double));
     b3let_axisym_wav_analysis_real(f_wav_r, f_scal_r, f_r, B_l, B_n, L, N, J_min_l, J_min_n);
   }else{
     f_wav = (complex double*)calloc( (J_l+1) * L * (2*L-1) * (J_n+1) * N, sizeof(complex double));
-    f_scal = (complex double*)calloc( L * (2*L-1), sizeof(complex double));
+    f_scal = (complex double*)calloc( L * (2*L-1) * N, sizeof(complex double));
     b3let_axisym_wav_analysis(f_wav, f_scal, f, B_l, B_n, L, N, J_min_l, J_min_n); 
   }
-  printf("Done transform\n");
 
   // Output wavelets
   if(reality){
@@ -215,13 +199,14 @@ void mexFunction( int nlhs, mxArray *plhs[],
     plhs[iout] = mxCreateDoubleMatrix(1, (J_l+1) * L * (2*L-1) * (J_n+1) * N, mxREAL);
     f_wav_real = mxGetPr(plhs[iout]);
     for (i=0; i<(J_l+1) * L * (2*L-1) * (J_n+1) * N; i++)
-      f_wav_real[ i ] = creal( f_wav[ i ] );
+      f_wav_real[ i ] = creal( f_wav_r[ i ] );
 
     iout = 1;
-    plhs[iout] = mxCreateDoubleMatrix(1, N*L*(2*L-1), mxREAL);
+    plhs[iout] = mxCreateDoubleMatrix(N, L*(2*L-1), mxREAL);
     f_scal_real = mxGetPr(plhs[iout]);
-    for (i=0; i<f_m*f_n; i++)
-      f_scal_real[ i * N + n ] = creal(f_scal_r[ n*L*(2*L-1) + i ]);
+    for (n = 0; n < N; n++)
+      for (i=0; i<L*(2*L-1); i++)
+        f_scal_real[ i * N + n ] = creal(f_scal_r[ n*L*(2*L-1) + i ]);
 
   }else{
 

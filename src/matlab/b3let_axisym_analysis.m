@@ -66,7 +66,6 @@ end
 f_scal = zeros(N, L, (2*L-1));
 for n = 1:N
     temp = f_scal_vec(n,:);
-    size(temp)
     size(flag_mw_vec2arr( temp ));
     f_scal(n,:,:) = flag_mw_vec2arr( temp );
 end

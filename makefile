@@ -87,10 +87,12 @@ B3LETOBJS= $(B3LETOBJ)/b3let_axisym.o	\
 	$(B3LETOBJ)/b3let_tilling.o
 
 B3LETOBJSMAT = $(B3LETOBJMAT)/b3let_axisym_tilling_mex.o	\
-	$(B3LETOBJMAT)/b3let_axisym_analysis_mex.o
+	$(B3LETOBJMAT)/b3let_axisym_analysis_mex.o	\
+	$(B3LETOBJMAT)/b3let_axisym_synthesis_mex.o
 
 B3LETOBJSMEX = $(B3LETOBJMEX)/b3let_axisym_tilling_mex.$(MEXEXT)	\
-	$(B3LETOBJMEX)/b3let_axisym_analysis_mex.$(MEXEXT)
+	$(B3LETOBJMEX)/b3let_axisym_analysis_mex.$(MEXEXT)	\
+	$(B3LETOBJMEX)/b3let_axisym_synthesis_mex.$(MEXEXT)
 
 $(B3LETOBJ)/%.o: %.c
 	$(CC) $(OPT) $(FFLAGS) -c $< -o $@
