@@ -192,7 +192,7 @@ void b3let_axisym_wav_lm_test(int B_l, int B_n, int L, int N, int J_min_l, int J
 }
 
 
-void b3let_axisym_wav_test(int B_l, int B_n, int L, int N, int J_min_l, int J_min_n, int seed)
+void b3let_axisym_wav_test(double R, int B_l, int B_n, int L, int N, int J_min_l, int J_min_n, int seed)
 {
 	clock_t time_start, time_end;
 	int J_l = s2let_j_max(L, B_l);
@@ -206,20 +206,29 @@ void b3let_axisym_wav_test(int B_l, int B_n, int L, int N, int J_min_l, int J_mi
 
 	b3let_random_flmn(flmn, L, N, seed);
 
-	flag_synthesis(f, flmn, L, N);
+	double *nodes = (double*)calloc(N, sizeof(double));
+	double *weights = (double*)calloc(N, sizeof(double));
+	assert(nodes != NULL);
+	assert(weights != NULL);
+	flag_spherlaguerre_sampling(nodes, weights, R, N);
+
+	flag_synthesis(f, flmn, nodes, N, L, N);
+
+	free(nodes);
+	free(weights);
 
 	complex double *f_wav, *f_scal;
 	f_wav = (complex double*)calloc( (J_l+1) * L * (2*L-1) * (J_n+1) * N, sizeof(complex double));
 	f_scal = (complex double*)calloc( L * (2*L-1) * N, sizeof(complex double));
 
 	time_start = clock();
-	b3let_axisym_wav_analysis(f_wav, f_scal, f, B_l, B_n, L, N, J_min_l, J_min_n);
+	b3let_axisym_wav_analysis(f_wav, f_scal, f, R, B_l, B_n, L, N, J_min_l, J_min_n);
 	time_end = clock();
 	printf("  - Wavelet analysis   : %4.4f seconds\n", 
 		(time_end - time_start) / (double)CLOCKS_PER_SEC);
 
 	time_start = clock();
-	b3let_axisym_wav_synthesis(f_rec, f_wav, f_scal, B_l, B_n, L, N, J_min_l, J_min_n);
+	b3let_axisym_wav_synthesis(f_rec, f_wav, f_scal, R, B_l, B_n, L, N, J_min_l, J_min_n);
 	time_end = clock();
 	printf("  - Wavelet synthesis  : %4.4f seconds\n", 
 		(time_end - time_start) / (double)CLOCKS_PER_SEC);
@@ -230,7 +239,7 @@ void b3let_axisym_wav_test(int B_l, int B_n, int L, int N, int J_min_l, int J_mi
 		//printf("f[%i] = (%f,%f) - rec = (%f,%f)\n",n,creal(f[n]),cimag(f[n]),creal(f_rec[n]),cimag(f_rec[n]));
 	}*/
 
-	flag_analysis(flmn_rec, f_rec, L, N);
+	flag_analysis(flmn_rec, f_rec, R, L, N);
 
 	printf("  - Maximum abs error  : %6.5e\n", 
 		maxerr_cplx(flmn, flmn_rec, L*L*N));
@@ -253,7 +262,7 @@ void b3let_axisym_wav_test(int B_l, int B_n, int L, int N, int J_min_l, int J_mi
 	free(f_scal);
 }
 
-void b3let_axisym_wav_real_test(int B_l, int B_n, int L, int N, int J_min_l, int J_min_n, int seed)
+void b3let_axisym_wav_real_test(double R, int B_l, int B_n, int L, int N, int J_min_l, int J_min_n, int seed)
 {
 	clock_t time_start, time_end;
 	int J_l = s2let_j_max(L, B_l);
@@ -268,20 +277,29 @@ void b3let_axisym_wav_real_test(int B_l, int B_n, int L, int N, int J_min_l, int
 
 	b3let_random_flmn_real(flmn, L, N, seed);
 
-	flag_synthesis_real(f, flmn, L, N);
+	double *nodes = (double*)calloc(N, sizeof(double));
+	double *weights = (double*)calloc(N, sizeof(double));
+	assert(nodes != NULL);
+	assert(weights != NULL);
+	flag_spherlaguerre_sampling(nodes, weights, R, N);
+
+	flag_synthesis_real(f, flmn, nodes, N, L, N);
+
+	free(nodes);
+	free(weights);
 
 	double *f_wav, *f_scal;
 	f_wav = (double*)calloc( (J_l+1) * L * (2*L-1) * (J_n+1) * N, sizeof(double));
 	f_scal = (double*)calloc( L * (2*L-1) * N, sizeof(double));
 
 	time_start = clock();
-	b3let_axisym_wav_analysis_real(f_wav, f_scal, f, B_l, B_n, L, N, J_min_l, J_min_n);
+	b3let_axisym_wav_analysis_real(f_wav, f_scal, f, R, B_l, B_n, L, N, J_min_l, J_min_n);
 	time_end = clock();
 	printf("  - Wavelet analysis   : %4.4f seconds\n", 
 		(time_end - time_start) / (double)CLOCKS_PER_SEC);
 
 	time_start = clock();
-	b3let_axisym_wav_synthesis_real(f_rec, f_wav, f_scal, B_l, B_n, L, N, J_min_l, J_min_n);
+	b3let_axisym_wav_synthesis_real(f_rec, f_wav, f_scal, R, B_l, B_n, L, N, J_min_l, J_min_n);
 	time_end = clock();
 	printf("  - Wavelet synthesis  : %4.4f seconds\n", 
 		(time_end - time_start) / (double)CLOCKS_PER_SEC);
@@ -294,7 +312,7 @@ void b3let_axisym_wav_real_test(int B_l, int B_n, int L, int N, int J_min_l, int
 	}
 	*/
 
-	flag_analysis_real(flmn_rec, f_rec, L, N);
+	flag_analysis_real(flmn_rec, f_rec, R, L, N);
 
 	printf("  - Maximum abs error  : %6.5e\n", 
 		maxerr_cplx(flmn, flmn_rec, L*L*N));
@@ -319,7 +337,7 @@ void b3let_axisym_wav_real_test(int B_l, int B_n, int L, int N, int J_min_l, int
 
 int main(int argc, char *argv[]) 
 {
-
+	const double R = 1.0;
 	const int L = 32;
 	const int N = 32;
 	const int B_l = 2;
@@ -339,10 +357,10 @@ int main(int argc, char *argv[])
 	b3let_axisym_wav_lm_test(B_l, B_n, L, N, J_min_l, J_min_n, seed);
 	printf("----------------------------------------------------------\n");
 	printf("> Testing axisymmetric wavelets in pixel space...\n");
-	b3let_axisym_wav_test(B_l, B_n, L, N, J_min_l, J_min_n, seed);
+	b3let_axisym_wav_test(R, B_l, B_n, L, N, J_min_l, J_min_n, seed);
 	printf("----------------------------------------------------------\n");
 	printf("> Testing real axisymmetric wavelets in pixel space...\n");
-	b3let_axisym_wav_real_test(B_l, B_n, L, N, J_min_l, J_min_n, seed);
+	b3let_axisym_wav_real_test(R, B_l, B_n, L, N, J_min_l, J_min_n, seed);
 	printf("==========================================================\n");
 	
 	return 0;		

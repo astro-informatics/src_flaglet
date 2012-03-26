@@ -211,11 +211,11 @@ void b3let_axisym_wav_synthesis_lmn(complex double *flmn, const complex double *
  * \param[in]  J_min_n First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_wav_analysis(complex double *f_wav, complex double *f_scal, const complex double *f, int B_l, int B_n, int L, int N, int J_min_l, int J_min_n)
+void b3let_axisym_wav_analysis(complex double *f_wav, complex double *f_scal, const complex double *f, double R, int B_l, int B_n, int L, int N, int J_min_l, int J_min_n)
 {
 	complex double *flmn;
 	flag_allocate_flmn(&flmn, L, N);
-	flag_analysis(flmn, f, L, N);
+	flag_analysis(flmn, f, R, L, N);
 
 	complex double *wav_lmn, *scal_lmn, *f_wav_lmn, *f_scal_lmn;
 
@@ -228,18 +228,26 @@ void b3let_axisym_wav_analysis(complex double *f_wav, complex double *f_scal, co
 	free(wav_lmn);
 	free(scal_lmn);
 
+	double *nodes = (double*)calloc(N, sizeof(double));
+	double *weights = (double*)calloc(N, sizeof(double));
+	assert(nodes != NULL);
+	assert(weights != NULL);
+	flag_spherlaguerre_sampling(nodes, weights, R, N);
+
 	int offset_lmn, offset, jl, jn;
 	int J_l = s2let_j_max(L, B_l);
 	int J_n = s2let_j_max(N, B_n);
-	flag_synthesis(f_scal, f_scal_lmn, L, N);
+	flag_synthesis(f_scal, f_scal_lmn, nodes, N, L, N);
 	for (jn = J_min_n; jn <= J_n; jn++){
 		for (jl = J_min_l; jl <= J_l; jl++){
 			offset_lmn = jn * (J_l + 1) * L * L * N   +  jl * L * L * N;
 			offset = jn * (J_l + 1) * L * (2*L-1) * N   +  jl * L * (2*L-1) * N;
-			flag_synthesis(f_wav + offset, f_wav_lmn + offset_lmn, L, N);
+			flag_synthesis(f_wav + offset, f_wav_lmn + offset_lmn, nodes, N, L, N);
 		}
 	}
 
+	free(nodes);
+	free(weights);
 	free(f_wav_lmn);
 	free(f_scal_lmn);
 	free(flmn);
@@ -263,7 +271,7 @@ void b3let_axisym_wav_analysis(complex double *f_wav, complex double *f_scal, co
  * \param[in]  J_min_n First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_wav_synthesis(complex double *f, const complex double *f_wav, const complex double *f_scal, int B_l, int B_n, int L, int N, int J_min_l, int J_min_n)
+void b3let_axisym_wav_synthesis(complex double *f, const complex double *f_wav, const complex double *f_scal, double R, int B_l, int B_n, int L, int N, int J_min_l, int J_min_n)
 {
 	complex double *f_wav_lmn, *f_scal_lmn;
 	b3let_axisym_allocate_f_wav_lmn(&f_wav_lmn, &f_scal_lmn, B_l, B_n, L, N);
@@ -271,12 +279,12 @@ void b3let_axisym_wav_synthesis(complex double *f, const complex double *f_wav, 
 	int offset_lmn, offset, jl, jn;
 	int J_l = s2let_j_max(L, B_l);
 	int J_n = s2let_j_max(N, B_n);
-	flag_analysis(f_scal_lmn, f_scal, L, N);
+	flag_analysis(f_scal_lmn, f_scal, R, L, N);
 	for (jn = J_min_n; jn <= J_n; jn++){
 		for (jl = J_min_l; jl <= J_l; jl++){
 			offset_lmn = jn * (J_l + 1) * L * L * N   +  jl * L * L * N;
 			offset = jn * (J_l + 1) * L * (2*L-1) * N   +  jl * L * (2*L-1) * N;
-			flag_analysis(f_wav_lmn + offset_lmn, f_wav + offset, L, N);
+			flag_analysis(f_wav_lmn + offset_lmn, f_wav + offset, R, L, N);
 		}
 	}
 
@@ -288,8 +296,16 @@ void b3let_axisym_wav_synthesis(complex double *f, const complex double *f_wav, 
 	flag_allocate_flmn(&flmn, L, N);
 	b3let_axisym_wav_synthesis_lmn(flmn, f_wav_lmn, f_scal_lmn, wav_lmn, scal_lmn, B_l, B_n, L, N, J_min_l, J_min_n);
 	
-	flag_synthesis(f, flmn, L, N);
+	double *nodes = (double*)calloc(N, sizeof(double));
+	double *weights = (double*)calloc(N, sizeof(double));
+	assert(nodes != NULL);
+	assert(weights != NULL);
+	flag_spherlaguerre_sampling(nodes, weights, R, N);
 
+	flag_synthesis(f, flmn, nodes, N, L, N);
+
+	free(nodes);
+	free(weights);
 	free(wav_lmn);
 	free(scal_lmn);
 	free(f_wav_lmn);
@@ -316,11 +332,11 @@ void b3let_axisym_wav_synthesis(complex double *f, const complex double *f_wav, 
  * \param[in]  J_min_n First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_wav_analysis_real(double *f_wav, double *f_scal, const double *f, int B_l, int B_n, int L, int N, int J_min_l, int J_min_n)
+void b3let_axisym_wav_analysis_real(double *f_wav, double *f_scal, const double *f, double R, int B_l, int B_n, int L, int N, int J_min_l, int J_min_n)
 {
 	complex double *flmn;
 	flag_allocate_flmn(&flmn, L, N);
-	flag_analysis_real(flmn, f, L, N);
+	flag_analysis_real(flmn, f, R, L, N);
 
 	complex double *wav_lmn, *scal_lmn, *f_wav_lmn, *f_scal_lmn;
 
@@ -333,18 +349,26 @@ void b3let_axisym_wav_analysis_real(double *f_wav, double *f_scal, const double 
 	free(wav_lmn);
 	free(scal_lmn);
 
+	double *nodes = (double*)calloc(N, sizeof(double));
+	double *weights = (double*)calloc(N, sizeof(double));
+	assert(nodes != NULL);
+	assert(weights != NULL);
+	flag_spherlaguerre_sampling(nodes, weights, R, N);
+
 	int offset_lmn, offset, jl, jn;
 	int J_l = s2let_j_max(L, B_l);
 	int J_n = s2let_j_max(N, B_n);
-	flag_synthesis_real(f_scal, f_scal_lmn, L, N);
+	flag_synthesis_real(f_scal, f_scal_lmn, nodes, N, L, N);
 	for (jn = J_min_n; jn <= J_n; jn++){
 		for (jl = J_min_l; jl <= J_l; jl++){
 			offset_lmn = jn * (J_l + 1) * L * L * N   +  jl * L * L * N;
 			offset = jn * (J_l + 1) * L * (2*L-1) * N   +  jl * L * (2*L-1) * N;
-			flag_synthesis_real(f_wav + offset, f_wav_lmn + offset_lmn, L, N);
+			flag_synthesis_real(f_wav + offset, f_wav_lmn + offset_lmn, nodes, N, L, N);
 		}
 	}
 
+	free(nodes);
+	free(weights);
 	free(f_wav_lmn);
 	free(f_scal_lmn);
 	free(flmn);
@@ -369,7 +393,7 @@ void b3let_axisym_wav_analysis_real(double *f_wav, double *f_scal, const double 
  * \param[in]  J_min_n First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_wav_synthesis_real(double *f, const double *f_wav, const double *f_scal, int B_l, int B_n, int L, int N, int J_min_l, int J_min_n)
+void b3let_axisym_wav_synthesis_real(double *f, const double *f_wav, const double *f_scal, double R, int B_l, int B_n, int L, int N, int J_min_l, int J_min_n)
 {
 	complex double *f_wav_lmn, *f_scal_lmn;
 	b3let_axisym_allocate_f_wav_lmn(&f_wav_lmn, &f_scal_lmn, B_l, B_n, L, N);
@@ -377,12 +401,12 @@ void b3let_axisym_wav_synthesis_real(double *f, const double *f_wav, const doubl
 	int offset_lmn, offset, jl, jn;
 	int J_l = s2let_j_max(L, B_l);
 	int J_n = s2let_j_max(N, B_n);
-	flag_analysis_real(f_scal_lmn, f_scal, L, N);
+	flag_analysis_real(f_scal_lmn, f_scal, R, L, N);
 	for (jn = J_min_n; jn <= J_n; jn++){
 		for (jl = J_min_l; jl <= J_l; jl++){
 			offset_lmn = jn * (J_l + 1) * L * L * N   +  jl * L * L * N;
 			offset = jn * (J_l + 1) * L * (2*L-1) * N   +  jl * L * (2*L-1) * N;
-			flag_analysis_real(f_wav_lmn + offset_lmn, f_wav + offset, L, N);
+			flag_analysis_real(f_wav_lmn + offset_lmn, f_wav + offset, R, L, N);
 		}
 	}
 
@@ -394,8 +418,16 @@ void b3let_axisym_wav_synthesis_real(double *f, const double *f_wav, const doubl
 	flag_allocate_flmn(&flmn, L, N);
 	b3let_axisym_wav_synthesis_lmn(flmn, f_wav_lmn, f_scal_lmn, wav_lmn, scal_lmn, B_l, B_n, L, N, J_min_l, J_min_n);
 	
-	flag_synthesis_real(f, flmn, L, N);
+	double *nodes = (double*)calloc(N, sizeof(double));
+	double *weights = (double*)calloc(N, sizeof(double));
+	assert(nodes != NULL);
+	assert(weights != NULL);
+	flag_spherlaguerre_sampling(nodes, weights, R, N);
 
+	flag_synthesis_real(f, flmn, nodes, N, L, N);
+
+	free(nodes);
+	free(weights);
 	free(wav_lmn);
 	free(scal_lmn);
 	free(f_wav_lmn);

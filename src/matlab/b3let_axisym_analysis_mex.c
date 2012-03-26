@@ -27,9 +27,9 @@ void mexFunction( int nlhs, mxArray *plhs[],
   int iin = 0, iout = 0;
 
   // Check number of arguments
-  if(nrhs!=8) {
+  if(nrhs!=9) {
     mexErrMsgIdAndTxt("b3let_axisym_analysis_mex:InvalidInput:nrhs",
-          "Require eight inputs.");
+          "Require nine inputs.");
   }
   if(nlhs!=2) {
     mexErrMsgIdAndTxt("b3let_axisym_analysis_mex:InvalidOutput:nlhs",
@@ -37,7 +37,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
   }
 
   // Parse reality flag
-  iin = 7;
+  iin = 8;
   if( !mxIsLogicalScalar(prhs[iin]) )
     mexErrMsgIdAndTxt("b3let_axisym_analysis_mex:InvalidInput:reality",
           "Reality flag must be logical.");
@@ -181,15 +181,28 @@ void mexFunction( int nlhs, mxArray *plhs[],
           "First scale J_min_n must be larger than that!");
   }
 
+  // Parse harmonic band-limit R
+  iin = 7;
+  if( !mxIsDouble(prhs[iin]) || 
+      mxIsComplex(prhs[iin]) || 
+      mxGetNumberOfElements(prhs[iin])!=1 ) {
+    mexErrMsgIdAndTxt("slag_synthesis_mex:InvalidInput:Rlimit",
+          "Radial limit R must be positive real.");
+  }
+  double R = mxGetScalar(prhs[iin]);
+  if ( R <= 0 )
+    mexErrMsgIdAndTxt("slag_synthesis_mex:InvalidInput:RLimitNonInt",
+          "Radial limit R must be positive real.");
+
   // Perform wavelet transform in harmonic space and then FLAG reconstruction.
   if(reality){
     f_wav_r = (double*)calloc( (J_l+1) * L * (2*L-1) * (J_n+1) * N, sizeof(double));
     f_scal_r = (double*)calloc( L * (2*L-1) * N, sizeof(double));
-    b3let_axisym_wav_analysis_real(f_wav_r, f_scal_r, f_r, B_l, B_n, L, N, J_min_l, J_min_n);
+    b3let_axisym_wav_analysis_real(f_wav_r, f_scal_r, f_r, R, B_l, B_n, L, N, J_min_l, J_min_n);
   }else{
     f_wav = (complex double*)calloc( (J_l+1) * L * (2*L-1) * (J_n+1) * N, sizeof(complex double));
     f_scal = (complex double*)calloc( L * (2*L-1) * N, sizeof(complex double));
-    b3let_axisym_wav_analysis(f_wav, f_scal, f, B_l, B_n, L, N, J_min_l, J_min_n); 
+    b3let_axisym_wav_analysis(f_wav, f_scal, f, R, B_l, B_n, L, N, J_min_l, J_min_n); 
   }
 
   // Output wavelets

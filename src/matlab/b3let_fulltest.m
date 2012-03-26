@@ -8,12 +8,13 @@ clear all;
 close all;
 
 % Main parameters
-L = 3
-N = 3
-B_l = 2
-B_n = 2
-J_min_l = 0
-J_min_n = 0
+R = 1.0
+L = 16
+N = 16
+B_l = 3
+B_n = 3
+J_min_l = 1
+J_min_n = 1
 
 J_l = ceil(log(L) ./ log(B_l))
 J_n = ceil(log(N) ./ log(B_n))
@@ -28,11 +29,17 @@ flmn = rand(size(flmn)) + sqrt(-1)*rand(size(flmn));
 flmn = 2.*(flmn - (1+sqrt(-1))./2);
 
 % Generate the corresponding field
-f = flag_synthesis(flmn, L, N);
+f = flag_synthesis(flmn);
+
 % Test exactness of 3D Wavelet transform
-[f_wav, f_scal] = b3let_axisym_analysis(f, B_l, B_n, L, N, J_min_l, J_min_n);
-f_rec = b3let_axisym_synthesis(f_wav, f_scal, B_l, B_n, L, N, J_min_l, J_min_n);
-error_on_axisym_transform = max(max(max(abs(f-f_rec))))
+[f_wav, f_scal] = b3let_axisym_analysis(f);
+f_rec = b3let_axisym_synthesis(f_wav, f_scal);
+error_on_axisym_default_transform = max(max(max(abs(f-f_rec))))
+
+% Test exactness of 3D Wavelet transform
+[f_wav, f_scal] = b3let_axisym_analysis(f, 'B_l', B_l, 'B_n', B_n, 'L', L, 'N', N, 'J_min_l', J_min_l, 'J_min_n', J_min_n, 'R', R);
+f_rec = b3let_axisym_synthesis(f_wav, f_scal, 'B_l', B_l, 'B_n', B_n, 'L', L, 'N', N, 'J_min_l', J_min_l, 'J_min_n', J_min_n, 'R', R);
+error_on_axisym_custom_transform = max(max(max(abs(f-f_rec))))
 
 % Impose reality on flms.
 for en = 1:N
@@ -48,9 +55,14 @@ for en = 1:N
 end
 
 % Generate the corresponding field
-f_real = flag_synthesis(flmn, L, N, 'reality', true);
+f_real = flag_synthesis(flmn, 'reality', true);
 
 % Test exactness of 3D Wavelet transform
-[f_wav_real, f_scal_real] = b3let_axisym_analysis(f_real, B_l, B_n, L, N, J_min_l, J_min_n, 'reality', true);
-f_real_rec = b3let_axisym_synthesis(f_wav_real, f_scal_real, B_l, B_n, L, N, J_min_l, J_min_n, 'reality', true);
-error_on_axisym_transform = max(max(max(abs(f_real-f_real_rec))))
+[f_wav_real, f_scal_real] = b3let_axisym_analysis(f_real, 'reality', true);
+f_real_rec = b3let_axisym_synthesis(f_wav_real, f_scal_real, 'reality', true);
+error_on_axisym_default_transform = max(max(max(abs(f_real-f_real_rec))))
+
+% Test exactness of 3D Wavelet transform
+[f_wav_real, f_scal_real] = b3let_axisym_analysis(f_real, 'B_l', B_l, 'B_n', B_n, 'L', L, 'N', N, 'J_min_l', J_min_l, 'J_min_n', J_min_n, 'R', R, 'reality', true);
+f_real_rec = b3let_axisym_synthesis(f_wav_real, f_scal_real, 'B_l', B_l, 'B_n', B_n, 'L', L, 'N', N, 'J_min_l', J_min_l, 'J_min_n', J_min_n, 'R', R, 'reality', true);
+error_on_axisym_custom_transform = max(max(max(abs(f_real-f_real_rec))))

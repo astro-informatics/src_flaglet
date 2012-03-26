@@ -27,9 +27,9 @@ void mexFunction( int nlhs, mxArray *plhs[],
   int iin = 0, iout = 0;
 
   // Check number of arguments
-  if(nrhs!=9) {
+  if(nrhs!=10) {
     mexErrMsgIdAndTxt("b3let_axisym_synthesis_mex:InvalidInput:nrhs",
-          "Require nine inputs.");
+          "Require ten inputs.");
   }
   if(nlhs!=1) {
     mexErrMsgIdAndTxt("b3let_axisym_synthesis_mex:InvalidOutput:nlhs",
@@ -37,7 +37,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
   }
 
   // Parse reality flag
-  iin = 8;
+  iin = 9;
   if( !mxIsLogicalScalar(prhs[iin]) )
     mexErrMsgIdAndTxt("b3let_axisym_synthesis_mex:InvalidInput:reality",
           "Reality flag must be logical.");
@@ -197,13 +197,26 @@ void mexFunction( int nlhs, mxArray *plhs[],
           "First scale J_min_n must be larger than that!");
   }
 
+  // Parse harmonic band-limit R
+  iin = 8;
+  if( !mxIsDouble(prhs[iin]) || 
+      mxIsComplex(prhs[iin]) || 
+      mxGetNumberOfElements(prhs[iin])!=1 ) {
+    mexErrMsgIdAndTxt("slag_synthesis_mex:InvalidInput:Rlimit",
+          "Radial limit R must be positive real.");
+  }
+  double R = mxGetScalar(prhs[iin]);
+  if ( R <= 0 )
+    mexErrMsgIdAndTxt("slag_synthesis_mex:InvalidInput:RLimitNonInt",
+          "Radial limit R must be positive real.");
+
   // Perform wavelet transform in harmonic space and then FLAG reconstruction.
   if(reality){
     f_r = (double*)calloc( L * (2*L-1) * N, sizeof(double));
-    b3let_axisym_wav_synthesis_real(f_r, f_wav_r, f_scal_r, B_l, B_n, L, N, J_min_l, J_min_n);
+    b3let_axisym_wav_synthesis_real(f_r, f_wav_r, f_scal_r, R, B_l, B_n, L, N, J_min_l, J_min_n);
   }else{
     f = (complex double*)calloc( L * (2*L-1) * N, sizeof(complex double));
-    b3let_axisym_wav_synthesis(f, f_wav, f_scal, B_l, B_n, L, N, J_min_l, J_min_n); 
+    b3let_axisym_wav_synthesis(f, f_wav, f_scal, R, B_l, B_n, L, N, J_min_l, J_min_n); 
   }
 
   int ntheta = L;
