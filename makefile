@@ -120,7 +120,7 @@ $(B3LETLIB)/lib$(B3LETLIBN).a: $(B3LETOBJS)
 	ar -r $(B3LETLIB)/lib$(B3LETLIBN).a $(B3LETOBJS)
 
 .PHONY: test
-lib: lib $(B3LETBIN)/b3let_test
+test: lib $(B3LETBIN)/b3let_test
 $(B3LETBIN)/b3let_test: $(B3LETOBJ)/b3let_test.o $(B3LETLIB)/lib$(B3LETLIBN).a
 	$(CC) $(OPT) $< -o $(B3LETBIN)/b3let_test $(LDFLAGS)
 	$(B3LETBIN)/b3let_test
@@ -148,5 +148,6 @@ clean:	tidy cleandoc
 .PHONY: tidy
 tidy:
 	rm -f $(B3LETOBJ)/*.o
+	rm -f $(B3LETOBJMEX)/*.o
 	rm -f *~ 
 

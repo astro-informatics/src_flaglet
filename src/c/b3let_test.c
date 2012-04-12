@@ -206,20 +206,20 @@ void b3let_axisym_wav_test(double R, int B_l, int B_n, int L, int N, int J_min_l
 
 	b3let_random_flmn(flmn, L, N, seed);
 
-	double *nodes = (double*)calloc(N, sizeof(double));
-	double *weights = (double*)calloc(N, sizeof(double));
+	double *nodes = (double*)calloc(N+1, sizeof(double));
+	double *weights = (double*)calloc(N+1, sizeof(double));
 	assert(nodes != NULL);
 	assert(weights != NULL);
 	flag_spherlaguerre_sampling(nodes, weights, R, N);
 
-	flag_synthesis(f, flmn, nodes, N, L, N);
+	flag_synthesis(f, flmn, nodes, N+1, L, N);
 
 	free(nodes);
 	free(weights);
 
 	complex double *f_wav, *f_scal;
-	f_wav = (complex double*)calloc( (J_l+1) * L * (2*L-1) * (J_n+1) * N, sizeof(complex double));
-	f_scal = (complex double*)calloc( L * (2*L-1) * N, sizeof(complex double));
+	f_wav = (complex double*)calloc( (J_l+1) * L * (2*L-1) * (J_n+1) * (N+1), sizeof(complex double));
+	f_scal = (complex double*)calloc( L * (2*L-1) * (N+1), sizeof(complex double));
 
 	time_start = clock();
 	b3let_axisym_wav_analysis(f_wav, f_scal, f, R, B_l, B_n, L, N, J_min_l, J_min_n);
@@ -277,20 +277,20 @@ void b3let_axisym_wav_real_test(double R, int B_l, int B_n, int L, int N, int J_
 
 	b3let_random_flmn_real(flmn, L, N, seed);
 
-	double *nodes = (double*)calloc(N, sizeof(double));
-	double *weights = (double*)calloc(N, sizeof(double));
+	double *nodes = (double*)calloc(N+1, sizeof(double));
+	double *weights = (double*)calloc(N+1, sizeof(double));
 	assert(nodes != NULL);
 	assert(weights != NULL);
 	flag_spherlaguerre_sampling(nodes, weights, R, N);
 
-	flag_synthesis_real(f, flmn, nodes, N, L, N);
+	flag_synthesis_real(f, flmn, nodes, N+1, L, N);
 
 	free(nodes);
 	free(weights);
 
 	double *f_wav, *f_scal;
-	f_wav = (double*)calloc( (J_l+1) * L * (2*L-1) * (J_n+1) * N, sizeof(double));
-	f_scal = (double*)calloc( L * (2*L-1) * N, sizeof(double));
+	f_wav = (double*)calloc( (J_l+1) * L * (2*L-1) * (J_n+1) * (N+1), sizeof(double));
+	f_scal = (double*)calloc( L * (2*L-1) * (N+1), sizeof(double));
 
 	time_start = clock();
 	b3let_axisym_wav_analysis_real(f_wav, f_scal, f, R, B_l, B_n, L, N, J_min_l, J_min_n);

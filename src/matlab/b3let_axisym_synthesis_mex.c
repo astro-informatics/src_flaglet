@@ -212,10 +212,10 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
   // Perform wavelet transform in harmonic space and then FLAG reconstruction.
   if(reality){
-    f_r = (double*)calloc( L * (2*L-1) * N, sizeof(double));
+    f_r = (double*)calloc( L * (2*L-1) * (N+1), sizeof(double));
     b3let_axisym_wav_synthesis_real(f_r, f_wav_r, f_scal_r, R, B_l, B_n, L, N, J_min_l, J_min_n);
   }else{
-    f = (complex double*)calloc( L * (2*L-1) * N, sizeof(complex double));
+    f = (complex double*)calloc( L * (2*L-1) * (N+1), sizeof(complex double));
     b3let_axisym_wav_synthesis(f, f_wav, f_scal, R, B_l, B_n, L, N, J_min_l, J_min_n); 
   }
 
@@ -226,22 +226,22 @@ void mexFunction( int nlhs, mxArray *plhs[],
   if(reality){
 
     iout = 0;
-    plhs[iout] = mxCreateDoubleMatrix(N, L*(2*L-1), mxREAL);
+    plhs[iout] = mxCreateDoubleMatrix(N+1, L*(2*L-1), mxREAL);
     f_real = mxGetPr(plhs[iout]);
-    for(n=0; n<N; n++) 
+    for(n=0; n<N+1; n++) 
       for(i=0; i<ntheta*nphi; i++) 
-        f_real[i*N + n] = creal(f_r[n*ntheta*nphi + i]);
+        f_real[i*(N+1) + n] = creal(f_r[n*ntheta*nphi + i]);
 
   }else{
 
     iout = 0;
-    plhs[iout] = mxCreateDoubleMatrix(N, L*(2*L-1), mxCOMPLEX);
+    plhs[iout] = mxCreateDoubleMatrix(N+1, L*(2*L-1), mxCOMPLEX);
     f_real = mxGetPr(plhs[iout]);
     f_imag = mxGetPi(plhs[iout]);
-    for(n=0; n<N; n++) {    
+    for(n=0; n<N+1; n++) {    
       for(i=0; i<ntheta*nphi; i++) {
-        f_real[i*N + n] = creal( f[n*ntheta*nphi + i] );
-        f_imag[i*N + n] = cimag( f[n*ntheta*nphi + i] );
+        f_real[i*(N+1) + n] = creal( f[n*ntheta*nphi + i] );
+        f_imag[i*(N+1) + n] = cimag( f[n*ntheta*nphi + i] );
       }
     }
   }

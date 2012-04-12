@@ -28,7 +28,7 @@ J_n = s2let_jmax(N, B_n);
 figure('Position',[1 1 1000 1000])
 
 colours_n = zeros((J_n+2),3);
-hax = axes('Position', [.05, .40, .3, .55]);
+hax = axes('Position', [.05, .05, .3, .55]);
 colours_n(1,:) = rand(1,3)*0.8+0.2;
 plot(0:N-1, kappa0_n, 'k', 'LineWidth', 4, 'Color', colours_n(1,:));
 hold on;
@@ -44,7 +44,7 @@ view(-90,90)
 hold off
 
 colours_l = zeros((J_l+2),3);
-hax = axes('Position', [.40, .05, .55, .3]);
+hax = axes('Position', [.40, .65, .55, .3]);
 colours_l(1,:) = rand(1,3)*0.8+0.2;
 plot(0:L-1, kappa0_l, 'k', 'LineWidth', 4, 'Color', colours_l(1,:));
 hold on;
@@ -60,7 +60,7 @@ hold off
 
 colours = zeros((J_l+1)*(J_n+1),3);
 
-hax = axes('Position', [.40, .40, .55, .55]);
+hax = axes('Position', [.40, .05, .55, .55]);
 colour = 0.5* colours_n(1,:).*colours_l(1,:);
 surf(0:L-1, 0:N-1, kappa0, 'FaceColor', colour, 'EdgeColor', 'none');%,'FaceAlpha','flat', ...
         %'AlphaDataMapping','none','AlphaData',(kappa0));
@@ -68,8 +68,8 @@ hold on;
 for jl = J_min_l:J_l 
     for jn = J_min_n:J_n 
         temp = kappa{jl+1,jn+1};
-        colours((jn-1)*(J_l+1)+jl+1,:) = colours_n(jn+2,:).*colours_l(jl+2,:);%rand(1,3)*0.9;
-        surf(0:N-1, 0:L-1, temp, 'FaceColor', colours((jn-1)*(J_l+1)+jl+1,:), 'EdgeColor', 'none');%,'FaceAlpha','flat', ...
+        colours((jn)*(J_l+1)+jl+1,:) = colours_n(jn+2,:).*colours_l(jl+2,:);%rand(1,3)*0.9;
+        surf(0:N-1, 0:L-1, temp, 'FaceColor', colours((jn)*(J_l+1)+jl+1,:), 'EdgeColor', 'none');%,'FaceAlpha','flat', ...
         %'AlphaDataMapping','none','AlphaData',(temp));
     end
 end
@@ -84,24 +84,24 @@ colormap jet
 %alpha(.6)
 hold off
 
-hax = axes('Position', [.05, .05, .3, .3]);
+hax = axes('Position', [.05, .65, .3, .3]);
 surf(0:L-1, 0:N-1, kappa0, 'FaceColor', colour, 'EdgeColor', 'none');%,'FaceAlpha','flat', ...
         %'AlphaDataMapping','none','AlphaData',(kappa0));
 hold on;
 for jl = J_min_l:J_l 
     for jn = J_min_n:J_n 
         temp = kappa{jl+1,jn+1};
-        surf(0:N-1, 0:L-1, temp, 'FaceColor', colours((jn-1)*(J_l+1)+jl+1,:), 'EdgeColor', 'none');%,'FaceAlpha','flat', ...
+        surf(0:N-1, 0:L-1, temp, 'FaceColor', colours((jn)*(J_l+1)+jl+1,:), 'EdgeColor', 'none');%,'FaceAlpha','flat', ...
         %'AlphaDataMapping','none','AlphaData',(temp));
     end
 end
 surf(0:N-1, 0:L-1, zeros(N,L), 'FaceColor', 'black','EdgeColor', 'none')
 axis([0 L-1 0 N-1 0 1.2])
-view(45,45)
+view(135,45)
 set(gca,'FontSize',20);
 set(gca,'LineWidth',4);
 colormap jet
-%alpha(.6)
+%=alpha(.6)
 hold off
 
 end

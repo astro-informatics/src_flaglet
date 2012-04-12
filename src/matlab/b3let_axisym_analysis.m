@@ -36,7 +36,7 @@ function [f_wav, f_scal] = b3let_axisym_analysis(f, varargin)
 % See LICENSE.txt for license details
 
 sz = size(f);
-Nguessed = sz(1);
+Nguessed = sz(1)-1;
 Lguessed = sz(2);
 
 p = inputParser;
@@ -54,8 +54,8 @@ args = p.Results;
 
 N = args.N;
 L = args.L;
-f_vec = zeros(N, L*(2*L-1));
-for n = 1:args.N
+f_vec = zeros(N+1, L*(2*L-1));
+for n = 1:args.N+1
     temp(:,:) = f(n,:,:);
     f_vec(n,:) = flag_mw_arr2vec( temp );
 end
@@ -67,11 +67,11 @@ J_n = ceil(log(N) ./ log(args.B_n));
 f_wav = cell(J_l+1, J_n+1);
 for jl = 0:J_l
     for jn = 0:J_n
-        temp = zeros(N, L, 2*L-1);
-        for n = 0:N-1
+        temp = zeros(N+1, L, 2*L-1);
+        for n = 0:N
             for t = 0:L-1
                 for p = 0:2*L-2
-                    ind = jn*(J_l+1)*L*(2*L-1)*N + jl*L*(2*L-1)*N + n*L*(2*L-1) + t*(2*L-1) + p + 1;
+                    ind = jn*(J_l+1)*L*(2*L-1)*(N+1) + jl*L*(2*L-1)*(N+1) + n*L*(2*L-1) + t*(2*L-1) + p + 1;
                     temp(n+1,t+1,p+1) = f_wav_vec(1,ind);
                 end
             end
@@ -80,8 +80,8 @@ for jl = 0:J_l
     end
 end
 
-f_scal = zeros(N, L, (2*L-1));
-for n = 1:N
+f_scal = zeros(N+1, L, (2*L-1));
+for n = 1:N+1
     temp = f_scal_vec(n,:);
     size(flag_mw_vec2arr( temp ));
     f_scal(n,:,:) = flag_mw_vec2arr( temp );
