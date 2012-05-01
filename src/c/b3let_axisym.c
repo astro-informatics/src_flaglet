@@ -5,73 +5,74 @@
 #include "b3let.h"
 
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
+#define MIN(a,b) ((a) < (b) ? (a) : (b))
 
 /*!
  * Allocates arrays for the kernels of the wavelets and the scaling functions (in FLAG space).
  *
- * \param[out]  wav_lmn Wavelet kernels.
- * \param[out]  scal_lmn Scaling function kernels.
+ * \param[out]  wav_lmp Wavelet kernels.
+ * \param[out]  scal_lmp Scaling function kernels.
  * \param[in]  B_l Wavelet parameter for angular harmonic space.
- * \param[in]  B_n Wavelet parameter for radial harmonic space.
+ * \param[in]  B_p Wavelet parameter for radial harmonic space.
  * \param[in]  L Angular harmonic band-limit.
- * \param[in]  N Radial harmonic band-limit.
+ * \param[in]  P Radial harmonic band-limit.
  * \retval none
  */
-void b3let_axisym_allocate_wav_lmn(double **wav_lmn, double **scal_lmn, int B_l, int B_n, int L, int N)
+void b3let_axisym_allocate_wav_lmp(double **wav_lmp, double **scal_lmp, int B_l, int B_p, int L, int P)
 {
 	int J_l = s2let_j_max(L, B_l);
-	int J_n = s2let_j_max(N, B_n);
-	*wav_lmn = (double*)calloc( (J_l+1) * L * L * (J_n+1) * N, sizeof(double));
-	*scal_lmn = (double*)calloc( L * L * N, sizeof(double));
+	int J_p = s2let_j_max(P, B_p);
+	*wav_lmp = (double*)calloc( (J_l+1) * L * L * (J_p+1) * P, sizeof(double));
+	*scal_lmp = (double*)calloc( L * L * P, sizeof(double));
 }
 
 /*!
  * Computes the kernels of the wavelets and the scaling functions (in FLAG space).
  *
- * \param[out]  wav_lmn Wavelet kernels.
- * \param[out]  scal_lmn Scaling function kernels.
+ * \param[out]  wav_lmp Wavelet kernels.
+ * \param[out]  scal_lmp Scaling function kernels.
  * \param[in]  B_l Wavelet parameter for angular harmonic space.
- * \param[in]  B_n Wavelet parameter for radial harmonic space.
+ * \param[in]  B_p Wavelet parameter for radial harmonic space.
  * \param[in]  L Angular harmonic band-limit.
- * \param[in]  N Radial harmonic band-limit.
+ * \param[in]  P Radial harmonic band-limit.
  * \param[in]  J_min_l First wavelet scale to be used in angular space.
- * \param[in]  J_min_n First wavelet scale to be used in radial space.
+ * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_wav_lmn(double *wav_lmn, double *scal_lmn, int B_l, int B_n, int L, int N, int J_min_l, int J_min_n)
+void b3let_axisym_wav_lmp(double *wav_lmp, double *scal_lmp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
-	int jl, jn, l, n, m, indjjlmn, indlmn;
+	int jl, jp, l, n, m, indjjlmp, indlmp;
 	int J_l = s2let_j_max(L, B_l);
-	int J_n = s2let_j_max(N, B_n);
+	int J_p = s2let_j_max(P, B_p);
 
 	double wav0, scal0;
 
 	double *kappa_ln, *kappa0_ln;
-	b3let_axisym_allocate_tilling(&kappa_ln, &kappa0_ln, B_l, B_n, L, N);
+	b3let_axisym_allocate_tilling(&kappa_ln, &kappa0_ln, B_l, B_p, L, P);
 	
-	b3let_axisym_tilling(kappa_ln, kappa0_ln, B_l, B_n, L, N, J_min_l, J_min_n);
+	b3let_axisym_tilling(kappa_ln, kappa0_ln, B_l, B_p, L, P, J_min_l, J_min_p);
 
-	for (jn = J_min_n; jn <= J_n; jn++){
+	for (jp = J_min_p; jp <= J_p; jp++){
 		for (jl = J_min_l; jl <= J_l; jl++){
-			for (n = 0; n < N; n++){
+			for (n = 0; n < P; n++){
 				for (l = 0; l < L; l++){
 					wav0 = sqrt( (2 * l + 1) / (4.0 * PI) ) *
-						kappa_ln[ jn*(J_l+1)*L*N  + jl*L*N + n*L + l ];
+						kappa_ln[ jp*(J_l+1)*L*P  + jl*L*P + n*L + l ];
 					for (m = -l; m <= l ; m++){
-						indjjlmn = jjlmn2ind(jl,jn,l,m,n,J_l,J_n,L,N);
-						wav_lmn[indjjlmn] =  wav0;
+						indjjlmp = jjlmp2ind(jl,jp,l,m,n,J_l,J_p,L,P);
+						wav_lmp[indjjlmp] =  wav0;
 					}
 				}
 			}
 		}
 	}
-	for (n = 0; n < N; n++){
+	for (n = 0; n < P; n++){
 		for (l = 0; l < L; l++){
 			scal0 = sqrt( (2 * l + 1) / (4.0 * PI) ) *
 				kappa0_ln[ n*L + l ];
 			for (m = -l; m <= l ; m++){
-				indlmn = lmn2ind(l,m,n,L);
-				scal_lmn[indlmn] = scal0;
+				indlmp = lmp2ind(l,m,n,L);
+				scal_lmp[indlmp] = scal0;
 			}
 		}
 	}
@@ -83,63 +84,301 @@ void b3let_axisym_wav_lmn(double *wav_lmn, double *scal_lmn, int B_l, int B_n, i
 /*!
  * Allocates 3D Wavelet transform in FLAG space.
  *
- * \param[out]  f_wav_lmn FLAG transform of wavelets contributions of f.
- * \param[out]  f_scal_lmn FLAG transform of scaling function contribution of f.
+ * \param[out]  f_wav_lmp FLAG transform of wavelets contributions of f.
+ * \param[out]  f_scal_lmp FLAG transform of scaling function contribution of f.
  * \param[in]  B_l Wavelet parameter for angular harmonic space.
- * \param[in]  B_n Wavelet parameter for radial harmonic space.
+ * \param[in]  B_p Wavelet parameter for radial harmonic space.
  * \param[in]  L Angular harmonic band-limit.
- * \param[in]  N Radial harmonic band-limit.
+ * \param[in]  P Radial harmonic band-limit.
+ * \param[in]  J_min_l First wavelet scale to be used in angular space.
+ * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_allocate_f_wav_lmn(complex double **f_wav_lmn, complex double **f_scal_lmn, int B_l, int B_n, int L, int N)
+void b3let_axisym_allocate_f_wav_lmp(complex double **f_wav_lmp, complex double **f_scal_lmp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
 	int J_l = s2let_j_max(L, B_l);
-	int J_n = s2let_j_max(N, B_n);
-	*f_wav_lmn = (complex double*)calloc( (J_l+1) * L * L * (J_n+1) * N, sizeof(complex double));
-	*f_scal_lmn = (complex double*)calloc( L * L * N, sizeof(complex double));
+	int J_p = s2let_j_max(P, B_p);
+	*f_wav_lmp = (complex double*)calloc( (J_l+1-J_min_l) * L * L * (J_p+1-J_min_p) * P, sizeof(complex double));
+	*f_scal_lmp = (complex double*)calloc( L * L * P, sizeof(complex double));
+}
+
+/*!
+ * Allocates 3D Wavelet transform in real space.
+ *
+ * \param[out]  f_wav wavelets contributions of f.
+ * \param[out]  f_scal scaling function contribution of f.
+ * \param[in]  B_l Wavelet parameter for angular harmonic space.
+ * \param[in]  B_p Wavelet parameter for radial harmonic space.
+ * \param[in]  L Angular harmonic band-limit.
+ * \param[in]  P Radial harmonic band-limit.
+ * \param[in]  J_min_l First wavelet scale to be used in angular space.
+ * \param[in]  J_min_p First wavelet scale to be used in radial space.
+ * \retval none
+ */
+void b3let_axisym_allocate_f_wav(complex double **f_wav, complex double **f_scal, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+{
+	int J_l = s2let_j_max(L, B_l);
+	int J_p = s2let_j_max(P, B_p);
+	*f_wav = (complex double*)calloc( (J_l+1-J_min_l) * L * (2*L-1) * (J_p+1-J_min_p) * P, sizeof(complex double));
+	*f_scal = (complex double*)calloc( L * (2*L-1) * P, sizeof(complex double));
+}
+
+/*!
+ * Allocates real 3D Wavelet transform in real space.
+ *
+ * \param[out]  f_wav wavelets contributions of f.
+ * \param[out]  f_scal scaling function contribution of f.
+ * \param[in]  B_l Wavelet parameter for angular harmonic space.
+ * \param[in]  B_p Wavelet parameter for radial harmonic space.
+ * \param[in]  L Angular harmonic band-limit.
+ * \param[in]  P Radial harmonic band-limit.
+ * \param[in]  J_min_l First wavelet scale to be used in angular space.
+ * \param[in]  J_min_p First wavelet scale to be used in radial space.
+ * \retval none
+ */
+void b3let_axisym_allocate_f_wav_real(double **f_wav, double **f_scal, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+{
+	int J_l = s2let_j_max(L, B_l);
+	int J_p = s2let_j_max(P, B_p);
+	*f_wav = (double*)calloc( (J_l+1-J_min_l) * L * (2*L-1) * (J_p+1-J_min_p) * P, sizeof(double));
+	*f_scal = (double*)calloc( L * (2*L-1) * P, sizeof(double));
+}
+
+/*!
+ * Allocates multiresolution 3D Wavelet transform in FLAG space.
+ *
+ * \param[out]  f_wav_lmp FLAG transform of wavelets contributions of f.
+ * \param[out]  f_scal_lmp FLAG transform of scaling function contribution of f.
+ * \param[in]  B_l Wavelet parameter for angular harmonic space.
+ * \param[in]  B_p Wavelet parameter for radial harmonic space.
+ * \param[in]  L Angular harmonic band-limit.
+ * \param[in]  P Radial harmonic band-limit.
+ * \param[in]  J_min_l First wavelet scale to be used in angular space.
+ * \param[in]  J_min_p First wavelet scale to be used in radial space.
+ * \retval none
+ */
+void b3let_axisym_allocate_f_wav_multires_lmp(complex double **f_wav_lmp, complex double **f_scal_lmp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+{
+	int J_l = s2let_j_max(L, B_l);
+	int J_p = s2let_j_max(P, B_p);
+	int jp, jl, bandlimit_p, bandlimit_l, total = 0;
+	for (jp = J_min_p; jp <= J_p; jp++){
+		bandlimit_p = MIN(s2let_bandlimit(B_p, jp), P);
+		for (jl = J_min_l; jl <= J_l; jl++){
+			bandlimit_l = MIN(s2let_bandlimit(B_l, jl), L);
+			total += bandlimit_l * bandlimit_l * bandlimit_p;
+		}
+	}
+	*f_wav_lmp = (complex double*)calloc( total, sizeof(complex double));
+	*f_scal_lmp = (complex double*)calloc( L * L * P, sizeof(complex double));
+}
+
+/*!
+ * Allocates multiresolution 3D Wavelet transform in real space.
+ *
+ * \param[out]  f_wav wavelets contributions of f.
+ * \param[out]  f_scal scaling function contribution of f.
+ * \param[in]  B_l Wavelet parameter for angular harmonic space.
+ * \param[in]  B_p Wavelet parameter for radial harmonic space.
+ * \param[in]  L Angular harmonic band-limit.
+ * \param[in]  P Radial harmonic band-limit.
+ * \param[in]  J_min_l First wavelet scale to be used in angular space.
+ * \param[in]  J_min_p First wavelet scale to be used in radial space.
+ * \retval none
+ */
+void b3let_axisym_allocate_f_wav_multires(complex double **f_wav, complex double **f_scal, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+{
+	int J_l = s2let_j_max(L, B_l);
+	int J_p = s2let_j_max(P, B_p);
+	int jp, jl, bandlimit_p, bandlimit_l, total = 0;
+	for (jp = J_min_p; jp <= J_p; jp++){
+		bandlimit_p = MIN(s2let_bandlimit(B_p, jp), P);
+		for (jl = J_min_l; jl <= J_l; jl++){
+			bandlimit_l = MIN(s2let_bandlimit(B_l, jl), L);
+			total += bandlimit_l * (2 * bandlimit_l - 1) * bandlimit_p;
+		}
+	}
+	*f_wav = (complex double*)calloc( total, sizeof(complex double));
+	*f_scal = (complex double*)calloc( L * (2*L-1) * P, sizeof(complex double));
+}
+
+/*!
+ * Allocates multiresolution real 3D Wavelet transform in real space.
+ *
+ * \param[out]  f_wav wavelets contributions of f.
+ * \param[out]  f_scal scaling function contribution of f.
+ * \param[in]  B_l Wavelet parameter for angular harmonic space.
+ * \param[in]  B_p Wavelet parameter for radial harmonic space.
+ * \param[in]  L Angular harmonic band-limit.
+ * \param[in]  P Radial harmonic band-limit.
+ * \param[in]  J_min_l First wavelet scale to be used in angular space.
+ * \param[in]  J_min_p First wavelet scale to be used in radial space.
+ * \retval none
+ */
+void b3let_axisym_allocate_f_wav_multires_real(double **f_wav, double **f_scal, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+{
+	int J_l = s2let_j_max(L, B_l);
+	int J_p = s2let_j_max(P, B_p);
+	int jp, jl, bandlimit_p, bandlimit_l, total = 0;
+	for (jp = J_min_p; jp <= J_p; jp++){
+		bandlimit_p = MIN(s2let_bandlimit(B_p, jp), P);
+		for (jl = J_min_l; jl <= J_l; jl++){
+			bandlimit_l = MIN(s2let_bandlimit(B_l, jl), L);
+			total += bandlimit_l * (2 * bandlimit_l - 1) * bandlimit_p;
+		}
+	}
+	*f_wav = (double*)calloc( total, sizeof(double));
+	*f_scal = (double*)calloc( L * (2*L-1) * P, sizeof(double));
+}
+
+/*!
+ * Perform multiresolution wavelet transform in FLAG space (from precomputed kernels, gives FLAG coefficients).
+ * 3D spherical wavelets : analysis in FLAG-harmonic space.
+ *
+ * \param[out]  f_wav_lmp FLAG transform of wavelets contributions of f.
+ * \param[out]  f_scal_lmp FLAG transform of scaling function contribution of f.
+ * \param[in]  flmp FLAG transform of the input function.
+ * \param[in]  wav_lmp Wavelet kernel in FLAG space.
+ * \param[in]  scal_lmp Scaling function kernel in FLAG space.
+ * \param[in]  B_l Wavelet parameter for angular harmonic space.
+ * \param[in]  B_p Wavelet parameter for radial harmonic space.
+ * \param[in]  L Angular harmonic band-limit.
+ * \param[in]  P Radial harmonic band-limit.
+ * \param[in]  J_min_l First wavelet scale to be used in angular space.
+ * \param[in]  J_min_p First wavelet scale to be used in radial space.
+ * \retval none
+ */
+void b3let_axisym_wav_analysis_multires_lmp(complex double *f_wav_lmp, complex double *f_scal_lmp, const complex double *flmp, const double *wav_lmp, const double *scal_lmp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+{
+	int bandlimit_p, bandlimit_l, offset, jl, jp, l, m, n, indjjlmp, indlmp;
+	int J_l = s2let_j_max(L, B_l);
+	int J_p = s2let_j_max(P, B_p);
+
+	offset = 0;
+	for (jp = J_min_p; jp <= J_p; jp++){
+		bandlimit_p = MIN(s2let_bandlimit(B_p, jp), P);
+		for (jl = J_min_l; jl <= J_l; jl++){
+			bandlimit_l = MIN(s2let_bandlimit(B_l, jl), L);
+			for (n = 0; n < bandlimit_p; n++){
+				for (l = 0; l < bandlimit_l; l++){
+					for (m = -l; m <= l ; m++){
+						indjjlmp = jjlmp2ind(jl,jp,l,m,n,J_l,J_p,L,P);
+						indlmp = lmp2ind(l,m,n,L);
+						f_wav_lmp[offset + lmp2ind(l,m,n,bandlimit_l)] = flmp[indlmp] * sqrt((4.0*PI)/(2.0*l+1.0)) * wav_lmp[indjjlmp] ;
+					}
+				}
+			}
+			offset += bandlimit_l * bandlimit_l * bandlimit_p;
+		}
+	}
+
+	for (n = 0; n < P; n++){
+		for (l = 0; l < L; l++){
+			for (m = -l; m <= l ; m++){
+				indlmp = lmp2ind(l,m,n,L);
+				f_scal_lmp[indlmp] = flmp[indlmp] * sqrt((4.0*PI)/(2.0*l+1.0)) * scal_lmp[indlmp] ;
+			}
+		}
+	}
+}
+
+/*!
+ * Perform multiresolution wavelet transform in FLAG space (from precomputed kernels, gives FLAG coefficients).
+ * 3D spherical wavelets : synthesis in FLAG-harmonic space.
+ *
+ * \param[out]  flmp FLAG transform of the input function.
+ * \param[in]  f_wav_lmp FLAG transform of wavelets contributions of f.
+ * \param[in]  f_scal_lmp FLAG transform of scaling function contribution of f.
+ * \param[in]  wav_lmp Wavelet kernel in FLAG space.
+ * \param[in]  scal_lmp Scaling function kernel in FLAG space.
+ * \param[in]  B_l Wavelet parameter for angular harmonic space.
+ * \param[in]  B_p Wavelet parameter for radial harmonic space.
+ * \param[in]  L Angular harmonic band-limit.
+ * \param[in]  P Radial harmonic band-limit.
+ * \param[in]  J_min_l First wavelet scale to be used in angular space.
+ * \param[in]  J_min_p First wavelet scale to be used in radial space.
+ * \retval none
+ */
+void b3let_axisym_wav_synthesis_multires_lmp(complex double *flmp, const complex double *f_wav_lmp, const complex double *f_scal_lmp, const double *wav_lmp, const double *scal_lmp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+{
+	int bandlimit_p, bandlimit_l, offset, jl, jp, l, m, n, indjjlmp, indlmp;
+	int J_l = s2let_j_max(L, B_l);
+	int J_p = s2let_j_max(P, B_p);
+
+	offset = 0;
+	for (jp = J_min_p; jp <= J_p; jp++){
+		bandlimit_p = MIN(s2let_bandlimit(B_p, jp), P);
+		for (jl = J_min_l; jl <= J_l; jl++){
+			bandlimit_l = MIN(s2let_bandlimit(B_l, jl), L);
+			for (n = 0; n < bandlimit_p; n++){
+				for (l = 0; l < bandlimit_l; l++){
+					for (m = -l; m <= l ; m++){
+						indjjlmp = jjlmp2ind(jl,jp,l,m,n,J_l,J_p,L,P);
+						indlmp = lmp2ind(l,m,n,L);
+						flmp[indlmp] += f_wav_lmp[offset + lmp2ind(l,m,n,bandlimit_l)] * sqrt((4.0*PI)/(2.0*l+1.0)) * wav_lmp[indjjlmp] ;
+					}
+				}
+			}
+			offset += bandlimit_l * bandlimit_l * bandlimit_p;
+		}
+	}
+
+	bandlimit_p = MIN(s2let_bandlimit(B_p, J_min_p-1), P);
+	bandlimit_l = MIN(s2let_bandlimit(B_l, J_min_l-1), L);
+	for (n = 0; n < P; n++){
+		for (l = 0; l < L; l++){
+			for (m = -l; m <= l ; m++){
+				indlmp = lmp2ind(l,m,n,L);
+				flmp[indlmp] += f_scal_lmp[indlmp] * sqrt((4.0*PI)/(2.0*l+1.0)) * scal_lmp[indlmp] ;
+			}
+		}
+	}
+	
 }
 
 /*!
  * Perform wavelet transform in FLAG space (from precomputed kernels, gives FLAG coefficients).
  * 3D spherical wavelets : analysis in FLAG-harmonic space.
  *
- * \param[out]  f_wav_lmn FLAG transform of wavelets contributions of f.
- * \param[out]  f_scal_lmn FLAG transform of scaling function contribution of f.
- * \param[in]  flmn FLAG transform of the input function.
- * \param[in]  wav_lmn Wavelet kernel in FLAG space.
- * \param[in]  scal_lmn Scaling function kernel in FLAG space.
+ * \param[out]  f_wav_lmp FLAG transform of wavelets contributions of f.
+ * \param[out]  f_scal_lmp FLAG transform of scaling function contribution of f.
+ * \param[in]  flmp FLAG transform of the input function.
+ * \param[in]  wav_lmp Wavelet kernel in FLAG space.
+ * \param[in]  scal_lmp Scaling function kernel in FLAG space.
  * \param[in]  B_l Wavelet parameter for angular harmonic space.
- * \param[in]  B_n Wavelet parameter for radial harmonic space.
+ * \param[in]  B_p Wavelet parameter for radial harmonic space.
  * \param[in]  L Angular harmonic band-limit.
- * \param[in]  N Radial harmonic band-limit.
+ * \param[in]  P Radial harmonic band-limit.
  * \param[in]  J_min_l First wavelet scale to be used in angular space.
- * \param[in]  J_min_n First wavelet scale to be used in radial space.
+ * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_wav_analysis_lmn(complex double *f_wav_lmn, complex double *f_scal_lmn, const complex double *flmn, const double *wav_lmn, const double *scal_lmn, int B_l, int B_n, int L, int N, int J_min_l, int J_min_n)
+void b3let_axisym_wav_analysis_lmp(complex double *f_wav_lmp, complex double *f_scal_lmp, const complex double *flmp, const double *wav_lmp, const double *scal_lmp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
-	int jl, jn, l, m, n, indjjlmn, indlmn;
+	int offset, jl, jp, l, m, n, indjjlmp, indlmp;
 	int J_l = s2let_j_max(L, B_l);
-	int J_n = s2let_j_max(N, B_n);
+	int J_p = s2let_j_max(P, B_p);
 
-	for (jn = J_min_n; jn <= J_n; jn++){
+	offset = 0;
+	for (jp = J_min_p; jp <= J_p; jp++){
 		for (jl = J_min_l; jl <= J_l; jl++){
-			for (n = 0; n < N; n++){
+			for (n = 0; n < P; n++){
 				for (l = 0; l < L; l++){
 					for (m = -l; m <= l ; m++){
-						indjjlmn = jjlmn2ind(jl,jn,l,m,n,J_l,J_n,L,N);
-						indlmn = lmn2ind(l,m,n,L);
-						f_wav_lmn[indjjlmn] = flmn[indlmn] * sqrt((4.0*PI)/(2.0*l+1.0)) * wav_lmn[indjjlmn] ;
+						indjjlmp = jjlmp2ind(jl,jp,l,m,n,J_l,J_p,L,P);
+						indlmp = lmp2ind(l,m,n,L);
+						f_wav_lmp[offset + indlmp] = flmp[indlmp] * sqrt((4.0*PI)/(2.0*l+1.0)) * wav_lmp[indjjlmp] ;
 					}
 				}
 			}
+			offset += L * L * P;
 		}
 	}
-	for (n = 0; n < N; n++){
+	for (n = 0; n < P; n++){
 		for (l = 0; l < L; l++){
 			for (m = -l; m <= l ; m++){
-				indlmn = lmn2ind(l,m,n,L);
-				f_scal_lmn[indlmn] = flmn[indlmn] * sqrt((4.0*PI)/(2.0*l+1.0)) * scal_lmn[indlmn] ;
+				indlmp = lmp2ind(l,m,n,L);
+				f_scal_lmp[indlmp] = flmp[indlmp] * sqrt((4.0*PI)/(2.0*l+1.0)) * scal_lmp[indlmp] ;
 			}
 		}
 	}
@@ -149,50 +388,53 @@ void b3let_axisym_wav_analysis_lmn(complex double *f_wav_lmn, complex double *f_
  * Perform wavelet transform in FLAG space (from precomputed kernels, gives FLAG coefficients).
  * 3D spherical wavelets : synthesis in FLAG-harmonic space.
  *
- * \param[out]  flmn FLAG transform of the input function.
- * \param[in]  f_wav_lmn FLAG transform of wavelets contributions of f.
- * \param[in]  f_scal_lmn FLAG transform of scaling function contribution of f.
- * \param[in]  wav_lmn Wavelet kernel in FLAG space.
- * \param[in]  scal_lmn Scaling function kernel in FLAG space.
+ * \param[out]  flmp FLAG transform of the input function.
+ * \param[in]  f_wav_lmp FLAG transform of wavelets contributions of f.
+ * \param[in]  f_scal_lmp FLAG transform of scaling function contribution of f.
+ * \param[in]  wav_lmp Wavelet kernel in FLAG space.
+ * \param[in]  scal_lmp Scaling function kernel in FLAG space.
  * \param[in]  B_l Wavelet parameter for angular harmonic space.
- * \param[in]  B_n Wavelet parameter for radial harmonic space.
+ * \param[in]  B_p Wavelet parameter for radial harmonic space.
  * \param[in]  L Angular harmonic band-limit.
- * \param[in]  N Radial harmonic band-limit.
+ * \param[in]  P Radial harmonic band-limit.
  * \param[in]  J_min_l First wavelet scale to be used in angular space.
- * \param[in]  J_min_n First wavelet scale to be used in radial space.
+ * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_wav_synthesis_lmn(complex double *flmn, const complex double *f_wav_lmn, const complex double *f_scal_lmn, const double *wav_lmn, const double *scal_lmn, int B_l, int B_n, int L, int N, int J_min_l, int J_min_n)
+void b3let_axisym_wav_synthesis_lmp(complex double *flmp, const complex double *f_wav_lmp, const complex double *f_scal_lmp, const double *wav_lmp, const double *scal_lmp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
-	int jl, jn, l, m, n, indjjlmn, indlmn;
+	int offset, jl, jp, l, m, n, indjjlmp, indlmp;
 	int J_l = s2let_j_max(L, B_l);
-	int J_n = s2let_j_max(N, B_n);
+	int J_p = s2let_j_max(P, B_p);
 
-	for (jn = J_min_n; jn <= J_n; jn++){
+	offset = 0;
+	for (jp = J_min_p; jp <= J_p; jp++){
 		for (jl = J_min_l; jl <= J_l; jl++){
-			for (n = 0; n < N; n++){
+			for (n = 0; n < P; n++){
 				for (l = 0; l < L; l++){
 					for (m = -l; m <= l ; m++){
-						indjjlmn = jjlmn2ind(jl,jn,l,m,n,J_l,J_n,L,N);
-						indlmn = lmn2ind(l,m,n,L);
-						flmn[indlmn] += f_wav_lmn[indjjlmn] * sqrt((4.0*PI)/(2.0*l+1.0)) * wav_lmn[indjjlmn] ;
+						indjjlmp = jjlmp2ind(jl,jp,l,m,n,J_l,J_p,L,P);
+						indlmp = lmp2ind(l,m,n,L);
+						flmp[indlmp] += f_wav_lmp[offset + indlmp] * sqrt((4.0*PI)/(2.0*l+1.0)) * wav_lmp[indjjlmp] ;
 					}
 				}
 			}
+			offset += L * L * P;
 		}
 	}
 
-	for (n = 0; n < N; n++){
+	for (n = 0; n < P; n++){
 		for (l = 0; l < L; l++){
 			for (m = -l; m <= l ; m++){
-				indlmn = lmn2ind(l,m,n,L);
-				flmn[indlmn] += f_scal_lmn[indlmn] * sqrt((4.0*PI)/(2.0*l+1.0)) * scal_lmn[indlmn] ;
+				indlmp = lmp2ind(l,m,n,L);
+				flmp[indlmp] += f_scal_lmp[indlmp] * sqrt((4.0*PI)/(2.0*l+1.0)) * scal_lmp[indlmp] ;
 			}
 		}
 	}
 	
 }
 
+
 /*!
  * Perform wavelet transform in real space (from scratch, gives pixel space components).
  * Sampling scheme : MW sampling.
@@ -201,56 +443,62 @@ void b3let_axisym_wav_synthesis_lmn(complex double *flmn, const complex double *
  * \param[out]  f_wav Wavelet transform (wavelet contribution in real space).
  * \param[out]  f_scal Wavelet transform (scaling contribution in real space).
  * \param[in]  f Input function (MW sampling).
- * \param[in]  wav_lmn Wavelet kernel in FLAG space.
- * \param[in]  scal_lmn Scaling function kernel in FLAG space.
+ * \param[in]  wav_lmp Wavelet kernel in FLAG space.
+ * \param[in]  scal_lmp Scaling function kernel in FLAG space.
  * \param[in]  B_l Wavelet parameter for angular harmonic space.
- * \param[in]  B_n Wavelet parameter for radial harmonic space.
+ * \param[in]  B_p Wavelet parameter for radial harmonic space.
  * \param[in]  L Angular harmonic band-limit.
- * \param[in]  N Radial harmonic band-limit.
+ * \param[in]  P Radial harmonic band-limit.
  * \param[in]  J_min_l First wavelet scale to be used in angular space.
- * \param[in]  J_min_n First wavelet scale to be used in radial space.
+ * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_wav_analysis(complex double *f_wav, complex double *f_scal, const complex double *f, double R, int B_l, int B_n, int L, int N, int J_min_l, int J_min_n)
+void b3let_axisym_wav_analysis_multires(complex double *f_wav, complex double *f_scal, const complex double *f, double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
-	complex double *flmn;
-	flag_allocate_flmn(&flmn, L, N);
-	flag_analysis(flmn, f, R, L, N);
+	complex double *flmp;
+	flag_allocate_flmn(&flmp, L, P);
+	flag_analysis(flmp, f, R, L, P);
 
-	complex double *wav_lmn, *scal_lmn, *f_wav_lmn, *f_scal_lmn;
+	double *wav_lmp, *scal_lmp;
+	b3let_axisym_allocate_wav_lmp(&wav_lmp, &scal_lmp, B_l, B_p, L, P);
+	b3let_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
-	b3let_axisym_allocate_wav_lmn(&wav_lmn, &scal_lmn, B_l, B_n, L, N);
-	b3let_axisym_wav_lmn(wav_lmn, scal_lmn, B_l, B_n, L, N, J_min_l, J_min_n);
+	complex double *f_wav_lmp, *f_scal_lmp;
+	b3let_axisym_allocate_f_wav_multires_lmp(&f_wav_lmp, &f_scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	b3let_axisym_wav_analysis_multires_lmp(f_wav_lmp, f_scal_lmp, flmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
-	b3let_axisym_allocate_f_wav_lmn(&f_wav_lmn, &f_scal_lmn, B_l, B_n, L, N);
-	b3let_axisym_wav_analysis_lmn(f_wav_lmn, f_scal_lmn, flmn, wav_lmn, scal_lmn, B_l, B_n, L, N, J_min_l, J_min_n);
-
-	free(wav_lmn);
-	free(scal_lmn);
-
-	double *nodes = (double*)calloc(N+1, sizeof(double));
-	double *weights = (double*)calloc(N+1, sizeof(double));
+	double *nodes = (double*)calloc(P, sizeof(double));
+	double *weights = (double*)calloc(P, sizeof(double));
 	assert(nodes != NULL);
 	assert(weights != NULL);
-	flag_spherlaguerre_sampling(nodes, weights, R, N);
+	flag_spherlaguerre_sampling(nodes, weights, R, P);
 
-	int offset_lmn, offset, jl, jn;
+	int bandlimit_p, bandlimit_l, offset_lmp, offset, jl, jp;
 	int J_l = s2let_j_max(L, B_l);
-	int J_n = s2let_j_max(N, B_n);
-	flag_synthesis(f_scal, f_scal_lmn, nodes, N+1, L, N);
-	for (jn = J_min_n; jn <= J_n; jn++){
+	int J_p = s2let_j_max(P, B_p);
+
+	flag_synthesis(f_scal, f_scal_lmp, nodes, P, L, P);
+
+	offset_lmp = 0;
+	offset = 0;
+	for (jp = J_min_p; jp <= J_p; jp++){
+		bandlimit_p = MIN(s2let_bandlimit(B_p, jp), P);
+		flag_spherlaguerre_sampling(nodes, weights, R, bandlimit_p);
 		for (jl = J_min_l; jl <= J_l; jl++){
-			offset_lmn = jn * (J_l + 1) * L * L * N   +  jl * L * L * N;
-			offset = jn * (J_l + 1) * L * (2*L-1) * (N+1)  +  jl * L * (2*L-1) * (N+1);
-			flag_synthesis(f_wav + offset, f_wav_lmn + offset_lmn, nodes, N+1, L, N);
+			bandlimit_l = MIN(s2let_bandlimit(B_l, jl), L);			
+			//offset_lmp = jp * (J_l + 1) * L * L * P   +  jl * L * L * P;
+			//offset = jp * (J_l + 1) * L * (2*L-1) * (P)  +  jl * L * (2*L-1) * (P);
+			flag_synthesis(f_wav + offset, f_wav_lmp + offset_lmp, nodes, bandlimit_p, bandlimit_l, bandlimit_p);
+			offset_lmp += bandlimit_l * bandlimit_l * bandlimit_p ;
+			offset += bandlimit_l * (2 * bandlimit_l - 1) * bandlimit_p;
 		}
 	}
 
 	free(nodes);
 	free(weights);
-	free(f_wav_lmn);
-	free(f_scal_lmn);
-	free(flmn);
+	free(f_wav_lmp);
+	free(f_scal_lmp);
+	free(flmp);
 }
 
 /*!
@@ -261,56 +509,65 @@ void b3let_axisym_wav_analysis(complex double *f_wav, complex double *f_scal, co
  * \param[out]  f Input function (MW sampling).
  * \param[in]  f_wav Wavelet transform (wavelet contribution in real space).
  * \param[in]  f_scal Wavelet transform (scaling contribution in real space).
- * \param[in]  wav_lmn Wavelet kernel in FLAG space.
- * \param[in]  scal_lmn Scaling function kernel in FLAG space.
+ * \param[in]  wav_lmp Wavelet kernel in FLAG space.
+ * \param[in]  scal_lmp Scaling function kernel in FLAG space.
  * \param[in]  B_l Wavelet parameter for angular harmonic space.
- * \param[in]  B_n Wavelet parameter for radial harmonic space.
+ * \param[in]  B_p Wavelet parameter for radial harmonic space.
  * \param[in]  L Angular harmonic band-limit.
- * \param[in]  N Radial harmonic band-limit.
+ * \param[in]  P Radial harmonic band-limit.
  * \param[in]  J_min_l First wavelet scale to be used in angular space.
- * \param[in]  J_min_n First wavelet scale to be used in radial space.
+ * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_wav_synthesis(complex double *f, const complex double *f_wav, const complex double *f_scal, double R, int B_l, int B_n, int L, int N, int J_min_l, int J_min_n)
+void b3let_axisym_wav_synthesis_multires(complex double *f, const complex double *f_wav, const complex double *f_scal, double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
-	complex double *f_wav_lmn, *f_scal_lmn;
-	b3let_axisym_allocate_f_wav_lmn(&f_wav_lmn, &f_scal_lmn, B_l, B_n, L, N);
+	complex double *f_wav_lmp, *f_scal_lmp;
+	b3let_axisym_allocate_f_wav_multires_lmp(&f_wav_lmp, &f_scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
-	int offset_lmn, offset, jl, jn;
+	int bandlimit_p, bandlimit_l, offset_lmp, offset, jl, jp;
 	int J_l = s2let_j_max(L, B_l);
-	int J_n = s2let_j_max(N, B_n);
-	flag_analysis(f_scal_lmn, f_scal, R, L, N);
-	for (jn = J_min_n; jn <= J_n; jn++){
+	int J_p = s2let_j_max(P, B_p);
+
+	flag_analysis(f_scal_lmp, f_scal, R, L, P);
+
+	offset_lmp = 0;
+	offset = 0;
+	for (jp = J_min_p; jp <= J_p; jp++){
+		bandlimit_p = MIN(s2let_bandlimit(B_p, jp), P);
 		for (jl = J_min_l; jl <= J_l; jl++){
-			offset_lmn = jn * (J_l + 1) * L * L * N   +  jl * L * L * N;
-			offset = jn * (J_l + 1) * L * (2*L-1) * (N+1)   +  jl * L * (2*L-1) * (N+1);
-			flag_analysis(f_wav_lmn + offset_lmn, f_wav + offset, R, L, N);
+			bandlimit_l = MIN(s2let_bandlimit(B_l, jl), L);
+			//offset_lmp = jp * (J_l + 1) * L * L * P   +  jl * L * L * P;
+			//offset = jp * (J_l + 1) * L * (2*L-1) * (P)   +  jl * L * (2*L-1) * (P);
+			flag_analysis(f_wav_lmp + offset_lmp, f_wav + offset, R, bandlimit_l, bandlimit_p);
+			offset_lmp += bandlimit_l * bandlimit_l * bandlimit_p ;
+			offset += bandlimit_l * (2 * bandlimit_l - 1) * bandlimit_p;
 		}
 	}
 
-	complex double *wav_lmn, *scal_lmn ;
-	b3let_axisym_allocate_wav_lmn(&wav_lmn, &scal_lmn, B_l, B_n, L, N);
-	b3let_axisym_wav_lmn(wav_lmn, scal_lmn, B_l, B_n, L, N, J_min_l, J_min_n);
+	double *wav_lmp, *scal_lmp ;
+	b3let_axisym_allocate_wav_lmp(&wav_lmp, &scal_lmp, B_l, B_p, L, P);
+	b3let_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
-	complex double *flmn;
-	flag_allocate_flmn(&flmn, L, N);
-	b3let_axisym_wav_synthesis_lmn(flmn, f_wav_lmn, f_scal_lmn, wav_lmn, scal_lmn, B_l, B_n, L, N, J_min_l, J_min_n);
-	
-	double *nodes = (double*)calloc(N+1, sizeof(double));
-	double *weights = (double*)calloc(N+1, sizeof(double));
+	complex double *flmp;
+	flag_allocate_flmn(&flmp, L, P);
+	b3let_axisym_wav_synthesis_multires_lmp(flmp, f_wav_lmp, f_scal_lmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+
+
+	double *nodes = (double*)calloc(P, sizeof(double));
+	double *weights = (double*)calloc(P, sizeof(double));
 	assert(nodes != NULL);
 	assert(weights != NULL);
-	flag_spherlaguerre_sampling(nodes, weights, R, N);
+	flag_spherlaguerre_sampling(nodes, weights, R, P);
 
-	flag_synthesis(f, flmn, nodes, N+1, L, N);
+	flag_synthesis(f, flmp, nodes, P, L, P);
 
 	free(nodes);
 	free(weights);
-	free(wav_lmn);
-	free(scal_lmn);
-	free(f_wav_lmn);
-	free(f_scal_lmn);
-	free(flmn);
+	free(wav_lmp);
+	free(scal_lmp);
+	free(f_wav_lmp);
+	free(f_scal_lmp);
+	free(flmp);
 }
 
 /*!
@@ -322,56 +579,65 @@ void b3let_axisym_wav_synthesis(complex double *f, const complex double *f_wav, 
  * \param[out]  f_wav Wavelet transform (wavelet contribution in real space).
  * \param[out]  f_scal Wavelet transform (scaling contribution in real space).
  * \param[in]  f Input function (MW sampling).
- * \param[in]  wav_lmn Wavelet kernel in FLAG space.
- * \param[in]  scal_lmn Scaling function kernel in FLAG space.
+ * \param[in]  wav_lmp Wavelet kernel in FLAG space.
+ * \param[in]  scal_lmp Scaling function kernel in FLAG space.
  * \param[in]  B_l Wavelet parameter for angular harmonic space.
- * \param[in]  B_n Wavelet parameter for radial harmonic space.
+ * \param[in]  B_p Wavelet parameter for radial harmonic space.
  * \param[in]  L Angular harmonic band-limit.
- * \param[in]  N Radial harmonic band-limit.
+ * \param[in]  P Radial harmonic band-limit.
  * \param[in]  J_min_l First wavelet scale to be used in angular space.
- * \param[in]  J_min_n First wavelet scale to be used in radial space.
+ * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_wav_analysis_real(double *f_wav, double *f_scal, const double *f, double R, int B_l, int B_n, int L, int N, int J_min_l, int J_min_n)
+void b3let_axisym_wav_analysis_multires_real(double *f_wav, double *f_scal, const double *f, double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
-	complex double *flmn;
-	flag_allocate_flmn(&flmn, L, N);
-	flag_analysis_real(flmn, f, R, L, N);
+	complex double *flmp;
+	flag_allocate_flmn(&flmp, L, P);
+	flag_analysis_real(flmp, f, R, L, P);
 
-	complex double *wav_lmn, *scal_lmn, *f_wav_lmn, *f_scal_lmn;
+	double *wav_lmp, *scal_lmp;
+	complex double *f_wav_lmp, *f_scal_lmp;
 
-	b3let_axisym_allocate_wav_lmn(&wav_lmn, &scal_lmn, B_l, B_n, L, N);
-	b3let_axisym_wav_lmn(wav_lmn, scal_lmn, B_l, B_n, L, N, J_min_l, J_min_n);
+	b3let_axisym_allocate_wav_lmp(&wav_lmp, &scal_lmp, B_l, B_p, L, P);
+	b3let_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
-	b3let_axisym_allocate_f_wav_lmn(&f_wav_lmn, &f_scal_lmn, B_l, B_n, L, N);
-	b3let_axisym_wav_analysis_lmn(f_wav_lmn, f_scal_lmn, flmn, wav_lmn, scal_lmn, B_l, B_n, L, N, J_min_l, J_min_n);
+	b3let_axisym_allocate_f_wav_multires_lmp(&f_wav_lmp, &f_scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	b3let_axisym_wav_analysis_multires_lmp(f_wav_lmp, f_scal_lmp, flmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
-	free(wav_lmn);
-	free(scal_lmn);
+	free(wav_lmp);
+	free(scal_lmp);
 
-	double *nodes = (double*)calloc(N+1, sizeof(double));
-	double *weights = (double*)calloc(N+1, sizeof(double));
+	double *nodes = (double*)calloc(P, sizeof(double));
+	double *weights = (double*)calloc(P, sizeof(double));
 	assert(nodes != NULL);
 	assert(weights != NULL);
-	flag_spherlaguerre_sampling(nodes, weights, R, N);
+	flag_spherlaguerre_sampling(nodes, weights, R, P);
 
-	int offset_lmn, offset, jl, jn;
+	int bandlimit_p, bandlimit_l, offset_lmp, offset, jl, jp;
 	int J_l = s2let_j_max(L, B_l);
-	int J_n = s2let_j_max(N, B_n);
-	flag_synthesis_real(f_scal, f_scal_lmn, nodes, N+1, L, N);
-	for (jn = J_min_n; jn <= J_n; jn++){
+	int J_p = s2let_j_max(P, B_p);
+	flag_synthesis_real(f_scal, f_scal_lmp, nodes, P, L, P);
+
+	offset_lmp = 0;
+	offset = 0;
+	for (jp = J_min_p; jp <= J_p; jp++){
+		bandlimit_p = MIN(s2let_bandlimit(B_p, jp), P);
+		flag_spherlaguerre_sampling(nodes, weights, R, bandlimit_p);
 		for (jl = J_min_l; jl <= J_l; jl++){
-			offset_lmn = jn * (J_l + 1) * L * L * N   +  jl * L * L * N;
-			offset = jn * (J_l + 1) * L * (2*L-1) * (N+1)  +  jl * L * (2*L-1) * (N+1);
-			flag_synthesis_real(f_wav + offset, f_wav_lmn + offset_lmn, nodes, N+1, L, N);
+			bandlimit_l = MIN(s2let_bandlimit(B_l, jl), L);
+			//offset_lmp = jp * (J_l + 1) * L * L * P   +  jl * L * L * P;
+			//offset = jp * (J_l + 1) * L * (2*L-1) * (P)  +  jl * L * (2*L-1) * (P);
+			flag_synthesis_real(f_wav + offset, f_wav_lmp + offset_lmp, nodes, bandlimit_p, bandlimit_l, bandlimit_p);
+			offset_lmp += bandlimit_l * bandlimit_l * bandlimit_p ;
+			offset += bandlimit_l * (2 * bandlimit_l - 1) * bandlimit_p;
 		}
 	}
 
 	free(nodes);
 	free(weights);
-	free(f_wav_lmn);
-	free(f_scal_lmn);
-	free(flmn);
+	free(f_wav_lmp);
+	free(f_scal_lmp);
+	free(flmp);
 }
 
 /*!
@@ -383,75 +649,346 @@ void b3let_axisym_wav_analysis_real(double *f_wav, double *f_scal, const double 
  * \param[out]  f Input function (MW sampling).
  * \param[in]  f_wav Wavelet transform (wavelet contribution in real space).
  * \param[in]  f_scal Wavelet transform (scaling contribution in real space).
- * \param[in]  wav_lmn Wavelet kernel in FLAG space.
- * \param[in]  scal_lmn Scaling function kernel in FLAG space.
+ * \param[in]  wav_lmp Wavelet kernel in FLAG space.
+ * \param[in]  scal_lmp Scaling function kernel in FLAG space.
  * \param[in]  B_l Wavelet parameter for angular harmonic space.
- * \param[in]  B_n Wavelet parameter for radial harmonic space.
+ * \param[in]  B_p Wavelet parameter for radial harmonic space.
  * \param[in]  L Angular harmonic band-limit.
- * \param[in]  N Radial harmonic band-limit.
+ * \param[in]  P Radial harmonic band-limit.
  * \param[in]  J_min_l First wavelet scale to be used in angular space.
- * \param[in]  J_min_n First wavelet scale to be used in radial space.
+ * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_wav_synthesis_real(double *f, const double *f_wav, const double *f_scal, double R, int B_l, int B_n, int L, int N, int J_min_l, int J_min_n)
+void b3let_axisym_wav_synthesis_multires_real(double *f, const double *f_wav, const double *f_scal, double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
-	complex double *f_wav_lmn, *f_scal_lmn;
-	b3let_axisym_allocate_f_wav_lmn(&f_wav_lmn, &f_scal_lmn, B_l, B_n, L, N);
+	complex double *f_wav_lmp, *f_scal_lmp;
+	b3let_axisym_allocate_f_wav_multires_lmp(&f_wav_lmp, &f_scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
-	int offset_lmn, offset, jl, jn;
+	int bandlimit_p, bandlimit_l, offset_lmp, offset, jl, jp;
 	int J_l = s2let_j_max(L, B_l);
-	int J_n = s2let_j_max(N, B_n);
-	flag_analysis_real(f_scal_lmn, f_scal, R, L, N);
-	for (jn = J_min_n; jn <= J_n; jn++){
+	int J_p = s2let_j_max(P, B_p);
+	flag_analysis_real(f_scal_lmp, f_scal, R, L, P);
+
+	offset_lmp = 0;
+	offset = 0;
+	for (jp = J_min_p; jp <= J_p; jp++){
+		bandlimit_p = MIN(s2let_bandlimit(B_p, jp), P);
 		for (jl = J_min_l; jl <= J_l; jl++){
-			offset_lmn = jn * (J_l + 1) * L * L * N   +  jl * L * L * N;
-			offset = jn * (J_l + 1) * L * (2*L-1) * (N+1)   +  jl * L * (2*L-1) * (N+1);
-			flag_analysis_real(f_wav_lmn + offset_lmn, f_wav + offset, R, L, N);
+			bandlimit_l = MIN(s2let_bandlimit(B_l, jl), L);
+			//offset_lmp = jp * (J_l + 1) * L * L * P   +  jl * L * L * P;
+			//offset = jp * (J_l + 1) * L * (2*L-1) * (P)   +  jl * L * (2*L-1) * (P);
+			flag_analysis_real(f_wav_lmp + offset_lmp, f_wav + offset, R, bandlimit_l, bandlimit_p);
+			offset_lmp += bandlimit_l * bandlimit_l * bandlimit_p ;
+			offset += bandlimit_l * (2 * bandlimit_l - 1) * bandlimit_p;
 		}
 	}
 
-	complex double *wav_lmn, *scal_lmn ;
-	b3let_axisym_allocate_wav_lmn(&wav_lmn, &scal_lmn, B_l, B_n, L, N);
-	b3let_axisym_wav_lmn(wav_lmn, scal_lmn, B_l, B_n, L, N, J_min_l, J_min_n);
+	double *wav_lmp, *scal_lmp ;
+	b3let_axisym_allocate_wav_lmp(&wav_lmp, &scal_lmp, B_l, B_p, L, P);
+	b3let_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
-	complex double *flmn;
-	flag_allocate_flmn(&flmn, L, N);
-	b3let_axisym_wav_synthesis_lmn(flmn, f_wav_lmn, f_scal_lmn, wav_lmn, scal_lmn, B_l, B_n, L, N, J_min_l, J_min_n);
+	complex double *flmp;
+	flag_allocate_flmn(&flmp, L, P);
+	b3let_axisym_wav_synthesis_multires_lmp(flmp, f_wav_lmp, f_scal_lmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 	
-	double *nodes = (double*)calloc(N+1, sizeof(double));
-	double *weights = (double*)calloc(N+1, sizeof(double));
+	double *nodes = (double*)calloc(P, sizeof(double));
+	double *weights = (double*)calloc(P, sizeof(double));
 	assert(nodes != NULL);
 	assert(weights != NULL);
-	flag_spherlaguerre_sampling(nodes, weights, R, N);
+	flag_spherlaguerre_sampling(nodes, weights, R, P);
 
-	flag_synthesis_real(f, flmn, nodes, N+1, L, N);
+	flag_synthesis_real(f, flmp, nodes, P, L, P);
 
 	free(nodes);
 	free(weights);
-	free(wav_lmn);
-	free(scal_lmn);
-	free(f_wav_lmn);
-	free(f_scal_lmn);
-	free(flmn);
+	free(wav_lmp);
+	free(scal_lmp);
+	free(f_wav_lmp);
+	free(f_scal_lmp);
+	free(flmp);
 }
 
 /*!
- * Indice corresponding to a quintuplet (jl, jn, l, m, n) in the wavelets.
+ * Perform wavelet transform in real space (from scratch, gives pixel space components).
+ * Sampling scheme : MW sampling.
+ * 3D spherical wavelets : analysis in real space.
+ *
+ * \param[out]  f_wav Wavelet transform (wavelet contribution in real space).
+ * \param[out]  f_scal Wavelet transform (scaling contribution in real space).
+ * \param[in]  f Input function (MW sampling).
+ * \param[in]  wav_lmp Wavelet kernel in FLAG space.
+ * \param[in]  scal_lmp Scaling function kernel in FLAG space.
+ * \param[in]  B_l Wavelet parameter for angular harmonic space.
+ * \param[in]  B_p Wavelet parameter for radial harmonic space.
+ * \param[in]  L Angular harmonic band-limit.
+ * \param[in]  P Radial harmonic band-limit.
+ * \param[in]  J_min_l First wavelet scale to be used in angular space.
+ * \param[in]  J_min_p First wavelet scale to be used in radial space.
+ * \retval none
+ */
+void b3let_axisym_wav_analysis(complex double *f_wav, complex double *f_scal, const complex double *f, double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+{
+	complex double *flmp;
+	flag_allocate_flmn(&flmp, L, P);
+	flag_analysis(flmp, f, R, L, P);
+
+	double *wav_lmp, *scal_lmp;
+	complex double *f_wav_lmp, *f_scal_lmp;
+
+	b3let_axisym_allocate_wav_lmp(&wav_lmp, &scal_lmp, B_l, B_p, L, P);
+	b3let_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+
+	b3let_axisym_allocate_f_wav_lmp(&f_wav_lmp, &f_scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	b3let_axisym_wav_analysis_lmp(f_wav_lmp, f_scal_lmp, flmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+
+	free(wav_lmp);
+	free(scal_lmp);
+
+	double *nodes = (double*)calloc(P, sizeof(double));
+	double *weights = (double*)calloc(P, sizeof(double));
+	assert(nodes != NULL);
+	assert(weights != NULL);
+	flag_spherlaguerre_sampling(nodes, weights, R, P);
+
+	int offset_lmp, offset, jl, jp;
+	int J_l = s2let_j_max(L, B_l);
+	int J_p = s2let_j_max(P, B_p);
+	flag_synthesis(f_scal, f_scal_lmp, nodes, P, L, P);
+
+	offset_lmp = 0;
+	offset = 0;
+	for (jp = J_min_p; jp <= J_p; jp++){
+		for (jl = J_min_l; jl <= J_l; jl++){
+			//offset_lmp = jp * (J_l + 1) * L * L * P   +  jl * L * L * P;
+			//offset = jp * (J_l + 1) * L * (2*L-1) * (P)  +  jl * L * (2*L-1) * (P);
+			flag_synthesis(f_wav + offset, f_wav_lmp + offset_lmp, nodes, P, L, P);
+			offset_lmp += L * L * P ;
+			offset += L * (2 * L - 1) * P;
+		}
+	}
+
+	free(nodes);
+	free(weights);
+	free(f_wav_lmp);
+	free(f_scal_lmp);
+	free(flmp);
+}
+
+/*!
+ * Perform wavelet transform in real space (from scratch, gives pixel space components).
+ * Sampling scheme : MW sampling.
+ * 3D spherical wavelets : synthesis in real space.
+ *
+ * \param[out]  f Input function (MW sampling).
+ * \param[in]  f_wav Wavelet transform (wavelet contribution in real space).
+ * \param[in]  f_scal Wavelet transform (scaling contribution in real space).
+ * \param[in]  wav_lmp Wavelet kernel in FLAG space.
+ * \param[in]  scal_lmp Scaling function kernel in FLAG space.
+ * \param[in]  B_l Wavelet parameter for angular harmonic space.
+ * \param[in]  B_p Wavelet parameter for radial harmonic space.
+ * \param[in]  L Angular harmonic band-limit.
+ * \param[in]  P Radial harmonic band-limit.
+ * \param[in]  J_min_l First wavelet scale to be used in angular space.
+ * \param[in]  J_min_p First wavelet scale to be used in radial space.
+ * \retval none
+ */
+void b3let_axisym_wav_synthesis(complex double *f, const complex double *f_wav, const complex double *f_scal, double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+{
+	complex double *f_wav_lmp, *f_scal_lmp;
+	b3let_axisym_allocate_f_wav_lmp(&f_wav_lmp, &f_scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+
+	int offset_lmp, offset, jl, jp;
+	int J_l = s2let_j_max(L, B_l);
+	int J_p = s2let_j_max(P, B_p);
+	flag_analysis(f_scal_lmp, f_scal, R, L, P);
+
+	offset_lmp = 0;
+	offset = 0;
+	for (jp = J_min_p; jp <= J_p; jp++){
+		for (jl = J_min_l; jl <= J_l; jl++){
+			//offset_lmp = jp * (J_l + 1) * L * L * P   +  jl * L * L * P;
+			//offset = jp * (J_l + 1) * L * (2*L-1) * (P)   +  jl * L * (2*L-1) * (P);
+			flag_analysis(f_wav_lmp + offset_lmp, f_wav + offset, R, L, P);
+			offset_lmp += L * L * P ;
+			offset += L * (2 * L - 1) * P;
+		}
+	}
+
+	double *wav_lmp, *scal_lmp ;
+	b3let_axisym_allocate_wav_lmp(&wav_lmp, &scal_lmp, B_l, B_p, L, P);
+	b3let_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+
+	complex double *flmp;
+	flag_allocate_flmn(&flmp, L, P);
+	b3let_axisym_wav_synthesis_lmp(flmp, f_wav_lmp, f_scal_lmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	
+	double *nodes = (double*)calloc(P, sizeof(double));
+	double *weights = (double*)calloc(P, sizeof(double));
+	assert(nodes != NULL);
+	assert(weights != NULL);
+	flag_spherlaguerre_sampling(nodes, weights, R, P);
+
+	flag_synthesis(f, flmp, nodes, P, L, P);
+
+	free(nodes);
+	free(weights);
+	free(wav_lmp);
+	free(scal_lmp);
+	free(f_wav_lmp);
+	free(f_scal_lmp);
+	free(flmp);
+}
+
+/*!
+ * Perform wavelet transform in real space (from scratch, gives pixel space components).
+ * Real input function and real wavelet contributions.
+ * Sampling scheme : MW sampling.
+ * 3D spherical wavelets : analysis in real space.
+ *
+ * \param[out]  f_wav Wavelet transform (wavelet contribution in real space).
+ * \param[out]  f_scal Wavelet transform (scaling contribution in real space).
+ * \param[in]  f Input function (MW sampling).
+ * \param[in]  wav_lmp Wavelet kernel in FLAG space.
+ * \param[in]  scal_lmp Scaling function kernel in FLAG space.
+ * \param[in]  B_l Wavelet parameter for angular harmonic space.
+ * \param[in]  B_p Wavelet parameter for radial harmonic space.
+ * \param[in]  L Angular harmonic band-limit.
+ * \param[in]  P Radial harmonic band-limit.
+ * \param[in]  J_min_l First wavelet scale to be used in angular space.
+ * \param[in]  J_min_p First wavelet scale to be used in radial space.
+ * \retval none
+ */
+void b3let_axisym_wav_analysis_real(double *f_wav, double *f_scal, const double *f, double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+{
+	complex double *flmp;
+	flag_allocate_flmn(&flmp, L, P);
+	flag_analysis_real(flmp, f, R, L, P);
+
+	double *wav_lmp, *scal_lmp;
+	complex double *f_wav_lmp, *f_scal_lmp;
+
+	b3let_axisym_allocate_wav_lmp(&wav_lmp, &scal_lmp, B_l, B_p, L, P);
+	b3let_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+
+	b3let_axisym_allocate_f_wav_lmp(&f_wav_lmp, &f_scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	b3let_axisym_wav_analysis_lmp(f_wav_lmp, f_scal_lmp, flmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+
+	free(wav_lmp);
+	free(scal_lmp);
+
+	double *nodes = (double*)calloc(P, sizeof(double));
+	double *weights = (double*)calloc(P, sizeof(double));
+	assert(nodes != NULL);
+	assert(weights != NULL);
+	flag_spherlaguerre_sampling(nodes, weights, R, P);
+
+	int offset_lmp, offset, jl, jp;
+	int J_l = s2let_j_max(L, B_l);
+	int J_p = s2let_j_max(P, B_p);
+	flag_synthesis_real(f_scal, f_scal_lmp, nodes, P, L, P);
+
+	offset_lmp = 0;
+	offset = 0;
+	for (jp = J_min_p; jp <= J_p; jp++){
+		for (jl = J_min_l; jl <= J_l; jl++){
+			//offset_lmp = jp * (J_l + 1) * L * L * P   +  jl * L * L * P;
+			//offset = jp * (J_l + 1) * L * (2*L-1) * (P)  +  jl * L * (2*L-1) * (P);
+			flag_synthesis_real(f_wav + offset, f_wav_lmp + offset_lmp, nodes, P, L, P);
+			offset_lmp += L * L * P ;
+			offset += L * (2 * L - 1) * P;
+		}
+	}
+
+	free(nodes);
+	free(weights);
+	free(f_wav_lmp);
+	free(f_scal_lmp);
+	free(flmp);
+}
+
+/*!
+ * Perform wavelet transform in real space (from scratch, gives pixel space components).
+ * Real input function and real wavelet contributions.
+ * Sampling scheme : MW sampling.
+ * 3D spherical wavelets : synthesis in real space.
+ *
+ * \param[out]  f Input function (MW sampling).
+ * \param[in]  f_wav Wavelet transform (wavelet contribution in real space).
+ * \param[in]  f_scal Wavelet transform (scaling contribution in real space).
+ * \param[in]  wav_lmp Wavelet kernel in FLAG space.
+ * \param[in]  scal_lmp Scaling function kernel in FLAG space.
+ * \param[in]  B_l Wavelet parameter for angular harmonic space.
+ * \param[in]  B_p Wavelet parameter for radial harmonic space.
+ * \param[in]  L Angular harmonic band-limit.
+ * \param[in]  P Radial harmonic band-limit.
+ * \param[in]  J_min_l First wavelet scale to be used in angular space.
+ * \param[in]  J_min_p First wavelet scale to be used in radial space.
+ * \retval none
+ */
+void b3let_axisym_wav_synthesis_real(double *f, const double *f_wav, const double *f_scal, double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+{
+	complex double *f_wav_lmp, *f_scal_lmp;
+	b3let_axisym_allocate_f_wav_lmp(&f_wav_lmp, &f_scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+
+	int offset_lmp, offset, jl, jp;
+	int J_l = s2let_j_max(L, B_l);
+	int J_p = s2let_j_max(P, B_p);
+	flag_analysis_real(f_scal_lmp, f_scal, R, L, P);
+
+	offset_lmp = 0;
+	offset = 0;
+	for (jp = J_min_p; jp <= J_p; jp++){
+		for (jl = J_min_l; jl <= J_l; jl++){
+			//offset_lmp = jp * (J_l + 1) * L * L * P   +  jl * L * L * P;
+			//offset = jp * (J_l + 1) * L * (2*L-1) * (P)   +  jl * L * (2*L-1) * (P);
+			flag_analysis_real(f_wav_lmp + offset_lmp, f_wav + offset, R, L, P);
+			offset_lmp += L * L * P ;
+			offset += L * (2 * L - 1) * P;
+		}
+	}
+
+	double *wav_lmp, *scal_lmp ;
+	b3let_axisym_allocate_wav_lmp(&wav_lmp, &scal_lmp, B_l, B_p, L, P);
+	b3let_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+
+	complex double *flmp;
+	flag_allocate_flmn(&flmp, L, P);
+	b3let_axisym_wav_synthesis_lmp(flmp, f_wav_lmp, f_scal_lmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	
+	double *nodes = (double*)calloc(P, sizeof(double));
+	double *weights = (double*)calloc(P, sizeof(double));
+	assert(nodes != NULL);
+	assert(weights != NULL);
+	flag_spherlaguerre_sampling(nodes, weights, R, P);
+
+	flag_synthesis_real(f, flmp, nodes, P, L, P);
+
+	free(nodes);
+	free(weights);
+	free(wav_lmp);
+	free(scal_lmp);
+	free(f_wav_lmp);
+	free(f_scal_lmp);
+	free(flmp);
+}
+
+/*!
+ * Indice corresponding to a quintuplet (jl, jp, l, m, n) in the wavelets kernels.
  *
  * \param[in]  jl Angular scale indice.
- * \param[in]  jn Radial scale indice.
+ * \param[in]  jp Radial scale indice.
  * \param[in]  l Multipole indice.
  * \param[in]  m Order indice.
  * \param[in]  n Laguerre order indice.
  * \param[in]  J_l Maximum scale for angular harmonic space.
- * \param[in]  J_n Maximum scale for radial harmonic space.
+ * \param[in]  J_p Maximum scale for radial harmonic space.
  * \param[in]  L Angular harmonic band-limit.
- * \param[in]  N Radial harmonic band-limit.
+ * \param[in]  P Radial harmonic band-limit.
  * \retval Indice
  */
-int jjlmn2ind(int jl, int jn, int l, int m, int n, int J_l, int J_n, int L, int N)
+int jjlmp2ind(int jl, int jp, int l, int m, int n, int J_l, int J_p, int L, int P)
 {
-	return jn * (J_l + 1) * L * L * N   +  jl * L * L * N  +  n * L * L  +  l * l  + l +  m;
+	return jp * (J_l + 1) * L * L * P   +  jl * L * L * P  +  n * L * L  +  l * l  + l +  m;
 }
 
 /*!
@@ -463,7 +1000,7 @@ int jjlmn2ind(int jl, int jn, int l, int m, int n, int J_l, int J_n, int L, int 
  * \param[in]  L Angular harmonic band-limit.
  * \retval Indice
  */
-int lmn2ind(int l, int m, int n, int L)
+int lmp2ind(int l, int m, int n, int L)
 {
 	return n * L * L  +  l * l  +  l  +  m ;
 }
