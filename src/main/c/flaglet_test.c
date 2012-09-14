@@ -1,8 +1,8 @@
-// B3LET package
+// FLAGLET package
 // Copyright (C) 2012 
 // Boris Leistedt & Jason McEwen
 
-#include "b3let.h"
+#include "flaglet.h"
 #include <assert.h>
 
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
@@ -51,7 +51,7 @@ double ran2_dp(int idum) {
   return (AM*iy < RPMX ? AM*iy : RPMX); // min(AM*iy,RPMX);
 }
 
-void b3let_random_flmp(complex double *flmp, int L, int P, int seed)
+void flaglet_random_flmp(complex double *flmp, int L, int P, int seed)
 {
 	int i;
 	srand( time(NULL) );
@@ -60,7 +60,7 @@ void b3let_random_flmp(complex double *flmp, int L, int P, int seed)
 	}
 }
 
-void b3let_random_flmp_real(complex double *flmp, int L, int P, int seed)
+void flaglet_random_flmp_real(complex double *flmp, int L, int P, int seed)
 {
 	int en, el, m, msign, i, i_op, offset;
 	int flmsize = ssht_flm_size(L);
@@ -83,13 +83,13 @@ void b3let_random_flmp_real(complex double *flmp, int L, int P, int seed)
  	}
 }
 
-void b3let_tilling_test(int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+void flaglet_tilling_test(int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {		
 	//double kl, kn;
 	double *kappa_lp, *kappa0_lp;
-	b3let_axisym_allocate_tilling(&kappa_lp, &kappa0_lp, B_l, B_p, L, P);
+	flaglet_axisym_allocate_tilling(&kappa_lp, &kappa0_lp, B_l, B_p, L, P);
 	
-	b3let_axisym_tilling(kappa_lp, kappa0_lp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_tilling(kappa_lp, kappa0_lp, B_l, B_p, L, P, J_min_l, J_min_p);
 	
 	/*
 	int jl, jp, l, n;
@@ -113,23 +113,23 @@ void b3let_tilling_test(int B_l, int B_p, int L, int P, int J_min_l, int J_min_p
 		printf("\n\n\n");}
 	*/
 
-	double sum = b3let_axisym_check_identity(kappa_lp, kappa0_lp, B_l, B_p, L, P, J_min_l, J_min_p);
+	double sum = flaglet_axisym_check_identity(kappa_lp, kappa0_lp, B_l, B_p, L, P, J_min_l, J_min_p);
 	printf("  - Identity residuals : %e\n", sum);
 
 	free(kappa_lp);
 	free(kappa0_lp);
 }
 
-void b3let_axisym_wav_lm_test(int B_l, int B_p, int L, int P, int J_min_l, int J_min_p, int seed)
+void flaglet_axisym_wav_lm_test(int B_l, int B_p, int L, int P, int J_min_l, int J_min_p, int seed)
 {		
 	clock_t time_start, time_end;
 
 	double *wav_lmp, *scal_lmp;
 
-	b3let_axisym_allocate_wav_lmp(&wav_lmp, &scal_lmp, B_l, B_p, L, P);
+	flaglet_axisym_allocate_wav_lmp(&wav_lmp, &scal_lmp, B_l, B_p, L, P);
 
 	time_start = clock();
-	b3let_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 	time_end = clock();
 	printf("  - Generate wavelets  : %4.4f seconds\n", 
 		(time_end - time_start) / (double)CLOCKS_PER_SEC);
@@ -138,12 +138,12 @@ void b3let_axisym_wav_lm_test(int B_l, int B_p, int L, int P, int J_min_l, int J
 	flmp = (complex double*)calloc(L * L * P, sizeof(complex double));
 	flmp_rec = (complex double*)calloc(L * L * P, sizeof(complex double));
 
-	b3let_random_flmp(flmp, L, P, seed);
+	flaglet_random_flmp(flmp, L, P, seed);
 	
-	b3let_axisym_allocate_f_wav_lmp(&f_wav_lmp, &f_scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_allocate_f_wav_lmp(&f_wav_lmp, &f_scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
 	time_start = clock();
-	b3let_axisym_wav_analysis_lmp(f_wav_lmp, f_scal_lmp, flmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_wav_analysis_lmp(f_wav_lmp, f_scal_lmp, flmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 	time_end = clock();
 	printf("  - Wavelet analysis   : %4.4f seconds\n", 
 		(time_end - time_start) / (double)CLOCKS_PER_SEC);
@@ -161,7 +161,7 @@ void b3let_axisym_wav_lm_test(int B_l, int B_p, int L, int P, int J_min_l, int J
 	*/
 
 	time_start = clock();
-	b3let_axisym_wav_synthesis_lmp(flmp_rec, f_wav_lmp, f_scal_lmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_wav_synthesis_lmp(flmp_rec, f_wav_lmp, f_scal_lmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 	time_end = clock();
 	printf("  - Wavelet synthesis  : %4.4f seconds\n", 
 		(time_end - time_start) / (double)CLOCKS_PER_SEC);
@@ -191,16 +191,16 @@ void b3let_axisym_wav_lm_test(int B_l, int B_p, int L, int P, int J_min_l, int J
 }
 
 
-void b3let_axisym_wav_lm_multires_test(int B_l, int B_p, int L, int P, int J_min_l, int J_min_p, int seed)
+void flaglet_axisym_wav_lm_multires_test(int B_l, int B_p, int L, int P, int J_min_l, int J_min_p, int seed)
 {		
 	clock_t time_start, time_end;
 
 	double *wav_lmp, *scal_lmp;
 
-	b3let_axisym_allocate_wav_lmp(&wav_lmp, &scal_lmp, B_l, B_p, L, P);
+	flaglet_axisym_allocate_wav_lmp(&wav_lmp, &scal_lmp, B_l, B_p, L, P);
 
 	time_start = clock();
-	b3let_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 	time_end = clock();
 	printf("  - Generate wavelets  : %4.4f seconds\n", 
 		(time_end - time_start) / (double)CLOCKS_PER_SEC);
@@ -209,18 +209,18 @@ void b3let_axisym_wav_lm_multires_test(int B_l, int B_p, int L, int P, int J_min
 	flmp = (complex double*)calloc(L * L * P, sizeof(complex double));
 	flmp_rec = (complex double*)calloc(L * L * P, sizeof(complex double));
 
-	b3let_random_flmp(flmp, L, P, seed);
+	flaglet_random_flmp(flmp, L, P, seed);
 	
-	b3let_axisym_allocate_f_wav_multires_lmp(&f_wav_lmp, &f_scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_allocate_f_wav_multires_lmp(&f_wav_lmp, &f_scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
 	time_start = clock();
-	b3let_axisym_wav_analysis_multires_lmp(f_wav_lmp, f_scal_lmp, flmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_wav_analysis_multires_lmp(f_wav_lmp, f_scal_lmp, flmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 	time_end = clock();
 	printf("  - Wavelet analysis   : %4.4f seconds\n", 
 		(time_end - time_start) / (double)CLOCKS_PER_SEC);
 
 	time_start = clock();
-	b3let_axisym_wav_synthesis_multires_lmp(flmp_rec, f_wav_lmp, f_scal_lmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_wav_synthesis_multires_lmp(flmp_rec, f_wav_lmp, f_scal_lmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 	time_end = clock();
 	printf("  - Wavelet synthesis  : %4.4f seconds\n", 
 		(time_end - time_start) / (double)CLOCKS_PER_SEC);
@@ -251,7 +251,7 @@ void b3let_axisym_wav_lm_multires_test(int B_l, int B_p, int L, int P, int J_min
 }
 
 
-void b3let_axisym_wav_test(double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p, int seed)
+void flaglet_axisym_wav_test(double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p, int seed)
 {
 	clock_t time_start, time_end;
 
@@ -261,7 +261,7 @@ void b3let_axisym_wav_test(double R, int B_l, int B_p, int L, int P, int J_min_l
 	flag_allocate_f(&f, L, P);
 	flag_allocate_f(&f_rec, L, P);
 
-	b3let_random_flmp(flmp, L, P, seed);
+	flaglet_random_flmp(flmp, L, P, seed);
 
 	double *nodes = (double*)calloc(P, sizeof(double));
 	double *weights = (double*)calloc(P, sizeof(double));
@@ -275,16 +275,16 @@ void b3let_axisym_wav_test(double R, int B_l, int B_p, int L, int P, int J_min_l
 	free(weights);
 
 	complex double *f_wav, *f_scal;
-	b3let_axisym_allocate_f_wav(&f_wav, &f_scal, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_allocate_f_wav(&f_wav, &f_scal, B_l, B_p, L, P, J_min_l, J_min_p);
 
 	time_start = clock();
-	b3let_axisym_wav_analysis(f_wav, f_scal, f, R, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_wav_analysis(f_wav, f_scal, f, R, B_l, B_p, L, P, J_min_l, J_min_p);
 	time_end = clock();
 	printf("  - Wavelet analysis   : %4.4f seconds\n", 
 		(time_end - time_start) / (double)CLOCKS_PER_SEC);
 
 	time_start = clock();
-	b3let_axisym_wav_synthesis(f_rec, f_wav, f_scal, R, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_wav_synthesis(f_rec, f_wav, f_scal, R, B_l, B_p, L, P, J_min_l, J_min_p);
 	time_end = clock();
 	printf("  - Wavelet synthesis  : %4.4f seconds\n", 
 		(time_end - time_start) / (double)CLOCKS_PER_SEC);
@@ -318,7 +318,7 @@ void b3let_axisym_wav_test(double R, int B_l, int B_p, int L, int P, int J_min_l
 	free(f_scal);
 }
 
-void b3let_axisym_wav_real_test(double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p, int seed)
+void flaglet_axisym_wav_real_test(double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p, int seed)
 {
 	clock_t time_start, time_end;
 
@@ -329,7 +329,7 @@ void b3let_axisym_wav_real_test(double R, int B_l, int B_p, int L, int P, int J_
 	flag_allocate_f_real(&f, L, P);
 	flag_allocate_f_real(&f_rec, L, P);
 
-	b3let_random_flmp_real(flmp, L, P, seed);
+	flaglet_random_flmp_real(flmp, L, P, seed);
 
 	double *nodes = (double*)calloc(P, sizeof(double));
 	double *weights = (double*)calloc(P, sizeof(double));
@@ -343,16 +343,16 @@ void b3let_axisym_wav_real_test(double R, int B_l, int B_p, int L, int P, int J_
 	free(weights);
 
 	double *f_wav, *f_scal;
-	b3let_axisym_allocate_f_wav_real(&f_wav, &f_scal, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_allocate_f_wav_real(&f_wav, &f_scal, B_l, B_p, L, P, J_min_l, J_min_p);
 
 	time_start = clock();
-	b3let_axisym_wav_analysis_real(f_wav, f_scal, f, R, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_wav_analysis_real(f_wav, f_scal, f, R, B_l, B_p, L, P, J_min_l, J_min_p);
 	time_end = clock();
 	printf("  - Wavelet analysis   : %4.4f seconds\n", 
 		(time_end - time_start) / (double)CLOCKS_PER_SEC);
 
 	time_start = clock();
-	b3let_axisym_wav_synthesis_real(f_rec, f_wav, f_scal, R, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_wav_synthesis_real(f_rec, f_wav, f_scal, R, B_l, B_p, L, P, J_min_l, J_min_p);
 	time_end = clock();
 	printf("  - Wavelet synthesis  : %4.4f seconds\n", 
 		(time_end - time_start) / (double)CLOCKS_PER_SEC);
@@ -389,7 +389,7 @@ void b3let_axisym_wav_real_test(double R, int B_l, int B_p, int L, int P, int J_
 }
 
 
-void b3let_axisym_wav_multires_test(double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p, int seed)
+void flaglet_axisym_wav_multires_test(double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p, int seed)
 {
 	clock_t time_start, time_end;
 
@@ -399,7 +399,7 @@ void b3let_axisym_wav_multires_test(double R, int B_l, int B_p, int L, int P, in
 	flag_allocate_f(&f, L, P);
 	flag_allocate_f(&f_rec, L, P);
 
-	b3let_random_flmp(flmp, L, P, seed);
+	flaglet_random_flmp(flmp, L, P, seed);
 
 	double *nodes = (double*)calloc(P, sizeof(double));
 	double *weights = (double*)calloc(P, sizeof(double));
@@ -413,16 +413,16 @@ void b3let_axisym_wav_multires_test(double R, int B_l, int B_p, int L, int P, in
 	free(weights);
 
 	complex double *f_wav, *f_scal;
-	b3let_axisym_allocate_f_wav_multires(&f_wav, &f_scal, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_allocate_f_wav_multires(&f_wav, &f_scal, B_l, B_p, L, P, J_min_l, J_min_p);
 
 	time_start = clock();
-	b3let_axisym_wav_analysis_multires(f_wav, f_scal, f, R, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_wav_analysis_multires(f_wav, f_scal, f, R, B_l, B_p, L, P, J_min_l, J_min_p);
 	time_end = clock();
 	printf("  - Wavelet analysis   : %4.4f seconds\n", 
 		(time_end - time_start) / (double)CLOCKS_PER_SEC);
 
 	time_start = clock();
-	b3let_axisym_wav_synthesis_multires(f_rec, f_wav, f_scal, R, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_wav_synthesis_multires(f_rec, f_wav, f_scal, R, B_l, B_p, L, P, J_min_l, J_min_p);
 	time_end = clock();
 	printf("  - Wavelet synthesis  : %4.4f seconds\n", 
 		(time_end - time_start) / (double)CLOCKS_PER_SEC);
@@ -454,7 +454,7 @@ void b3let_axisym_wav_multires_test(double R, int B_l, int B_p, int L, int P, in
 	free(f_scal);
 }
 
-void b3let_axisym_wav_multires_real_test(double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p, int seed)
+void flaglet_axisym_wav_multires_real_test(double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p, int seed)
 {
 	clock_t time_start, time_end;
 	int J_l = s2let_j_max(L, B_l);
@@ -467,7 +467,7 @@ void b3let_axisym_wav_multires_real_test(double R, int B_l, int B_p, int L, int 
 	flag_allocate_f_real(&f, L, P);
 	flag_allocate_f_real(&f_rec, L, P);
 
-	b3let_random_flmp_real(flmp, L, P, seed);
+	flaglet_random_flmp_real(flmp, L, P, seed);
 
 	double *nodes = (double*)calloc(P, sizeof(double));
 	double *weights = (double*)calloc(P, sizeof(double));
@@ -481,16 +481,16 @@ void b3let_axisym_wav_multires_real_test(double R, int B_l, int B_p, int L, int 
 	free(weights);
 
 	double *f_wav, *f_scal;
-	b3let_axisym_allocate_f_wav_multires_real(&f_wav, &f_scal, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_allocate_f_wav_multires_real(&f_wav, &f_scal, B_l, B_p, L, P, J_min_l, J_min_p);
 
 	time_start = clock();
-	b3let_axisym_wav_analysis_multires_real(f_wav, f_scal, f, R, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_wav_analysis_multires_real(f_wav, f_scal, f, R, B_l, B_p, L, P, J_min_l, J_min_p);
 	time_end = clock();
 	printf("  - Wavelet analysis   : %4.4f seconds\n", 
 		(time_end - time_start) / (double)CLOCKS_PER_SEC);
 
 	time_start = clock();
-	b3let_axisym_wav_synthesis_multires_real(f_rec, f_wav, f_scal, R, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_wav_synthesis_multires_real(f_rec, f_wav, f_scal, R, B_l, B_p, L, P, J_min_l, J_min_p);
 	time_end = clock();
 	printf("  - Wavelet synthesis  : %4.4f seconds\n", 
 		(time_end - time_start) / (double)CLOCKS_PER_SEC);
@@ -528,7 +528,7 @@ void b3let_axisym_wav_multires_real_test(double R, int B_l, int B_p, int L, int 
 }
 
 
-void b3let_axisym_wav_performance_test(double R, int NREPEAT, int NSCALE, int seed, int B_l, int B_p, int J_min_l, int J_min_p)
+void flaglet_axisym_wav_performance_test(double R, int NREPEAT, int NSCALE, int seed, int B_l, int B_p, int J_min_l, int J_min_p)
 {
 	complex double *f, *f_rec, *flmp, *flmp_rec;
 	clock_t time_start, time_end;
@@ -556,7 +556,7 @@ void b3let_axisym_wav_performance_test(double R, int NREPEAT, int NSCALE, int se
 
 	 		//printf("  -> Iteration : %i on %i\n",repeat+1,NREPEAT);
 
-			b3let_random_flmp(flmp, L, P, seed);
+			flaglet_random_flmp(flmp, L, P, seed);
 
 			flag_allocate_f(&f, L, P);
 			flag_allocate_flmn(&flmp_rec, L, P);
@@ -567,10 +567,10 @@ void b3let_axisym_wav_performance_test(double R, int NREPEAT, int NSCALE, int se
 			//printf("  - (FLAG synthesis   : %4.4f seconds)\n", (time_end - time_start) / (double)CLOCKS_PER_SEC);
 
 			complex double *f_wav, *f_scal;
-			b3let_axisym_allocate_f_wav(&f_wav, &f_scal, B_l, B_p, L, P, J_min_l, J_min_p);
+			flaglet_axisym_allocate_f_wav(&f_wav, &f_scal, B_l, B_p, L, P, J_min_l, J_min_p);
 
 		    time_start = clock();
-			b3let_axisym_wav_analysis(f_wav, f_scal, f, R, B_l, B_p, L, P, J_min_l, J_min_p);
+			flaglet_axisym_wav_analysis(f_wav, f_scal, f, R, B_l, B_p, L, P, J_min_l, J_min_p);
 			time_end = clock();
 			tottime_analysis += (time_end - time_start) / (double)CLOCKS_PER_SEC;
 			//printf("  - Duration for wavelet analysis   : %4.4f seconds\n", (time_end - time_start) / (double)CLOCKS_PER_SEC);
@@ -578,7 +578,7 @@ void b3let_axisym_wav_performance_test(double R, int NREPEAT, int NSCALE, int se
 			flag_allocate_f(&f_rec, L, P);
 
 			time_start = clock();
-			b3let_axisym_wav_synthesis(f_rec, f_wav, f_scal, R, B_l, B_p, L, P, J_min_l, J_min_p);
+			flaglet_axisym_wav_synthesis(f_rec, f_wav, f_scal, R, B_l, B_p, L, P, J_min_l, J_min_p);
 			time_end = clock();
 			tottime_synthesis += (time_end - time_start) / (double)CLOCKS_PER_SEC;
 			//printf("  - Duration for wavelet synthesis   : %4.4f seconds\n", (time_end - time_start) / (double)CLOCKS_PER_SEC);
@@ -615,7 +615,7 @@ void b3let_axisym_wav_performance_test(double R, int NREPEAT, int NSCALE, int se
 
 }
 
-void b3let_axisym_wav_multires_performance_test(double R, int NREPEAT, int NSCALE, int seed, int B_l, int B_p, int J_min_l, int J_min_p)
+void flaglet_axisym_wav_multires_performance_test(double R, int NREPEAT, int NSCALE, int seed, int B_l, int B_p, int J_min_l, int J_min_p)
 {
 	complex double *f, *f_rec, *flmp, *flmp_rec;
 	clock_t time_start, time_end;
@@ -643,7 +643,7 @@ void b3let_axisym_wav_multires_performance_test(double R, int NREPEAT, int NSCAL
 
 	 		//printf("  -> Iteration : %i on %i\n",repeat+1,NREPEAT);
 
-			b3let_random_flmp(flmp, L, P, seed);
+			flaglet_random_flmp(flmp, L, P, seed);
 
 			flag_allocate_f(&f, L, P);
 			flag_allocate_flmn(&flmp_rec, L, P);
@@ -654,10 +654,10 @@ void b3let_axisym_wav_multires_performance_test(double R, int NREPEAT, int NSCAL
 			//printf("  - (FLAG synthesis   : %4.4f seconds)\n", (time_end - time_start) / (double)CLOCKS_PER_SEC);
 
 			complex double *f_wav, *f_scal;
-			b3let_axisym_allocate_f_wav_multires(&f_wav, &f_scal, B_l, B_p, L, P, J_min_l, J_min_p);
+			flaglet_axisym_allocate_f_wav_multires(&f_wav, &f_scal, B_l, B_p, L, P, J_min_l, J_min_p);
 
 		    time_start = clock();
-			b3let_axisym_wav_analysis_multires(f_wav, f_scal, f, R, B_l, B_p, L, P, J_min_l, J_min_p);
+			flaglet_axisym_wav_analysis_multires(f_wav, f_scal, f, R, B_l, B_p, L, P, J_min_l, J_min_p);
 			time_end = clock();
 			tottime_analysis += (time_end - time_start) / (double)CLOCKS_PER_SEC;
 			//printf("  - Duration for wavelet analysis   : %4.4f seconds\n", (time_end - time_start) / (double)CLOCKS_PER_SEC);
@@ -665,7 +665,7 @@ void b3let_axisym_wav_multires_performance_test(double R, int NREPEAT, int NSCAL
 			flag_allocate_f(&f_rec, L, P);
 
 			time_start = clock();
-			b3let_axisym_wav_synthesis_multires(f_rec, f_wav, f_scal, R, B_l, B_p, L, P, J_min_l, J_min_p);
+			flaglet_axisym_wav_synthesis_multires(f_rec, f_wav, f_scal, R, B_l, B_p, L, P, J_min_l, J_min_p);
 			time_end = clock();
 			tottime_synthesis += (time_end - time_start) / (double)CLOCKS_PER_SEC;
 			//printf("  - Duration for wavelet synthesis   : %4.4f seconds\n", (time_end - time_start) / (double)CLOCKS_PER_SEC);
@@ -721,32 +721,32 @@ int main(int argc, char *argv[])
 	printf(" L = %i   P = %i   Bl = %i   Bn = %i   Jminl = %i  Jminn = %i \n", L, P, B_l, B_p, J_min_l, J_min_p);
 	printf("----------------------------------------------------------\n");
 	printf("> Testing axisymmetric harmonic tilling...\n");
-	b3let_tilling_test(B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_tilling_test(B_l, B_p, L, P, J_min_l, J_min_p);
 	printf("==========================================================\n");
 	printf("> Testing axisymmetric wavelets in harmonics space...\n");
-	b3let_axisym_wav_lm_test(B_l, B_p, L, P, J_min_l, J_min_p, seed);
+	flaglet_axisym_wav_lm_test(B_l, B_p, L, P, J_min_l, J_min_p, seed);
 	printf("----------------------------------------------------------\n");
 	printf("> Testing multiresolution algorithm in harmonics space...\n");
-	b3let_axisym_wav_lm_multires_test(B_l, B_p, L, P, J_min_l, J_min_p, seed);
+	flaglet_axisym_wav_lm_multires_test(B_l, B_p, L, P, J_min_l, J_min_p, seed);
 	printf("==========================================================\n");
 	printf("> Testing axisymmetric wavelets in pixel space...\n");
-	b3let_axisym_wav_test(R, B_l, B_p, L, P, J_min_l, J_min_p, seed);
+	flaglet_axisym_wav_test(R, B_l, B_p, L, P, J_min_l, J_min_p, seed);
 	printf("----------------------------------------------------------\n");
 	printf("> Testing multiresolution algorithm...\n");
-	b3let_axisym_wav_multires_test(R, B_l, B_p, L, P, J_min_l, J_min_p, seed);
+	flaglet_axisym_wav_multires_test(R, B_l, B_p, L, P, J_min_l, J_min_p, seed);
 	printf("----------------------------------------------------------\n");
 	printf("> Testing real axisymmetric wavelets in pixel space...\n");
-	b3let_axisym_wav_real_test(R, B_l, B_p, L, P, J_min_l, J_min_p, seed);
+	flaglet_axisym_wav_real_test(R, B_l, B_p, L, P, J_min_l, J_min_p, seed);
 	printf("----------------------------------------------------------\n");
 	printf("> Testing multiresolution algorithm...\n");
-	b3let_axisym_wav_multires_real_test(R, B_l, B_p, L, P, J_min_l, J_min_p, seed);
+	flaglet_axisym_wav_multires_real_test(R, B_l, B_p, L, P, J_min_l, J_min_p, seed);
 	printf("==========================================================\n");
 	printf("> Full resolution wavelet transform : performance tests\n");
-	b3let_axisym_wav_performance_test(R, NREPEAT, NSCALE, seed, B_l, B_p, J_min_l, J_min_p);
+	flaglet_axisym_wav_performance_test(R, NREPEAT, NSCALE, seed, B_l, B_p, J_min_l, J_min_p);
 	fflush(NULL);
 	printf("----------------------------------------------------------\n");
 	printf("> Multiresolution wavelet transform : performance tests\n");
-	b3let_axisym_wav_multires_performance_test(R, NREPEAT, NSCALE, seed, B_l, B_p, J_min_l, J_min_p);
+	flaglet_axisym_wav_multires_performance_test(R, NREPEAT, NSCALE, seed, B_l, B_p, J_min_l, J_min_p);
 	fflush(NULL);
 	printf("==========================================================\n");
 	

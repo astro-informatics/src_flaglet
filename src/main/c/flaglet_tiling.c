@@ -1,8 +1,8 @@
-// B3LET package
+// FLAGLET package
 // Copyright (C) 2012 
 // Boris Leistedt & Jason McEwen
 
-#include "b3let.h"
+#include "flaglet.h"
 
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 
@@ -17,7 +17,7 @@
  * \param[in]  P Radial harmonic band-limit.
  * \retval none
  */
-void b3let_axisym_allocate_tilling(double **kappa_lp, double **kappa0_lp, int B_l, int B_p, int L, int P)
+void flaglet_axisym_allocate_tilling(double **kappa_lp, double **kappa0_lp, int B_l, int B_p, int L, int P)
 {
 	int J_l = s2let_j_max(L, B_l);
 	int J_p = s2let_j_max(P, B_p);
@@ -38,7 +38,7 @@ void b3let_axisym_allocate_tilling(double **kappa_lp, double **kappa0_lp, int B_
  * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_tilling(double *kappa_lp, double *kappa0_lp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+void flaglet_axisym_tilling(double *kappa_lp, double *kappa0_lp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
 	int l, n, jl, jp;
 	int J_l = s2let_j_max(L, B_l);
@@ -130,7 +130,7 @@ void b3let_axisym_tilling(double *kappa_lp, double *kappa0_lp, int B_l, int B_p,
  * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval Achieved accuracy (should be lower than e-12).
  */
-double b3let_axisym_check_identity(double *kappa_lp, double *kappa0_lp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+double flaglet_axisym_check_identity(double *kappa_lp, double *kappa0_lp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
 	int jl, jp, l, n;
 	int J_l = s2let_j_max(L, B_l);

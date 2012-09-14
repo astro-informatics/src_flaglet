@@ -1,8 +1,8 @@
-// B3LET package
+// FLAGLET package
 // Copyright (C) 2012 
 // Boris Leistedt & Jason McEwen
 
-#include "b3let.h"
+#include "flaglet.h"
 
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
@@ -18,7 +18,7 @@
  * \param[in]  P Radial harmonic band-limit.
  * \retval none
  */
-void b3let_axisym_allocate_wav_lmp(double **wav_lmp, double **scal_lmp, int B_l, int B_p, int L, int P)
+void flaglet_axisym_allocate_wav_lmp(double **wav_lmp, double **scal_lmp, int B_l, int B_p, int L, int P)
 {
 	int J_l = s2let_j_max(L, B_l);
 	int J_p = s2let_j_max(P, B_p);
@@ -39,7 +39,7 @@ void b3let_axisym_allocate_wav_lmp(double **wav_lmp, double **scal_lmp, int B_l,
  * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_wav_lmp(double *wav_lmp, double *scal_lmp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+void flaglet_axisym_wav_lmp(double *wav_lmp, double *scal_lmp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
 	int jl, jp, l, n, m, indjjlmp, indlmp;
 	int J_l = s2let_j_max(L, B_l);
@@ -48,9 +48,9 @@ void b3let_axisym_wav_lmp(double *wav_lmp, double *scal_lmp, int B_l, int B_p, i
 	double wav0, scal0;
 
 	double *kappa_ln, *kappa0_ln;
-	b3let_axisym_allocate_tilling(&kappa_ln, &kappa0_ln, B_l, B_p, L, P);
+	flaglet_axisym_allocate_tilling(&kappa_ln, &kappa0_ln, B_l, B_p, L, P);
 	
-	b3let_axisym_tilling(kappa_ln, kappa0_ln, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_tilling(kappa_ln, kappa0_ln, B_l, B_p, L, P, J_min_l, J_min_p);
 
 	for (jp = J_min_p; jp <= J_p; jp++){
 		for (jl = J_min_l; jl <= J_l; jl++){
@@ -94,7 +94,7 @@ void b3let_axisym_wav_lmp(double *wav_lmp, double *scal_lmp, int B_l, int B_p, i
  * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_allocate_f_wav_lmp(complex double **f_wav_lmp, complex double **f_scal_lmp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+void flaglet_axisym_allocate_f_wav_lmp(complex double **f_wav_lmp, complex double **f_scal_lmp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
 	int J_l = s2let_j_max(L, B_l);
 	int J_p = s2let_j_max(P, B_p);
@@ -115,7 +115,7 @@ void b3let_axisym_allocate_f_wav_lmp(complex double **f_wav_lmp, complex double 
  * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_allocate_f_wav(complex double **f_wav, complex double **f_scal, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+void flaglet_axisym_allocate_f_wav(complex double **f_wav, complex double **f_scal, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
 	int J_l = s2let_j_max(L, B_l);
 	int J_p = s2let_j_max(P, B_p);
@@ -136,7 +136,7 @@ void b3let_axisym_allocate_f_wav(complex double **f_wav, complex double **f_scal
  * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_allocate_f_wav_real(double **f_wav, double **f_scal, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+void flaglet_axisym_allocate_f_wav_real(double **f_wav, double **f_scal, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
 	int J_l = s2let_j_max(L, B_l);
 	int J_p = s2let_j_max(P, B_p);
@@ -157,7 +157,7 @@ void b3let_axisym_allocate_f_wav_real(double **f_wav, double **f_scal, int B_l, 
  * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_allocate_f_wav_multires_lmp(complex double **f_wav_lmp, complex double **f_scal_lmp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+void flaglet_axisym_allocate_f_wav_multires_lmp(complex double **f_wav_lmp, complex double **f_scal_lmp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
 	int J_l = s2let_j_max(L, B_l);
 	int J_p = s2let_j_max(P, B_p);
@@ -186,7 +186,7 @@ void b3let_axisym_allocate_f_wav_multires_lmp(complex double **f_wav_lmp, comple
  * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_allocate_f_wav_multires(complex double **f_wav, complex double **f_scal, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+void flaglet_axisym_allocate_f_wav_multires(complex double **f_wav, complex double **f_scal, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
 	int J_l = s2let_j_max(L, B_l);
 	int J_p = s2let_j_max(P, B_p);
@@ -215,7 +215,7 @@ void b3let_axisym_allocate_f_wav_multires(complex double **f_wav, complex double
  * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_allocate_f_wav_multires_real(double **f_wav, double **f_scal, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+void flaglet_axisym_allocate_f_wav_multires_real(double **f_wav, double **f_scal, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
 	int J_l = s2let_j_max(L, B_l);
 	int J_p = s2let_j_max(P, B_p);
@@ -248,7 +248,7 @@ void b3let_axisym_allocate_f_wav_multires_real(double **f_wav, double **f_scal, 
  * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_wav_analysis_multires_lmp(complex double *f_wav_lmp, complex double *f_scal_lmp, const complex double *flmp, const double *wav_lmp, const double *scal_lmp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+void flaglet_axisym_wav_analysis_multires_lmp(complex double *f_wav_lmp, complex double *f_scal_lmp, const complex double *flmp, const double *wav_lmp, const double *scal_lmp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
 	int bandlimit_p, bandlimit_l, offset, jl, jp, l, m, n, indjjlmp, indlmp;
 	int J_l = s2let_j_max(L, B_l);
@@ -299,7 +299,7 @@ void b3let_axisym_wav_analysis_multires_lmp(complex double *f_wav_lmp, complex d
  * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_wav_synthesis_multires_lmp(complex double *flmp, const complex double *f_wav_lmp, const complex double *f_scal_lmp, const double *wav_lmp, const double *scal_lmp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+void flaglet_axisym_wav_synthesis_multires_lmp(complex double *flmp, const complex double *f_wav_lmp, const complex double *f_scal_lmp, const double *wav_lmp, const double *scal_lmp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
 	int bandlimit_p, bandlimit_l, offset, jl, jp, l, m, n, indjjlmp, indlmp;
 	int J_l = s2let_j_max(L, B_l);
@@ -353,7 +353,7 @@ void b3let_axisym_wav_synthesis_multires_lmp(complex double *flmp, const complex
  * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_wav_analysis_lmp(complex double *f_wav_lmp, complex double *f_scal_lmp, const complex double *flmp, const double *wav_lmp, const double *scal_lmp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+void flaglet_axisym_wav_analysis_lmp(complex double *f_wav_lmp, complex double *f_scal_lmp, const complex double *flmp, const double *wav_lmp, const double *scal_lmp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
 	int offset, jl, jp, l, m, n, indjjlmp, indlmp;
 	int J_l = s2let_j_max(L, B_l);
@@ -401,7 +401,7 @@ void b3let_axisym_wav_analysis_lmp(complex double *f_wav_lmp, complex double *f_
  * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_wav_synthesis_lmp(complex double *flmp, const complex double *f_wav_lmp, const complex double *f_scal_lmp, const double *wav_lmp, const double *scal_lmp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+void flaglet_axisym_wav_synthesis_lmp(complex double *flmp, const complex double *f_wav_lmp, const complex double *f_scal_lmp, const double *wav_lmp, const double *scal_lmp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
 	int offset, jl, jp, l, m, n, indjjlmp, indlmp;
 	int J_l = s2let_j_max(L, B_l);
@@ -453,19 +453,19 @@ void b3let_axisym_wav_synthesis_lmp(complex double *flmp, const complex double *
  * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_wav_analysis_multires(complex double *f_wav, complex double *f_scal, const complex double *f, double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+void flaglet_axisym_wav_analysis_multires(complex double *f_wav, complex double *f_scal, const complex double *f, double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
 	complex double *flmp;
 	flag_allocate_flmn(&flmp, L, P);
 	flag_analysis(flmp, f, R, L, P);
 
 	double *wav_lmp, *scal_lmp;
-	b3let_axisym_allocate_wav_lmp(&wav_lmp, &scal_lmp, B_l, B_p, L, P);
-	b3let_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_allocate_wav_lmp(&wav_lmp, &scal_lmp, B_l, B_p, L, P);
+	flaglet_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
 	complex double *f_wav_lmp, *f_scal_lmp;
-	b3let_axisym_allocate_f_wav_multires_lmp(&f_wav_lmp, &f_scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
-	b3let_axisym_wav_analysis_multires_lmp(f_wav_lmp, f_scal_lmp, flmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_allocate_f_wav_multires_lmp(&f_wav_lmp, &f_scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_wav_analysis_multires_lmp(f_wav_lmp, f_scal_lmp, flmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
 	double *nodes = (double*)calloc(P, sizeof(double));
 	double *weights = (double*)calloc(P, sizeof(double));
@@ -519,10 +519,10 @@ void b3let_axisym_wav_analysis_multires(complex double *f_wav, complex double *f
  * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_wav_synthesis_multires(complex double *f, const complex double *f_wav, const complex double *f_scal, double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+void flaglet_axisym_wav_synthesis_multires(complex double *f, const complex double *f_wav, const complex double *f_scal, double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
 	complex double *f_wav_lmp, *f_scal_lmp;
-	b3let_axisym_allocate_f_wav_multires_lmp(&f_wav_lmp, &f_scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_allocate_f_wav_multires_lmp(&f_wav_lmp, &f_scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
 	int bandlimit_p, bandlimit_l, offset_lmp, offset, jl, jp;
 	int J_l = s2let_j_max(L, B_l);
@@ -545,12 +545,12 @@ void b3let_axisym_wav_synthesis_multires(complex double *f, const complex double
 	}
 
 	double *wav_lmp, *scal_lmp ;
-	b3let_axisym_allocate_wav_lmp(&wav_lmp, &scal_lmp, B_l, B_p, L, P);
-	b3let_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_allocate_wav_lmp(&wav_lmp, &scal_lmp, B_l, B_p, L, P);
+	flaglet_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
 	complex double *flmp;
 	flag_allocate_flmn(&flmp, L, P);
-	b3let_axisym_wav_synthesis_multires_lmp(flmp, f_wav_lmp, f_scal_lmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_wav_synthesis_multires_lmp(flmp, f_wav_lmp, f_scal_lmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
 
 	double *nodes = (double*)calloc(P, sizeof(double));
@@ -589,7 +589,7 @@ void b3let_axisym_wav_synthesis_multires(complex double *f, const complex double
  * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_wav_analysis_multires_real(double *f_wav, double *f_scal, const double *f, double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+void flaglet_axisym_wav_analysis_multires_real(double *f_wav, double *f_scal, const double *f, double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
 	complex double *flmp;
 	flag_allocate_flmn(&flmp, L, P);
@@ -598,11 +598,11 @@ void b3let_axisym_wav_analysis_multires_real(double *f_wav, double *f_scal, cons
 	double *wav_lmp, *scal_lmp;
 	complex double *f_wav_lmp, *f_scal_lmp;
 
-	b3let_axisym_allocate_wav_lmp(&wav_lmp, &scal_lmp, B_l, B_p, L, P);
-	b3let_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_allocate_wav_lmp(&wav_lmp, &scal_lmp, B_l, B_p, L, P);
+	flaglet_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
-	b3let_axisym_allocate_f_wav_multires_lmp(&f_wav_lmp, &f_scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
-	b3let_axisym_wav_analysis_multires_lmp(f_wav_lmp, f_scal_lmp, flmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_allocate_f_wav_multires_lmp(&f_wav_lmp, &f_scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_wav_analysis_multires_lmp(f_wav_lmp, f_scal_lmp, flmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
 	free(wav_lmp);
 	free(scal_lmp);
@@ -659,10 +659,10 @@ void b3let_axisym_wav_analysis_multires_real(double *f_wav, double *f_scal, cons
  * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_wav_synthesis_multires_real(double *f, const double *f_wav, const double *f_scal, double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+void flaglet_axisym_wav_synthesis_multires_real(double *f, const double *f_wav, const double *f_scal, double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
 	complex double *f_wav_lmp, *f_scal_lmp;
-	b3let_axisym_allocate_f_wav_multires_lmp(&f_wav_lmp, &f_scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_allocate_f_wav_multires_lmp(&f_wav_lmp, &f_scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
 	int bandlimit_p, bandlimit_l, offset_lmp, offset, jl, jp;
 	int J_l = s2let_j_max(L, B_l);
@@ -684,12 +684,12 @@ void b3let_axisym_wav_synthesis_multires_real(double *f, const double *f_wav, co
 	}
 
 	double *wav_lmp, *scal_lmp ;
-	b3let_axisym_allocate_wav_lmp(&wav_lmp, &scal_lmp, B_l, B_p, L, P);
-	b3let_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_allocate_wav_lmp(&wav_lmp, &scal_lmp, B_l, B_p, L, P);
+	flaglet_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
 	complex double *flmp;
 	flag_allocate_flmn(&flmp, L, P);
-	b3let_axisym_wav_synthesis_multires_lmp(flmp, f_wav_lmp, f_scal_lmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_wav_synthesis_multires_lmp(flmp, f_wav_lmp, f_scal_lmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 	
 	double *nodes = (double*)calloc(P, sizeof(double));
 	double *weights = (double*)calloc(P, sizeof(double));
@@ -726,7 +726,7 @@ void b3let_axisym_wav_synthesis_multires_real(double *f, const double *f_wav, co
  * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_wav_analysis(complex double *f_wav, complex double *f_scal, const complex double *f, double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+void flaglet_axisym_wav_analysis(complex double *f_wav, complex double *f_scal, const complex double *f, double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
 	complex double *flmp;
 	flag_allocate_flmn(&flmp, L, P);
@@ -735,11 +735,11 @@ void b3let_axisym_wav_analysis(complex double *f_wav, complex double *f_scal, co
 	double *wav_lmp, *scal_lmp;
 	complex double *f_wav_lmp, *f_scal_lmp;
 
-	b3let_axisym_allocate_wav_lmp(&wav_lmp, &scal_lmp, B_l, B_p, L, P);
-	b3let_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_allocate_wav_lmp(&wav_lmp, &scal_lmp, B_l, B_p, L, P);
+	flaglet_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
-	b3let_axisym_allocate_f_wav_lmp(&f_wav_lmp, &f_scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
-	b3let_axisym_wav_analysis_lmp(f_wav_lmp, f_scal_lmp, flmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_allocate_f_wav_lmp(&f_wav_lmp, &f_scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_wav_analysis_lmp(f_wav_lmp, f_scal_lmp, flmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
 	free(wav_lmp);
 	free(scal_lmp);
@@ -792,10 +792,10 @@ void b3let_axisym_wav_analysis(complex double *f_wav, complex double *f_scal, co
  * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_wav_synthesis(complex double *f, const complex double *f_wav, const complex double *f_scal, double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+void flaglet_axisym_wav_synthesis(complex double *f, const complex double *f_wav, const complex double *f_scal, double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
 	complex double *f_wav_lmp, *f_scal_lmp;
-	b3let_axisym_allocate_f_wav_lmp(&f_wav_lmp, &f_scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_allocate_f_wav_lmp(&f_wav_lmp, &f_scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
 	int offset_lmp, offset, jl, jp;
 	int J_l = s2let_j_max(L, B_l);
@@ -815,12 +815,12 @@ void b3let_axisym_wav_synthesis(complex double *f, const complex double *f_wav, 
 	}
 
 	double *wav_lmp, *scal_lmp ;
-	b3let_axisym_allocate_wav_lmp(&wav_lmp, &scal_lmp, B_l, B_p, L, P);
-	b3let_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_allocate_wav_lmp(&wav_lmp, &scal_lmp, B_l, B_p, L, P);
+	flaglet_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
 	complex double *flmp;
 	flag_allocate_flmn(&flmp, L, P);
-	b3let_axisym_wav_synthesis_lmp(flmp, f_wav_lmp, f_scal_lmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_wav_synthesis_lmp(flmp, f_wav_lmp, f_scal_lmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 	
 	double *nodes = (double*)calloc(P, sizeof(double));
 	double *weights = (double*)calloc(P, sizeof(double));
@@ -858,7 +858,7 @@ void b3let_axisym_wav_synthesis(complex double *f, const complex double *f_wav, 
  * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_wav_analysis_real(double *f_wav, double *f_scal, const double *f, double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+void flaglet_axisym_wav_analysis_real(double *f_wav, double *f_scal, const double *f, double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
 	complex double *flmp;
 	flag_allocate_flmn(&flmp, L, P);
@@ -867,11 +867,11 @@ void b3let_axisym_wav_analysis_real(double *f_wav, double *f_scal, const double 
 	double *wav_lmp, *scal_lmp;
 	complex double *f_wav_lmp, *f_scal_lmp;
 
-	b3let_axisym_allocate_wav_lmp(&wav_lmp, &scal_lmp, B_l, B_p, L, P);
-	b3let_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_allocate_wav_lmp(&wav_lmp, &scal_lmp, B_l, B_p, L, P);
+	flaglet_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
-	b3let_axisym_allocate_f_wav_lmp(&f_wav_lmp, &f_scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
-	b3let_axisym_wav_analysis_lmp(f_wav_lmp, f_scal_lmp, flmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_allocate_f_wav_lmp(&f_wav_lmp, &f_scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_wav_analysis_lmp(f_wav_lmp, f_scal_lmp, flmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
 	free(wav_lmp);
 	free(scal_lmp);
@@ -925,10 +925,10 @@ void b3let_axisym_wav_analysis_real(double *f_wav, double *f_scal, const double 
  * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void b3let_axisym_wav_synthesis_real(double *f, const double *f_wav, const double *f_scal, double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+void flaglet_axisym_wav_synthesis_real(double *f, const double *f_wav, const double *f_scal, double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
 	complex double *f_wav_lmp, *f_scal_lmp;
-	b3let_axisym_allocate_f_wav_lmp(&f_wav_lmp, &f_scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_allocate_f_wav_lmp(&f_wav_lmp, &f_scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
 	int offset_lmp, offset, jl, jp;
 	int J_l = s2let_j_max(L, B_l);
@@ -948,12 +948,12 @@ void b3let_axisym_wav_synthesis_real(double *f, const double *f_wav, const doubl
 	}
 
 	double *wav_lmp, *scal_lmp ;
-	b3let_axisym_allocate_wav_lmp(&wav_lmp, &scal_lmp, B_l, B_p, L, P);
-	b3let_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_allocate_wav_lmp(&wav_lmp, &scal_lmp, B_l, B_p, L, P);
+	flaglet_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
 	complex double *flmp;
 	flag_allocate_flmn(&flmp, L, P);
-	b3let_axisym_wav_synthesis_lmp(flmp, f_wav_lmp, f_scal_lmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_wav_synthesis_lmp(flmp, f_wav_lmp, f_scal_lmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 	
 	double *nodes = (double*)calloc(P, sizeof(double));
 	double *weights = (double*)calloc(P, sizeof(double));

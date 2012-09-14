@@ -17,7 +17,7 @@ DOXYGEN_PATH=/Applications/Doxygen.app/Contents/Resources/doxygen
 
 # Compiler and options
 CC	= gcc
-OPT	= -Wall -O3 -g -DB3LET_VERSION=\"1.0\" -DB3LET_BUILD=\"`svnversion -n .`\"
+OPT	= -Wall -O3 -g -DFLAGLET_VERSION=\"1.0\" -DFLAGLET_BUILD=\"`svnversion -n .`\"
 UNAME := $(shell uname)
 
 # ======================================== #
@@ -38,14 +38,14 @@ ifeq ($(UNAME), Darwin)
   MEXFLAGS	= -cxx
 endif
 
-# === B3LET ===
-B3LETDIR = .
-B3LETLIB = $(B3LETDIR)/lib/c
-B3LETINC = $(B3LETDIR)/include/c
-B3LETBIN = $(B3LETDIR)/bin/c
-B3LETLIBN= b3let
-B3LETSRC = $(B3LETDIR)/src/c
-B3LETOBJ = $(B3LETSRC)
+# === FLAGLET ===
+FLAGLETDIR = .
+FLAGLETLIB = $(FLAGLETDIR)/lib/c
+FLAGLETINC = $(FLAGLETDIR)/include/c
+FLAGLETBIN = $(FLAGLETDIR)/bin/c
+FLAGLETLIBN= flaglet
+FLAGLETSRC = $(FLAGLETDIR)/src/c
+FLAGLETOBJ = $(FLAGLETSRC)
 
 # === S2LET ===
 S2LETLIB = $(S2LETDIR)/lib/c
@@ -69,38 +69,38 @@ FFTWLIBNM   = fftw3
 
 # ======================================== #
 
-B3LETSRCMAT	= $(B3LETDIR)/src/matlab
-B3LETOBJMAT  = $(B3LETSRCMAT)
-B3LETOBJMEX  = $(B3LETSRCMAT)
+FLAGLETSRCMAT	= $(FLAGLETDIR)/src/matlab
+FLAGLETOBJMAT  = $(FLAGLETSRCMAT)
+FLAGLETOBJMEX  = $(FLAGLETSRCMAT)
 
-vpath %.c $(B3LETSRC)
-vpath %.h $(B3LETSRC)
-vpath %_mex.c $(B3LETSRCMAT)
+vpath %.c $(FLAGLETSRC)
+vpath %.h $(FLAGLETSRC)
+vpath %_mex.c $(FLAGLETSRCMAT)
 
-LDFLAGS = -L$(FFTWLIB) -l$(FFTWLIBNM) -L$(SSHTLIB) -l$(SSHTLIBN) -L$(FLAGLIB) -l$(FLAGLIBN) -L$(S2LETLIB) -l$(S2LETLIBN) -L$(B3LETLIB) -l$(B3LETLIBN) -lm
+LDFLAGS = -L$(FFTWLIB) -l$(FFTWLIBNM) -L$(SSHTLIB) -l$(SSHTLIBN) -L$(FLAGLIB) -l$(FLAGLIBN) -L$(S2LETLIB) -l$(S2LETLIBN) -L$(FLAGLETLIB) -l$(FLAGLETLIBN) -lm
 
-LDFLAGSMEX = -I/usr/local/include -L$(FFTWLIB) -l$(FFTWLIBNM) -L$(SSHTLIB) -l$(SSHTLIBN) -L$(FLAGLIB) -l$(FLAGLIBN) -L$(S2LETLIB) -l$(S2LETLIBN) -L$(B3LETLIB) -l$(B3LETLIBN)
+LDFLAGSMEX = -I/usr/local/include -L$(FFTWLIB) -l$(FFTWLIBNM) -L$(SSHTLIB) -l$(SSHTLIBN) -L$(FLAGLIB) -l$(FLAGLIBN) -L$(S2LETLIB) -l$(S2LETLIBN) -L$(FLAGLETLIB) -l$(FLAGLETLIBN)
 
-FFLAGS  = -I$(FFTWINC) -I$(SSHTINC) -I$(FLAGINC) -I$(S2LETINC) -I$(B3LETINC)
+FFLAGS  = -I$(FFTWINC) -I$(SSHTINC) -I$(FLAGINC) -I$(S2LETINC) -I$(FLAGLETINC)
 
-B3LETOBJS= $(B3LETOBJ)/b3let_axisym.o	\
-	$(B3LETOBJ)/b3let_tilling.o
+FLAGLETOBJS= $(FLAGLETOBJ)/flaglet_axisym.o	\
+	$(FLAGLETOBJ)/flaglet_tilling.o
 
-B3LETOBJSMAT = $(B3LETOBJMAT)/b3let_axisym_tilling_mex.o	\
-	$(B3LETOBJMAT)/b3let_axisym_analysis_mex.o	\
-	$(B3LETOBJMAT)/b3let_axisym_synthesis_mex.o
+FLAGLETOBJSMAT = $(FLAGLETOBJMAT)/flaglet_axisym_tilling_mex.o	\
+	$(FLAGLETOBJMAT)/flaglet_axisym_analysis_mex.o	\
+	$(FLAGLETOBJMAT)/flaglet_axisym_synthesis_mex.o
 
-B3LETOBJSMEX = $(B3LETOBJMEX)/b3let_axisym_tilling_mex.$(MEXEXT)	\
-	$(B3LETOBJMEX)/b3let_axisym_analysis_mex.$(MEXEXT)	\
-	$(B3LETOBJMEX)/b3let_axisym_synthesis_mex.$(MEXEXT)
+FLAGLETOBJSMEX = $(FLAGLETOBJMEX)/flaglet_axisym_tilling_mex.$(MEXEXT)	\
+	$(FLAGLETOBJMEX)/flaglet_axisym_analysis_mex.$(MEXEXT)	\
+	$(FLAGLETOBJMEX)/flaglet_axisym_synthesis_mex.$(MEXEXT)
 
-$(B3LETOBJ)/%.o: %.c
+$(FLAGLETOBJ)/%.o: %.c
 	$(CC) $(OPT) $(FFLAGS) -c $< -o $@
 
-$(B3LETOBJMAT)/%_mex.o: %_mex.c $(B3LETLIB)/lib$(B3LETLIBN).a
+$(FLAGLETOBJMAT)/%_mex.o: %_mex.c $(FLAGLETLIB)/lib$(FLAGLETLIBN).a
 	$(CC) $(OPT) $(FFLAGS) -c $< -o $@ -I${MLABINC} 
 
-$(B3LETOBJMEX)/%_mex.$(MEXEXT): $(B3LETOBJMAT)/%_mex.o $(B3LETLIB)/lib$(B3LETLIBN).a
+$(FLAGLETOBJMEX)/%_mex.$(MEXEXT): $(FLAGLETOBJMAT)/%_mex.o $(FLAGLETLIB)/lib$(FLAGLETLIBN).a
 	$(MEX) $< -o $@ $(LDFLAGSMEX) $(MEXFLAGS) -L$(MLABLIB)
 
 # ======================================== #
@@ -109,45 +109,45 @@ $(B3LETOBJMEX)/%_mex.$(MEXEXT): $(B3LETOBJMAT)/%_mex.o $(B3LETLIB)/lib$(B3LETLIB
 default: lib test about tidy
 
 .PHONY: matlab
-matlab: $(B3LETOBJSMEX)
+matlab: $(FLAGLETOBJSMEX)
 
 .PHONY: all
 all: lib matlab doc test about tidy
 
 .PHONY: lib
-lib: $(B3LETLIB)/lib$(B3LETLIBN).a
-$(B3LETLIB)/lib$(B3LETLIBN).a: $(B3LETOBJS)
-	ar -r $(B3LETLIB)/lib$(B3LETLIBN).a $(B3LETOBJS)
+lib: $(FLAGLETLIB)/lib$(FLAGLETLIBN).a
+$(FLAGLETLIB)/lib$(FLAGLETLIBN).a: $(FLAGLETOBJS)
+	ar -r $(FLAGLETLIB)/lib$(FLAGLETLIBN).a $(FLAGLETOBJS)
 
 .PHONY: test
-test: lib $(B3LETBIN)/b3let_test
-$(B3LETBIN)/b3let_test: $(B3LETOBJ)/b3let_test.o $(B3LETLIB)/lib$(B3LETLIBN).a
-	$(CC) $(OPT) $< -o $(B3LETBIN)/b3let_test $(LDFLAGS)
-	$(B3LETBIN)/b3let_test
+test: lib $(FLAGLETBIN)/flaglet_test
+$(FLAGLETBIN)/flaglet_test: $(FLAGLETOBJ)/flaglet_test.o $(FLAGLETLIB)/lib$(FLAGLETLIBN).a
+	$(CC) $(OPT) $< -o $(FLAGLETBIN)/flaglet_test $(LDFLAGS)
+	$(FLAGLETBIN)/flaglet_test
 
 .PHONY: about
-about: $(B3LETBIN)/b3let_about
-$(B3LETBIN)/b3let_about: $(B3LETOBJ)/b3let_about.o 
-	$(CC) $(OPT) $< -o $(B3LETBIN)/b3let_about
-	$(B3LETBIN)/b3let_about
+about: $(FLAGLETBIN)/flaglet_about
+$(FLAGLETBIN)/flaglet_about: $(FLAGLETOBJ)/flaglet_about.o 
+	$(CC) $(OPT) $< -o $(FLAGLETBIN)/flaglet_about
+	$(FLAGLETBIN)/flaglet_about
 
 .PHONY: doc
 doc:
-	$(DOXYGEN_PATH) $(B3LETDIR)/src/doxygen.config
+	$(DOXYGEN_PATH) $(FLAGLETDIR)/src/doxygen.config
 .PHONY: cleandoc
 cleandoc:
-	rm -rf $(B3LETDIR)/doc/html/*
+	rm -rf $(FLAGLETDIR)/doc/html/*
 
 .PHONY: clean
 clean:	tidy cleandoc
-	rm -f $(B3LETLIB)/lib$(B3LETLIBN).a
-	rm -f $(B3LETOBJMEX)/*_mex.$(MEXEXT)
-	rm -f $(B3LETBIN)/b3let_test
-	rm -f $(B3LETBIN)/b3let_about
+	rm -f $(FLAGLETLIB)/lib$(FLAGLETLIBN).a
+	rm -f $(FLAGLETOBJMEX)/*_mex.$(MEXEXT)
+	rm -f $(FLAGLETBIN)/flaglet_test
+	rm -f $(FLAGLETBIN)/flaglet_about
 
 .PHONY: tidy
 tidy:
-	rm -f $(B3LETOBJ)/*.o
-	rm -f $(B3LETOBJMEX)/*.o
+	rm -f $(FLAGLETOBJ)/*.o
+	rm -f $(FLAGLETOBJMEX)/*.o
 	rm -f *~ 
 

@@ -1,5 +1,5 @@
-#ifndef B3LET
-#define B3LET
+#ifndef FLAGLET
+#define FLAGLET
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,7 +12,7 @@
 #include <flag.h>
 #include <s2let.h>
 
-#include "../../src/c/b3let_axisym.h"
-#include "../../src/c/b3let_tilling.h"
+#include "../../src/c/flaglet_axisym.h"
+#include "../../src/c/flaglet_tilling.h"
 
 #endif
