@@ -3,9 +3,12 @@
 // Boris Leistedt & Jason McEwen
 
 #include "flaglet.h"
-
-#define MAX(a,b) ((a) > (b) ? (a) : (b))
-#define MIN(a,b) ((a) < (b) ? (a) : (b))
+#include <stdlib.h>
+#include <math.h>
+#include <complex.h> 
+#include <flag.h>
+#include <s2let.h>
+#include <assert.h>
 
 /*!
  * Allocates arrays for the kernels of the wavelets and the scaling functions (in FLAG space).
@@ -48,9 +51,9 @@ void flaglet_axisym_wav_lmp(double *wav_lmp, double *scal_lmp, int B_l, int B_p,
 	double wav0, scal0;
 
 	double *kappa_ln, *kappa0_ln;
-	flaglet_axisym_allocate_tilling(&kappa_ln, &kappa0_ln, B_l, B_p, L, P);
+	flaglet_axisym_allocate_tiling(&kappa_ln, &kappa0_ln, B_l, B_p, L, P);
 	
-	flaglet_axisym_tilling(kappa_ln, kappa0_ln, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_tiling(kappa_ln, kappa0_ln, B_l, B_p, L, P, J_min_l, J_min_p);
 
 	for (jp = J_min_p; jp <= J_p; jp++){
 		for (jl = J_min_l; jl <= J_l; jl++){

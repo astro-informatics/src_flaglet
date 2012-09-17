@@ -5,6 +5,8 @@
 #ifndef FLAGLET_AXISYM
 #define FLAGLET_AXISYM
 
+#include <complex.h> 
+
 void flaglet_axisym_allocate_f_wav_lmp(complex double **f_wav_lmp, complex double **f_scal_lmp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p);
 
 void flaglet_axisym_allocate_f_wav_multires_lmp(complex double **f_wav_lmp, complex double **f_scal_lmp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p);

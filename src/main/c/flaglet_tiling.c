@@ -3,11 +3,12 @@
 // Boris Leistedt & Jason McEwen
 
 #include "flaglet.h"
-
-#define MAX(a,b) ((a) > (b) ? (a) : (b))
+#include <stdlib.h>
+#include <math.h>
+#include <s2let.h>
 
 /*!
- * Allocates tilling in FLAG - harmonic space.
+ * Allocates tiling in FLAG - harmonic space.
  *
  * \param[out]  kappa_lp Kernel functions for the wavelets.
  * \param[out]  kappa0_lp Kernel for the scaling function.
@@ -17,7 +18,7 @@
  * \param[in]  P Radial harmonic band-limit.
  * \retval none
  */
-void flaglet_axisym_allocate_tilling(double **kappa_lp, double **kappa0_lp, int B_l, int B_p, int L, int P)
+void flaglet_axisym_allocate_tiling(double **kappa_lp, double **kappa0_lp, int B_l, int B_p, int L, int P)
 {
 	int J_l = s2let_j_max(L, B_l);
 	int J_p = s2let_j_max(P, B_p);
@@ -26,7 +27,7 @@ void flaglet_axisym_allocate_tilling(double **kappa_lp, double **kappa0_lp, int 
 }
 
 /*!
- * Allocates tilling in FLAG - harmonic space.
+ * Allocates tiling in FLAG - harmonic space.
  *
  * \param[out]  kappa_lp Kernel functions for the wavelets.
  * \param[out]  kappa0_lp Kernel for the scaling function.
@@ -38,7 +39,7 @@ void flaglet_axisym_allocate_tilling(double **kappa_lp, double **kappa0_lp, int 
  * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void flaglet_axisym_tilling(double *kappa_lp, double *kappa0_lp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+void flaglet_axisym_tiling(double *kappa_lp, double *kappa0_lp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
 	int l, n, jl, jp;
 	int J_l = s2let_j_max(L, B_l);
@@ -48,8 +49,8 @@ void flaglet_axisym_tilling(double *kappa_lp, double *kappa0_lp, int B_l, int B_
 	double *phi2_l = (double*)calloc((J_l+2) * L, sizeof(double));
 	double *phi2_n = (double*)calloc((J_p+2) * P, sizeof(double));
 
-	s2let_tilling_phi2(phi2_l, B_l, L, J_min_l);
-	s2let_tilling_phi2(phi2_n, B_p, P, J_min_p);
+	s2let_tiling_phi2(phi2_l, B_l, L, J_min_l);
+	s2let_tiling_phi2(phi2_n, B_p, P, J_min_p);
 
 	int el_max = ceil(pow(B_l,J_min_l))+1;
 	int en_max = ceil(pow(B_p,J_min_p))+1;
@@ -118,7 +119,7 @@ void flaglet_axisym_tilling(double *kappa_lp, double *kappa0_lp, int B_l, int B_
 }
 
 /*!
- * Checks exactness of the FLAG - harmonic tilling.
+ * Checks exactness of the FLAG - harmonic tiling.
  *
  * \param[in]  kappa_lp Kernel functions for the wavelets.
  * \param[in]  kappa0_lp Kernel for the scaling function.

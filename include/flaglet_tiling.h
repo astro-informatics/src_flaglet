@@ -2,12 +2,14 @@
 // Copyright (C) 2012 
 // Boris Leistedt & Jason McEwen
 
-#ifndef FLAGLET_TILLING
-#define FLAGLET_TILLING
+#ifndef FLAGLET_TILING
+#define FLAGLET_TILING
 
-void flaglet_axisym_allocate_tilling(double **kappa_lp, double **kappa0_lp, int B_l, int B_p, int L, int P);
+#include <complex.h> 
 
-void flaglet_axisym_tilling(double *kappa_lp, double *kappa0_lp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p);
+void flaglet_axisym_allocate_tiling(double **kappa_lp, double **kappa0_lp, int B_l, int B_p, int L, int P);
+
+void flaglet_axisym_tiling(double *kappa_lp, double *kappa0_lp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p);
 
 double flaglet_axisym_check_identity(double *kappa_lp, double *kappa0_lp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p);
 

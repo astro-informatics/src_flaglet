@@ -40,21 +40,21 @@ endif
 
 # === FLAGLET ===
 FLAGLETDIR = .
-FLAGLETLIB = $(FLAGLETDIR)/lib/c
-FLAGLETINC = $(FLAGLETDIR)/include/c
-FLAGLETBIN = $(FLAGLETDIR)/bin/c
+FLAGLETLIB = $(FLAGLETDIR)/lib
+FLAGLETINC = $(FLAGLETDIR)/include
+FLAGLETBIN = $(FLAGLETDIR)/bin
 FLAGLETLIBN= flaglet
-FLAGLETSRC = $(FLAGLETDIR)/src/c
+FLAGLETSRC = $(FLAGLETDIR)/src/main/c
 FLAGLETOBJ = $(FLAGLETSRC)
 
 # === S2LET ===
-S2LETLIB = $(S2LETDIR)/lib/c
-S2LETINC = $(S2LETDIR)/include/c
+S2LETLIB = $(S2LETDIR)/lib
+S2LETINC = $(S2LETDIR)/include
 S2LETLIBN= s2let
 
 # === FLAG ===
-FLAGLIB = $(FLAGDIR)/lib/c
-FLAGINC = $(FLAGDIR)/include/c
+FLAGLIB = $(FLAGDIR)/lib
+FLAGINC = $(FLAGDIR)/include
 FLAGLIBN= flag
 
 # === SSHT ===
@@ -69,28 +69,28 @@ FFTWLIBNM   = fftw3
 
 # ======================================== #
 
-FLAGLETSRCMAT	= $(FLAGLETDIR)/src/matlab
+FLAGLETSRCMAT	= $(FLAGLETDIR)/src/main/matlab
 FLAGLETOBJMAT  = $(FLAGLETSRCMAT)
 FLAGLETOBJMEX  = $(FLAGLETSRCMAT)
 
 vpath %.c $(FLAGLETSRC)
-vpath %.h $(FLAGLETSRC)
+vpath %.h $(FLAGLETINC)
 vpath %_mex.c $(FLAGLETSRCMAT)
 
-LDFLAGS = -L$(FFTWLIB) -l$(FFTWLIBNM) -L$(SSHTLIB) -l$(SSHTLIBN) -L$(FLAGLIB) -l$(FLAGLIBN) -L$(S2LETLIB) -l$(S2LETLIBN) -L$(FLAGLETLIB) -l$(FLAGLETLIBN) -lm
+LDFLAGS = -L$(FLAGLETLIB) -l$(FLAGLETLIBN) -L$(FLAGLIB) -l$(FLAGLIBN) -L$(S2LETLIB) -l$(S2LETLIBN) -L$(FFTWLIB) -l$(FFTWLIBNM) -L$(SSHTLIB) -l$(SSHTLIBN) -lm -lc
 
-LDFLAGSMEX = -I/usr/local/include -L$(FFTWLIB) -l$(FFTWLIBNM) -L$(SSHTLIB) -l$(SSHTLIBN) -L$(FLAGLIB) -l$(FLAGLIBN) -L$(S2LETLIB) -l$(S2LETLIBN) -L$(FLAGLETLIB) -l$(FLAGLETLIBN)
+LDFLAGSMEX = -L$(FLAGLETLIB) -l$(FLAGLETLIBN) -L$(FLAGLIB) -l$(FLAGLIBN) -L$(S2LETLIB) -l$(S2LETLIBN) -I/usr/local/include -L$(FFTWLIB) -l$(FFTWLIBNM) -L$(SSHTLIB) -l$(SSHTLIBN)
 
-FFLAGS  = -I$(FFTWINC) -I$(SSHTINC) -I$(FLAGINC) -I$(S2LETINC) -I$(FLAGLETINC)
+FFLAGS  = -I$(FLAGLETINC) -I$(FFTWINC) -I$(SSHTINC) -I$(FLAGINC) -I$(S2LETINC) 
 
 FLAGLETOBJS= $(FLAGLETOBJ)/flaglet_axisym.o	\
-	$(FLAGLETOBJ)/flaglet_tilling.o
+	$(FLAGLETOBJ)/flaglet_tiling.o
 
-FLAGLETOBJSMAT = $(FLAGLETOBJMAT)/flaglet_axisym_tilling_mex.o	\
+FLAGLETOBJSMAT = $(FLAGLETOBJMAT)/flaglet_axisym_tiling_mex.o	\
 	$(FLAGLETOBJMAT)/flaglet_axisym_analysis_mex.o	\
 	$(FLAGLETOBJMAT)/flaglet_axisym_synthesis_mex.o
 
-FLAGLETOBJSMEX = $(FLAGLETOBJMEX)/flaglet_axisym_tilling_mex.$(MEXEXT)	\
+FLAGLETOBJSMEX = $(FLAGLETOBJMEX)/flaglet_axisym_tiling_mex.$(MEXEXT)	\
 	$(FLAGLETOBJMEX)/flaglet_axisym_analysis_mex.$(MEXEXT)	\
 	$(FLAGLETOBJMEX)/flaglet_axisym_synthesis_mex.$(MEXEXT)
 
@@ -123,20 +123,18 @@ $(FLAGLETLIB)/lib$(FLAGLETLIBN).a: $(FLAGLETOBJS)
 test: lib $(FLAGLETBIN)/flaglet_test
 $(FLAGLETBIN)/flaglet_test: $(FLAGLETOBJ)/flaglet_test.o $(FLAGLETLIB)/lib$(FLAGLETLIBN).a
 	$(CC) $(OPT) $< -o $(FLAGLETBIN)/flaglet_test $(LDFLAGS)
-	$(FLAGLETBIN)/flaglet_test
 
 .PHONY: about
 about: $(FLAGLETBIN)/flaglet_about
 $(FLAGLETBIN)/flaglet_about: $(FLAGLETOBJ)/flaglet_about.o 
 	$(CC) $(OPT) $< -o $(FLAGLETBIN)/flaglet_about
-	$(FLAGLETBIN)/flaglet_about
 
 .PHONY: doc
 doc:
 	$(DOXYGEN_PATH) $(FLAGLETDIR)/src/doxygen.config
 .PHONY: cleandoc
 cleandoc:
-	rm -rf $(FLAGLETDIR)/doc/html/*
+	rm -rf $(FLAGLETDIR)/doc/c/*
 
 .PHONY: clean
 clean:	tidy cleandoc

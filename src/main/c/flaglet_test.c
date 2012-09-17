@@ -4,52 +4,15 @@
 
 #include "flaglet.h"
 #include <assert.h>
-
-#define MAX(a,b) ((a) > (b) ? (a) : (b))
-
-double maxerr_cplx(complex double *a, complex double *b, int size)
-{
-	double value = 0;
-	int i;
-	for(i = 0; i<size; i++){
-		value = MAX( cabs( a[i]-b[i] ), value );
-	}
-	return value;
-}
-
-double ran2_dp(int idum) {
-  int IM1=2147483563,IM2=2147483399,IMM1=IM1-1, 
-    IA1=40014,IA2=40692,IQ1=53668,IQ2=52774,IR1=12211,IR2=3791, 
-    PTAB=32,PDIV=1+IMM1/PTAB;
-
-  double AM=1./IM1,EPS=1.2e-7,RPMX=1.-EPS;
-  int j,k;
-  static int iv[32],iy,idum2 = 123456789; 
-  // P.B. in C static variables are initialised to 0 by default.
-
-  if (idum <= 0) {
-    idum= (-idum>1 ? -idum : 1); // max(-idum,1);
-    idum2=idum;
-    for(j=PTAB+8;j>=1;j--) {
-      k=idum/IQ1;
-      idum=IA1*(idum-k*IQ1)-k*IR1;
-      if (idum < 0) idum=idum+IM1;
-      if (j < PTAB) iv[j-1]=idum;
-    }
-    iy=iv[0];
-  }
-  k=idum/IQ1;
-  idum=IA1*(idum-k*IQ1)-k*IR1;
-  if (idum < 0) idum=idum+IM1;
-  k=idum2/IQ2;
-  idum2=IA2*(idum2-k*IQ2)-k*IR2;
-  if (idum2 < 0) idum2=idum2+IM2;
-  j=1+iy/PDIV;
-  iy=iv[j-1]-idum2;
-  iv[j-1]=idum;
-  if(iy < 1)iy=iy+IMM1;
-  return (AM*iy < RPMX ? AM*iy : RPMX); // min(AM*iy,RPMX);
-}
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <complex.h> 
+#include <time.h>
+#include <flag.h>
+#include <s2let.h>
+#include <ssht.h>
 
 void flaglet_random_flmp(complex double *flmp, int L, int P, int seed)
 {
@@ -83,13 +46,13 @@ void flaglet_random_flmp_real(complex double *flmp, int L, int P, int seed)
  	}
 }
 
-void flaglet_tilling_test(int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+void flaglet_tiling_test(int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {		
 	//double kl, kn;
 	double *kappa_lp, *kappa0_lp;
-	flaglet_axisym_allocate_tilling(&kappa_lp, &kappa0_lp, B_l, B_p, L, P);
+	flaglet_axisym_allocate_tiling(&kappa_lp, &kappa0_lp, B_l, B_p, L, P);
 	
-	flaglet_axisym_tilling(kappa_lp, kappa0_lp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_axisym_tiling(kappa_lp, kappa0_lp, B_l, B_p, L, P, J_min_l, J_min_p);
 	
 	/*
 	int jl, jp, l, n;
@@ -457,8 +420,8 @@ void flaglet_axisym_wav_multires_test(double R, int B_l, int B_p, int L, int P, 
 void flaglet_axisym_wav_multires_real_test(double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p, int seed)
 {
 	clock_t time_start, time_end;
-	int J_l = s2let_j_max(L, B_l);
-	int J_p = s2let_j_max(P, B_p);
+	//int J_l = s2let_j_max(L, B_l);
+	//int J_p = s2let_j_max(P, B_p);
 
 	complex *flmp, *flmp_rec;
 	double *f, *f_rec;
@@ -704,9 +667,6 @@ void flaglet_axisym_wav_multires_performance_test(double R, int NREPEAT, int NSC
 
 int main(int argc, char *argv[]) 
 {
-	const int NREPEAT = 4;
-	const int NSCALE = 3;
-
 	const double R = 1.0;
 	const int L = 16;
 	const int P = 16;
@@ -720,8 +680,8 @@ int main(int argc, char *argv[])
 	printf("PARAMETERS (seed = %i) \n", seed);
 	printf(" L = %i   P = %i   Bl = %i   Bn = %i   Jminl = %i  Jminn = %i \n", L, P, B_l, B_p, J_min_l, J_min_p);
 	printf("----------------------------------------------------------\n");
-	printf("> Testing axisymmetric harmonic tilling...\n");
-	flaglet_tilling_test(B_l, B_p, L, P, J_min_l, J_min_p);
+	printf("> Testing axisymmetric harmonic tiling...\n");
+	flaglet_tiling_test(B_l, B_p, L, P, J_min_l, J_min_p);
 	printf("==========================================================\n");
 	printf("> Testing axisymmetric wavelets in harmonics space...\n");
 	flaglet_axisym_wav_lm_test(B_l, B_p, L, P, J_min_l, J_min_p, seed);
@@ -740,6 +700,9 @@ int main(int argc, char *argv[])
 	printf("----------------------------------------------------------\n");
 	printf("> Testing multiresolution algorithm...\n");
 	flaglet_axisym_wav_multires_real_test(R, B_l, B_p, L, P, J_min_l, J_min_p, seed);
+	/*
+	const int NREPEAT = 4;
+	const int NSCALE = 3;
 	printf("==========================================================\n");
 	printf("> Full resolution wavelet transform : performance tests\n");
 	flaglet_axisym_wav_performance_test(R, NREPEAT, NSCALE, seed, B_l, B_p, J_min_l, J_min_p);
@@ -748,6 +711,7 @@ int main(int argc, char *argv[])
 	printf("> Multiresolution wavelet transform : performance tests\n");
 	flaglet_axisym_wav_multires_performance_test(R, NREPEAT, NSCALE, seed, B_l, B_p, J_min_l, J_min_p);
 	fflush(NULL);
+	*/
 	printf("==========================================================\n");
 	
 	return 0;		
