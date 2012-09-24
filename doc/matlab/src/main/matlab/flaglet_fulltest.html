@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of flaglet_fulltest</title>
+  <meta name="keywords" content="flaglet_fulltest">
+  <meta name="description" content="flaglet_fulltest - Run all tests">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">src</a> &gt; <a href="#">main</a> &gt; <a href="index.html">matlab</a> &gt; flaglet_fulltest.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for src/main/matlab&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>flaglet_fulltest
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>flaglet_fulltest - Run all tests</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> flaglet_fulltest - Run all tests
+
+ flaglet package to perform Wavelets on the Solid Sphere.
+ Copyright (C) 2012  Boris Leistedt &amp; Jason McEwen
+ See LICEPSE.txt for license details</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="flaglet_axisym_analysis.html" class="code" title="function [f_wav, f_scal] = flaglet_axisym_analysis(f, varargin)">flaglet_axisym_analysis</a>	flaglet_axisym_analysis</li><li><a href="flaglet_axisym_synthesis.html" class="code" title="function f = flaglet_axisym_synthesis(f_wav, f_scal, varargin)">flaglet_axisym_synthesis</a>	flaglet_axisym_synthesis</li><li><a href="flaglet_axisym_tiling.html" class="code" title="function [kappa kappa0] = flaglet_axisym_tiling(B_l, B_p, L, P, J_min_l, J_min_p)">flaglet_axisym_tiling</a>	flaglet_axisym_tiling - Compute tiling in l-n harmonic space.</li><li><a href="flaglet_check_axisym_tiling.html" class="code" title="function error_on_axisym_tiling = flaglet_check_axisym_tiling(kappa, kappa0, L, N, B_l, B_n)">flaglet_check_axisym_tiling</a>	flaglet_check_axisym_tiling - Checks exactness of the tiling.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% flaglet_fulltest - Run all tests</span>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% flaglet package to perform Wavelets on the Solid Sphere.</span>
+0004 <span class="comment">% Copyright (C) 2012  Boris Leistedt &amp; Jason McEwen</span>
+0005 <span class="comment">% See LICEPSE.txt for license details</span>
+0006 
+0007 clear all;
+0008 close all;
+0009 
+0010 <span class="comment">% Main parameters</span>
+0011 R = 1.0;
+0012 L = 16;
+0013 P = 16;
+0014 B_l = 3;
+0015 B_p = 2;
+0016 J_min_l = 0;
+0017 J_min_p = 1;
+0018 
+0019 J_l = ceil(log(L) ./ log(B_l))
+0020 J_p = ceil(log(P) ./ log(B_p))
+0021 
+0022 <span class="comment">% Checks tiling of harmonic space for axysimmetric wavelets</span>
+0023 [kappa kappa0] = <a href="flaglet_axisym_tiling.html" class="code" title="function [kappa kappa0] = flaglet_axisym_tiling(B_l, B_p, L, P, J_min_l, J_min_p)">flaglet_axisym_tiling</a>(B_l, B_p, L, P, J_min_l, J_min_p);
+0024 error_on_axisym_tiling = <a href="flaglet_check_axisym_tiling.html" class="code" title="function error_on_axisym_tiling = flaglet_check_axisym_tiling(kappa, kappa0, L, N, B_l, B_n)">flaglet_check_axisym_tiling</a>(kappa, kappa0, L, P, B_l, B_p)
+0025 
+0026 <span class="comment">% Generate random 3D FLAG decomposition</span>
+0027 flmn = zeros(P, L^2);
+0028 flmn = rand(size(flmn)) + sqrt(-1)*rand(size(flmn));
+0029 flmn = 2.*(flmn - (1+sqrt(-1))./2);
+0030 
+0031 <span class="comment">% Generate the corresponding field</span>
+0032 f = flag_synthesis(flmn);
+0033 
+0034 <span class="comment">% Test exactness of 3D Wavelet transform - multiresolution</span>
+0035 [f_wav, f_scal] = <a href="flaglet_axisym_analysis.html" class="code" title="function [f_wav, f_scal] = flaglet_axisym_analysis(f, varargin)">flaglet_axisym_analysis</a>(f);
+0036 f_rec = <a href="flaglet_axisym_synthesis.html" class="code" title="function f = flaglet_axisym_synthesis(f_wav, f_scal, varargin)">flaglet_axisym_synthesis</a>(f_wav, f_scal);
+0037 default = max(max(max(abs(f-f_rec))))
+0038 
+0039 <span class="comment">% Test exactness of 3D Wavelet transform - full resolution</span>
+0040 [f_wav, f_scal] = <a href="flaglet_axisym_analysis.html" class="code" title="function [f_wav, f_scal] = flaglet_axisym_analysis(f, varargin)">flaglet_axisym_analysis</a>(f, <span class="string">'Downsample'</span>, false);
+0041 f_rec = <a href="flaglet_axisym_synthesis.html" class="code" title="function f = flaglet_axisym_synthesis(f_wav, f_scal, varargin)">flaglet_axisym_synthesis</a>(f_wav, f_scal, <span class="string">'Downsample'</span>, false);
+0042 default_fullresolution = max(max(max(abs(f-f_rec))))
+0043 
+0044 <span class="comment">% Test exactness of 3D Wavelet transform - multiresolution</span>
+0045 [f_wav, f_scal] = <a href="flaglet_axisym_analysis.html" class="code" title="function [f_wav, f_scal] = flaglet_axisym_analysis(f, varargin)">flaglet_axisym_analysis</a>(f, <span class="string">'Downsample'</span>, true);
+0046 f_rec = <a href="flaglet_axisym_synthesis.html" class="code" title="function f = flaglet_axisym_synthesis(f_wav, f_scal, varargin)">flaglet_axisym_synthesis</a>(f_wav, f_scal, <span class="string">'Downsample'</span>, true);
+0047 default_multiresolution = max(max(max(abs(f-f_rec))))
+0048 
+0049 <span class="comment">% Test exactness of 3D Wavelet transform - custom values</span>
+0050 [f_wav, f_scal] = <a href="flaglet_axisym_analysis.html" class="code" title="function [f_wav, f_scal] = flaglet_axisym_analysis(f, varargin)">flaglet_axisym_analysis</a>(f, <span class="string">'B_l'</span>, B_l, <span class="string">'B_p'</span>, B_p, <span class="string">'L'</span>, L, <span class="string">'P'</span>, P, <span class="string">'J_min_l'</span>, J_min_l, <span class="string">'J_min_p'</span>, J_min_p, <span class="string">'R'</span>, R);
+0051 f_rec = <a href="flaglet_axisym_synthesis.html" class="code" title="function f = flaglet_axisym_synthesis(f_wav, f_scal, varargin)">flaglet_axisym_synthesis</a>(f_wav, f_scal, <span class="string">'B_l'</span>, B_l, <span class="string">'B_p'</span>, B_p, <span class="string">'L'</span>, L, <span class="string">'P'</span>, P, <span class="string">'J_min_l'</span>, J_min_l, <span class="string">'J_min_p'</span>, J_min_p, <span class="string">'R'</span>, R);
+0052 custom = max(max(max(abs(f-f_rec))))
+0053 
+0054 <span class="comment">% Impose reality on flms.</span>
+0055 <span class="keyword">for</span> en = 1:P
+0056    <span class="keyword">for</span> el = 0:L-1
+0057       ind = el*el + el + 1;
+0058       flmn(en,ind) = real(flmn(en,ind));
+0059       <span class="keyword">for</span> m = 1:el
+0060          ind_pm = el*el + el + m + 1;
+0061          ind_nm = el*el + el - m + 1;
+0062          flmn(en,ind_nm) = (-1)^m * conj(flmn(en,ind_pm));
+0063       <span class="keyword">end</span>  
+0064    <span class="keyword">end</span>
+0065 <span class="keyword">end</span>
+0066 
+0067 <span class="comment">% Generate the corresponding field</span>
+0068 f_real = flag_synthesis(flmn, <span class="string">'reality'</span>, true);
+0069 
+0070 <span class="comment">% Test exactness of 3D Wavelet transform - multiresolution</span>
+0071 [f_wav_real, f_scal_real] = <a href="flaglet_axisym_analysis.html" class="code" title="function [f_wav, f_scal] = flaglet_axisym_analysis(f, varargin)">flaglet_axisym_analysis</a>(f_real, <span class="string">'reality'</span>, true);
+0072 f_real_rec = <a href="flaglet_axisym_synthesis.html" class="code" title="function f = flaglet_axisym_synthesis(f_wav, f_scal, varargin)">flaglet_axisym_synthesis</a>(f_wav_real, f_scal_real, <span class="string">'reality'</span>, true);
+0073 real_default = max(max(max(abs(f_real-f_real_rec))))
+0074 
+0075 <span class="comment">% Test exactness of 3D Wavelet transform - full resolution</span>
+0076 [f_wav_real, f_scal_real] = <a href="flaglet_axisym_analysis.html" class="code" title="function [f_wav, f_scal] = flaglet_axisym_analysis(f, varargin)">flaglet_axisym_analysis</a>(f_real, <span class="string">'Downsample'</span>, false, <span class="string">'reality'</span>, true);
+0077 f_rec = <a href="flaglet_axisym_synthesis.html" class="code" title="function f = flaglet_axisym_synthesis(f_wav, f_scal, varargin)">flaglet_axisym_synthesis</a>(f_wav_real, f_scal_real, <span class="string">'Downsample'</span>, false, <span class="string">'reality'</span>, true);
+0078 real_default_fullresolution = max(max(max(abs(f_real-f_real_rec))))
+0079 
+0080 <span class="comment">% Test exactness of 3D Wavelet transform - multiresolution</span>
+0081 [f_wav_real, f_scal_real] = <a href="flaglet_axisym_analysis.html" class="code" title="function [f_wav, f_scal] = flaglet_axisym_analysis(f, varargin)">flaglet_axisym_analysis</a>(f_real, <span class="string">'Downsample'</span>, true, <span class="string">'reality'</span>, true);
+0082 f_rec = <a href="flaglet_axisym_synthesis.html" class="code" title="function f = flaglet_axisym_synthesis(f_wav, f_scal, varargin)">flaglet_axisym_synthesis</a>(f_wav_real, f_scal_real, <span class="string">'Downsample'</span>, true, <span class="string">'reality'</span>, true);
+0083 real_default_multiresolution = max(max(max(abs(f_real-f_real_rec))))
+0084 
+0085 <span class="comment">% Test exactness of 3D Wavelet transform</span>
+0086 [f_wav_real, f_scal_real] = <a href="flaglet_axisym_analysis.html" class="code" title="function [f_wav, f_scal] = flaglet_axisym_analysis(f, varargin)">flaglet_axisym_analysis</a>(f_real, <span class="string">'B_l'</span>, B_l, <span class="string">'B_p'</span>, B_p, <span class="string">'L'</span>, L, <span class="string">'P'</span>, P, <span class="string">'J_min_l'</span>, J_min_l, <span class="string">'J_min_p'</span>, J_min_p, <span class="string">'R'</span>, R, <span class="string">'reality'</span>, true);
+0087 f_real_rec = <a href="flaglet_axisym_synthesis.html" class="code" title="function f = flaglet_axisym_synthesis(f_wav, f_scal, varargin)">flaglet_axisym_synthesis</a>(f_wav_real, f_scal_real, <span class="string">'B_l'</span>, B_l, <span class="string">'B_p'</span>, B_p, <span class="string">'L'</span>, L, <span class="string">'P'</span>, P, <span class="string">'J_min_l'</span>, J_min_l, <span class="string">'J_min_p'</span>, J_min_p, <span class="string">'R'</span>, R, <span class="string">'reality'</span>, true);
+0088 real_custom = max(max(max(abs(f_real-f_real_rec))))</pre></div>
+<hr><address>Generated on Mon 24-Sep-2012 12:26:33 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

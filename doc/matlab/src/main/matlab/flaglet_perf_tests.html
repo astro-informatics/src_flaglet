@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of flaglet_perf_tests</title>
+  <meta name="keywords" content="flaglet_perf_tests">
+  <meta name="description" content="flaglet_perf_tests">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">src</a> &gt; <a href="#">main</a> &gt; <a href="index.html">matlab</a> &gt; flaglet_perf_tests.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for src/main/matlab&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>flaglet_perf_tests
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>flaglet_perf_tests</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> flaglet_perf_tests</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% flaglet_perf_tests</span>
+0002 
+0003 ell = [ 4 8 16 32 64 128 256 512 ];
+0004 accuracy = [ <span class="keyword">...</span>
+0005     3.49e-15 <span class="keyword">...</span><span class="comment"> % 4</span>
+0006     2.64e-14 <span class="keyword">...</span><span class="comment"> % 8</span>
+0007     9.02e-14 <span class="keyword">...</span><span class="comment"> % 16</span>
+0008     9.08e-13 <span class="keyword">...</span><span class="comment"> % 32</span>
+0009     2.93e-12 <span class="keyword">...</span><span class="comment"> % 64</span>
+0010     2.56e-11 <span class="keyword">...</span><span class="comment"> % 128</span>
+0011     1.1e-10 <span class="keyword">...</span><span class="comment"> % 256</span>
+0012     4.56e-10 <span class="keyword">...</span><span class="comment"> % 512</span>
+0013     ];
+0014 speed = [ <span class="keyword">...</span>
+0015     0.0036 <span class="keyword">...</span><span class="comment">  % 4</span>
+0016     0.022 <span class="keyword">...</span><span class="comment"> % 8</span>
+0017     0.3 <span class="keyword">...</span><span class="comment"> % 16</span>
+0018     3.3 <span class="keyword">...</span><span class="comment"> % 32</span>
+0019     50.0 <span class="keyword">...</span><span class="comment"> % 64</span>
+0020     880 <span class="keyword">...</span><span class="comment"> % 128</span>
+0021     10000 <span class="keyword">...</span><span class="comment"> % 256</span>
+0022     110000 <span class="keyword">...</span><span class="comment"> % 512</span>
+0023     ];
+0024 accuracy_multires = [ <span class="keyword">...</span>
+0025     3.31e-15 <span class="keyword">...</span><span class="comment"> % 4</span>
+0026     2.27e-14 <span class="keyword">...</span><span class="comment"> % 8</span>
+0027     8.42e-14 <span class="keyword">...</span><span class="comment"> % 16</span>
+0028     8.15e-13 <span class="keyword">...</span><span class="comment"> % 32</span>
+0029     2.86e-12 <span class="keyword">...</span><span class="comment"> % 64</span>
+0030     2.35e-11 <span class="keyword">...</span><span class="comment"> % 128</span>
+0031     1.1e-10 <span class="keyword">...</span><span class="comment"> % 256</span>
+0032     4.56e-10 <span class="keyword">...</span><span class="comment"> % 512</span>
+0033     ];
+0034 speed_multires = [ <span class="keyword">...</span>
+0035     0.00030 <span class="keyword">...</span><span class="comment">  % 4</span>
+0036     0.005 <span class="keyword">...</span><span class="comment"> % 8</span>
+0037     0.08 <span class="keyword">...</span><span class="comment"> % 16</span>
+0038     0.65 <span class="keyword">...</span><span class="comment"> % 32</span>
+0039     8.0 <span class="keyword">...</span><span class="comment"> % 64</span>
+0040     120 <span class="keyword">...</span><span class="comment"> % 128</span>
+0041     2300 <span class="keyword">...</span><span class="comment"> % 256</span>
+0042     23000 <span class="keyword">...</span><span class="comment"> % 512</span>
+0043     ];
+0044 
+0045 nb_samples = 2*ell.^3;
+0046 nb_samples_pow = str2mat(<span class="string">'t04'</span>, <span class="string">'t07'</span>, <span class="string">'t10'</span>, <span class="string">'t13'</span>, <span class="string">'t16'</span>, <span class="string">'t19'</span>, <span class="string">'t22'</span>, <span class="string">'t25'</span>, <span class="string">'t28'</span>);
+0047 
+0048 figure(<span class="string">'Position'</span>,[100 100 700 700])
+0049 
+0050 subplot(2,1,1)
+0051 loglog( nb_samples, (1e-14)*ell.^2, <span class="string">'red'</span>,<span class="string">'LineWidth'</span>, 2 )
+0052 hold on
+0053 loglog( nb_samples, accuracy, <span class="string">'--oblack'</span>, <span class="string">'LineWidth'</span>, 2, <span class="string">'MarkerSize'</span>,10)
+0054 loglog( nb_samples, accuracy_multires, <span class="string">'-oblack'</span>, <span class="string">'LineWidth'</span>, 2, <span class="string">'MarkerSize'</span>,10)
+0055 grid on
+0056 xlabel(<span class="string">'x1'</span>,<span class="string">'FontSize'</span>,20)
+0057 ylabel(<span class="string">'y1'</span>,<span class="string">'FontSize'</span>,20)
+0058 set(gca,<span class="string">'XTick'</span>,nb_samples,<span class="string">'XTickLabel'</span>,nb_samples_pow,<span class="string">'FontSize'</span>,20)
+0059 set(gca,<span class="string">'YTick'</span>,[1e-16 1e-14 1e-12  1e-10 1e-8] ,<span class="string">'FontSize'</span>,20)
+0060 axis([80 1.5*nb_samples(8) 1e-16 1e-8])
+0061 
+0062 <span class="comment">%title('Accuracy of overall transform','FontSize',20)</span>
+0063 
+0064 subplot(2,1,2)
+0065 loglog( nb_samples, (5e-5)*ell.^4, <span class="string">'red'</span>,<span class="string">'LineWidth'</span>, 2 )
+0066 hold on
+0067 loglog( nb_samples, speed, <span class="string">'--oblack'</span>, <span class="string">'LineWidth'</span>, 2, <span class="string">'MarkerSize'</span>,10)
+0068 loglog( nb_samples, speed_multires, <span class="string">'-oblack'</span>, <span class="string">'LineWidth'</span>, 2, <span class="string">'MarkerSize'</span>,10)
+0069 grid on
+0070 xlabel(<span class="string">'x2'</span>,<span class="string">'FontSize'</span>,20)
+0071 ylabel(<span class="string">'y2'</span>,<span class="string">'FontSize'</span>,20)
+0072 axis([80 1.5*nb_samples(8) 1e-5 2e7])
+0073 set(gca,<span class="string">'YTick'</span>,[1e-6 1e-4 1e-2  1e0 1e2 1e4 1e6] ,<span class="string">'FontSize'</span>,20)
+0074 set(gca,<span class="string">'XTick'</span>,nb_samples,<span class="string">'XTickLabel'</span>,nb_samples_pow,<span class="string">'FontSize'</span>,20)
+0075 <span class="comment">%title('Speed of overall transform','FontSize',20)</span>
+0076</pre></div>
+<hr><address>Generated on Mon 24-Sep-2012 12:26:33 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

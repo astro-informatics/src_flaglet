@@ -1,0 +1,178 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of flaglet_plot_axisym_tilling</title>
+  <meta name="keywords" content="flaglet_plot_axisym_tilling">
+  <meta name="description" content="flaglet_plot_axisym_tilling - Plot tilling in harmonic space.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">src</a> &gt; <a href="#">main</a> &gt; <a href="index.html">matlab</a> &gt; flaglet_plot_axisym_tilling.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for src/main/matlab&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>flaglet_plot_axisym_tilling
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>flaglet_plot_axisym_tilling - Plot tilling in harmonic space.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function flaglet_plot_axisym_tilling(B_l, B_n, L, N, J_min_l, J_min_n) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> flaglet_plot_axisym_tilling - Plot tilling in harmonic space.
+ -- Axisymmetric wavelets on the solid sphere.
+
+ Default usage :
+
+   flaglet_plot_axisym_tilling(B_l, B_n, L, N, J_min_l, J_min_n)
+
+ B_l is the wavelet parameter for angular space,
+ B_n is the wavelet parameter for radial space,
+ L is the angular band-limit,
+ N is the radial band-limit,
+ J_min_l the first angular wavelet scale to use,
+ J_min_n the first radial wavelet scale to use.
+
+ B3LET package to perform Wavelet transform on the Solid Sphere.
+ Copyright (C) 2012  Boris Leistedt &amp; Jason McEwen
+ See LICENSE.txt for license details</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function flaglet_plot_axisym_tilling(B_l, B_n, L, N, J_min_l, J_min_n)</a>
+0002 
+0003 <span class="comment">% flaglet_plot_axisym_tilling - Plot tilling in harmonic space.</span>
+0004 <span class="comment">% -- Axisymmetric wavelets on the solid sphere.</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% Default usage :</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">%   flaglet_plot_axisym_tilling(B_l, B_n, L, N, J_min_l, J_min_n)</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% B_l is the wavelet parameter for angular space,</span>
+0011 <span class="comment">% B_n is the wavelet parameter for radial space,</span>
+0012 <span class="comment">% L is the angular band-limit,</span>
+0013 <span class="comment">% N is the radial band-limit,</span>
+0014 <span class="comment">% J_min_l the first angular wavelet scale to use,</span>
+0015 <span class="comment">% J_min_n the first radial wavelet scale to use.</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">% B3LET package to perform Wavelet transform on the Solid Sphere.</span>
+0018 <span class="comment">% Copyright (C) 2012  Boris Leistedt &amp; Jason McEwen</span>
+0019 <span class="comment">% See LICENSE.txt for license details</span>
+0020 
+0021 [kappa kappa0] = flaglet_axisym_tilling(B_l, B_n, L, N, J_min_l, J_min_n);
+0022 [kappa_l kappa0_l] = s2let_axisym_tilling_mex(B_l, L, J_min_l);
+0023 [kappa_n kappa0_n] = s2let_axisym_tilling_mex(B_n, N, J_min_n);
+0024 
+0025 J_l = s2let_jmax(L, B_l);
+0026 J_n = s2let_jmax(N, B_n);
+0027 
+0028 figure(<span class="string">'Position'</span>,[100 100 1000 1000])<span class="comment">%figure('Position',[1 1 1000 1000])</span>
+0029 
+0030 colours_n = zeros((J_n+2),3);
+0031 hax = axes(<span class="string">'Position'</span>, [.05, .05, .27, .55]);
+0032 colours_n(1,:) = rand(1,3)*0.8+0.2;
+0033 plot(0:N-1, kappa0_n, <span class="string">'k'</span>, <span class="string">'LineWidth'</span>, 4, <span class="string">'Color'</span>, colours_n(1,:));
+0034 hold on;
+0035 <span class="keyword">for</span> jn = J_min_n:J_n  
+0036   colours_n(jn+2,:) = rand(1,3)*0.8+0.2;
+0037   plot(0:N-1, kappa_n(jn+1,:), <span class="string">'LineWidth'</span>, 4, <span class="string">'Color'</span>, colours_n(jn+2,:));
+0038 <span class="keyword">end</span>
+0039 set(gca,<span class="string">'FontSize'</span>,20);
+0040 axis([0 N-1 0 1.2])
+0041 set(gca,<span class="string">'YTick'</span>,[0 1]);
+0042 set(gca,<span class="string">'LineWidth'</span>,4);
+0043 <span class="comment">%xlabel('x1')</span>
+0044 <span class="comment">%ylabel('y1')</span>
+0045 view(-90,90)
+0046 <span class="comment">%hold off</span>
+0047 
+0048 colours_l = zeros((J_l+2),3);
+0049 hax = axes(<span class="string">'Position'</span>, [.40, .67, .55, .27]);
+0050 colours_l(1,:) = rand(1,3)*0.8+0.2;
+0051 plot(0:L-1, kappa0_l, <span class="string">'k'</span>, <span class="string">'LineWidth'</span>, 4, <span class="string">'Color'</span>, colours_l(1,:));
+0052 hold on;
+0053 <span class="keyword">for</span> jl = J_min_l:J_l
+0054   colours_l(jl+2,:) = rand(1,3)*0.8+0.2;
+0055   plot(0:L-1, kappa_l(jl+1,:), <span class="string">'LineWidth'</span>, 4, <span class="string">'Color'</span>, colours_l(jl+2,:));
+0056 <span class="keyword">end</span>
+0057 set(gca,<span class="string">'FontSize'</span>,20);
+0058 set(gca,<span class="string">'YTick'</span>,[0 1]);
+0059 set(gca,<span class="string">'LineWidth'</span>,4);
+0060 <span class="comment">%xlabel('x2')</span>
+0061 <span class="comment">%ylabel('y2')</span>
+0062 axis([0 L-1 0 1.2])
+0063 hold off
+0064 
+0065 colours = zeros((J_l+1)*(J_n+1),3);
+0066 
+0067 <span class="comment">%figure('Position',[100 100 1000 1000])</span>
+0068 
+0069 hax = axes(<span class="string">'Position'</span>, [.40, .05, .54, .55]);
+0070 colour = 0.5* colours_n(1,:).*colours_l(1,:);
+0071 surf(0:L-1, 0:N-1, kappa0, <span class="string">'FaceColor'</span>, colour, <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);<span class="comment">%,'FaceAlpha','flat', ...</span>
+0072         <span class="comment">%'AlphaDataMapping','none','AlphaData',(kappa0));</span>
+0073 hold on;
+0074 <span class="keyword">for</span> jl = J_min_l:J_l 
+0075     <span class="keyword">for</span> jn = J_min_n:J_n 
+0076         temp = kappa{jl+1,jn+1};
+0077         colours((jn)*(J_l+1)+jl+1,:) = colours_n(jn+2,:).*colours_l(jl+2,:);<span class="comment">%rand(1,3)*0.9;</span>
+0078         surf(0:L-1, 0:N-1, temp, <span class="string">'FaceColor'</span>, colours((jn)*(J_l+1)+jl+1,:), <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);<span class="comment">%,'FaceAlpha','flat', ...</span>
+0079         <span class="comment">%'AlphaDataMapping','none','AlphaData',(temp));</span>
+0080     <span class="keyword">end</span>
+0081 <span class="keyword">end</span>
+0082 surf(0:L-1, 0:N-1, zeros(N,L), <span class="string">'FaceColor'</span>, <span class="string">'black'</span>,<span class="string">'EdgeColor'</span>, <span class="string">'none'</span>)
+0083 axis([0 L-1 0 N-1 0 1.2])
+0084 <span class="comment">%xlabel('x3')</span>
+0085 <span class="comment">%ylabel('y3')</span>
+0086 set(gca,<span class="string">'FontSize'</span>,20);
+0087 set(gca,<span class="string">'LineWidth'</span>,4);
+0088 view(0,90)
+0089 colormap jet
+0090 <span class="comment">%alpha(.6)</span>
+0091 hold off
+0092 
+0093 hax = axes(<span class="string">'Position'</span>, [.05, .65, .3, .3]);
+0094 surf(0:L-1, 0:N-1, kappa0, <span class="string">'FaceColor'</span>, colour, <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);<span class="comment">%,'FaceAlpha','flat', ...</span>
+0095         <span class="comment">%'AlphaDataMapping','none','AlphaData',(kappa0));</span>
+0096 hold on;
+0097 <span class="keyword">for</span> jl = J_min_l:J_l 
+0098     <span class="keyword">for</span> jn = J_min_n:J_n 
+0099         temp = kappa{jl+1,jn+1};
+0100         surf(0:L-1, 0:N-1, temp, <span class="string">'FaceColor'</span>, colours((jn)*(J_l+1)+jl+1,:), <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);<span class="comment">%,'FaceAlpha','flat', ...</span>
+0101         <span class="comment">%'AlphaDataMapping','none','AlphaData',(temp));</span>
+0102     <span class="keyword">end</span>
+0103 <span class="keyword">end</span>
+0104 surf(0:L-1, 0:N-1, zeros(N,L), <span class="string">'FaceColor'</span>, <span class="string">'black'</span>,<span class="string">'EdgeColor'</span>, <span class="string">'none'</span>)
+0105 axis([0 L-1 0 N-1 0 1.2])
+0106 view(135,45)
+0107 set(gca,<span class="string">'FontSize'</span>,20);
+0108 set(gca,<span class="string">'LineWidth'</span>,4);
+0109 <span class="comment">%xlabel('x4')</span>
+0110 <span class="comment">%ylabel('y4')</span>
+0111 colormap hot(256)
+0112 <span class="comment">%=alpha(.6)</span>
+0113 hold off
+0114 
+0115 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 24-Sep-2012 12:26:33 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

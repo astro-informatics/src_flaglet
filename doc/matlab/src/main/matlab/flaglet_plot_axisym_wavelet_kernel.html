@@ -1,0 +1,124 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of flaglet_plot_axisym_wavelet_kernel</title>
+  <meta name="keywords" content="flaglet_plot_axisym_wavelet_kernel">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">src</a> &gt; <a href="#">main</a> &gt; <a href="index.html">matlab</a> &gt; flaglet_plot_axisym_wavelet_kernel.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for src/main/matlab&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>flaglet_plot_axisym_wavelet_kernel
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function flaglet_plot_axisym_wavelet_kernel(kappa_ln, R, Rplot, P) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="flaglet_demo1.html" class="code" title="">flaglet_demo1</a>	flaglet_demo1</li><li><a href="flaglet_demo2.html" class="code" title="">flaglet_demo2</a>	flaglet_demo2</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function flaglet_plot_axisym_wavelet_kernel(kappa_ln, R, Rplot, P)</a>
+0002 
+0003 sz = size(kappa_ln);
+0004 N = sz(1);
+0005 L = sz(2);
+0006 
+0007 flmn = zeros(N,L^2);
+0008 <span class="keyword">for</span> l = 0:L-1
+0009     <span class="keyword">for</span> n = 0:N-1
+0010         flmn(n + 1, l^2 + l + 1) = kappa_ln(n+1,l+1);
+0011     <span class="keyword">end</span>
+0012 <span class="keyword">end</span>
+0013 
+0014 h = (R/(P));
+0015 rs = 0:h:R ;
+0016 [~, thetas, ~] = flag_sampling(L, N, 1.0);
+0017 
+0018 ind = find(rs &lt;= Rplot);
+0019 nind = length(ind);
+0020 
+0021 thetas = pi/2 - thetas; 
+0022 thetas = [ pi/2 thetas -pi-fliplr(thetas(1:L-1)) pi/2 ];
+0023 
+0024 f = (flag_synthesis(flmn, <span class="string">'Nodes'</span>, rs, <span class="string">'reality'</span>, true));
+0025 f(1:3,:,:) = 0.0;
+0026 
+0027 [rs, thetas] = ndgrid(rs(ind),thetas);
+0028 x = rs .* cos(thetas);
+0029 y = rs .* sin(thetas);
+0030 
+0031 v = zeros(nind,2*L+1);
+0032 v(:,1) = f(ind,1,1);
+0033 v(:,2:(L+1)) = f(ind,:,L);
+0034 v(:,(L+2):(2*L)) = fliplr(f(ind,1:L-1,1));
+0035 v(:,2*L+1) = f(ind,1,1);
+0036 
+0037 <span class="comment">%size(x)</span>
+0038 <span class="comment">%size(y)</span>
+0039 <span class="comment">%size(v)</span>
+0040 
+0041 ind_neg = find(v &lt; 0);
+0042 v(ind_neg) = v(ind_neg) / abs(min(min(min(v))));
+0043  
+0044 ind_pos = find(v &gt; 0);
+0045 v(ind_pos) = v(ind_pos) / max(max(max(v)));
+0046 
+0047 <span class="comment">%[min(min(min(v))), max(max(max(v)))]</span>
+0048 <span class="comment">%limit = max( [ -min(min(min(v))) max(max(max(v))) ]) ;</span>
+0049 <span class="comment">%levels = -limit:(2*limit/nlevels):limit ;</span>
+0050 <span class="comment">%levels = -1:(2/nlevels):1 ;</span>
+0051 
+0052 p = polar([0 2*pi], [0 Rplot]);
+0053 grid off
+0054 hold on
+0055 surface(x, y, zeros(size(x)), v, <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);
+0056 <span class="comment">%colorbar</span>
+0057 ph=findall(gca,<span class="string">'type'</span>,<span class="string">'text'</span>); 
+0058 ps=get(ph,<span class="string">'string'</span>); 
+0059 <span class="comment">%disp([num2cell(1:numel(ps)).',ps]);</span>
+0060 ps(1:numel(ps))={<span class="string">''</span>}; 
+0061 <span class="comment">%ps(16:19)={''};</span>
+0062 ps(4:11)={ 
+0063           <span class="string">'90'</span>
+0064           <span class="string">'-90'</span>
+0065           <span class="string">''</span>
+0066           <span class="string">''</span>
+0067           <span class="string">''</span>
+0068           <span class="string">''</span>
+0069           <span class="string">'180'</span>
+0070           <span class="string">'0'</span>
+0071      }; 
+0072 
+0073 set(ph,{<span class="string">'string'</span>},ps); 
+0074 delete(findall(ancestor(p,<span class="string">'figure'</span>),<span class="string">'HandleVisibility'</span>,<span class="string">'off'</span>,<span class="string">'type'</span>,<span class="string">'line'</span>));
+0075 delete(p)
+0076 <span class="comment">%axis([-Rplot Rplot -Rplot+0.2 Rplot+0.2])</span>
+0077 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 24-Sep-2012 12:26:33 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

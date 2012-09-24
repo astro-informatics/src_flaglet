@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+<meta name="description" content="Flaglet: exact wavelets on the ball" />
+<meta name="keywords" content="FLAGLET, spherical, harmonics, spherical
+harmonics, sphere, transforms, fourier, fast, algorithms, mcewen, leistedt, wavelets, tilling" />
+<meta name="author" content="Boris Leistedt & Jason McEwen" />
+<link rel="stylesheet" type="text/css" href="style.css" title="1024px style" media="screen,projection" />
+<title>FLAGLET:C</title>
+</head>
+
+<body>
+<div id="wrap">
+
+  
+<!--------------------------- HEADER --------------------------->
+<div id="header">
+
+  <p id="toplinks">
+  <a href="index.html">Introduction</a> |
+  <a href="index.html#routines">Flaglets</a> |
+  <a href="index.html#installation">Installation</a> |
+  <a href="c_doc.html">C</a> |
+  <a href="matlab_doc.html">Matlab</a> |
+  <a href="index.html#download">Download</a> |
+  <a href="index.html#referencing">Referencing</a> |  
+  <a href="index.html#version">Version</a> |
+  <a href="index.html#license">License</a> |
+  <a href="index.html#authors">Authors</a> 
+  </p>
+
+  <table border="0" cellspacing="0">
+    <tr>
+      <td width=200 align="right" valign="top">
+	<img src="images/logo.jpg" width="140" height="140" border=0> 
+      </td>
+      <td width=500 align="left" valign="center">
+	<h1 class="title">FLAGLET<span class="fade">1.0</span></h1>
+	<p id="slogantitle">Installing and using the C library</p>
+      </td>			
+    </tr>
+  </table>
+
+</div>
+
+
+<!--------------------------- SIDEBAR --------------------------->
+<div id="sidebar">
+
+
+<h2>Source documentation</h2>
+
+<ul>
+<li><a href="c/files.html">C source documentation</a></li>
+<li><a href="matlab/index.html">Matlab source documentation</a></li>
+</ul>
+
+
+<h2>Brief release notes</h2>
+
+<ul>
+<li><strong>Version 1.0</strong><br />
+	<ul>
+	<li>Flaglet transform operational and tested.</li>
+	</ul>
+</li>
+</ul>
+
+</div>
+
+
+<!--------------------------- CONTENT --------------------------->
+<div id="content">
+
+<!--------------------------------------------------------------->
+<a name="introduction"><h2>Introduction</h2></a>
+
+  <p> <strong>FLAGLET/strong> provides user-friendly routines for performing an exact FLAGLETlet transform (i.e. Fourier-Laguerre wavelets) of real and complex signals on the ball.</p> 
+
+<br>
+
+<!--------------------------------------------------------------->  
+<a name="installation"><h2>Installation</h2></a>
+
+  <p> The core functionalities of <strong>FLAGLET</strong> are written in C and self-documented. The C library requires the <strong>FLAG</strong>, <strong>S2LET</strong>, <a
+ href="http://www.mrao.cam.ac.uk/~jdm57/ssht/index.html">SSHT</a> and <a
+ href="http://www.fftw.org/">FFTW</a> packages.  Obviously suitable C and Fortran 90 compilers will be required to build the respective
+ implementations.  Both C and Matlab mex compilers will be required
+ to build the Matlab interface. The Java interfaces are pre-compiled and provided in a self-contained jar.</p>
+
+  <h4>Compiling</h4>
+
+  <p> Makefiles are provided to build the code. However the locations of <strong>FLAG</strong>, <strong>S2LET</strong>, <strong>SSHT</strong> and <strong>FFTW</strong> must be specified. In <strong>FLAGLET</strong> the default Makefile will look at these symbols in Bash/Shell profiles. Alternatively you may declare them explicitely in the first section of the makefile. The compilers and their options may also be changed in the Makefile. 
+
+  <p> Once you have set the Makefile up for your system,
+  <strong>FLAGLET</strong> may be compiled by running:
+
+  <pre> >> make all</pre> 
+
+  <p> This will build the C library, Matlab interface, test programs, high-level programs and documentation. We recommend to run the tests (flaglet_test) to check that compilation worked and that the transform achieves floating-point precision.
+
+  <p> You may alternatively build the individual components of
+  <strong>FLAGLET</strong>.  To build the library only run:
+  <pre> >> make lib</pre> 
+  <p> To build the test framework for the exact flaglet transform run:
+  <pre> >> make test</pre> 
+  <p> To build the Matlab interfaces:
+  <pre> >> make matlab</pre>
+
+  <h4>Documentation</h4>
+
+  <p>
+  The <strong>FLAGLET</strong> code is self documenting.  Although the package
+  ships with <a href="#documentation">source documentation</a>, you may generate html source
+  documentation by running:
+  <pre> >> make doc</pre>
+
+  <p> Documentation is generated using <a
+   href="http://www.doxygen.org">doxygen</a>, thus you must have doxygen
+  installed on your system to generate the source documentation.
+
+
+  <h4>Cleaning up</h4>
+
+  <p> To tidy up all temporary files and objects run:
+  <pre> >> make tidy</pre>
+  <p> To remove all compiled files and programs run:
+  <pre> >> make clean</pre>
+
+  <p> To remove all source documentation run:
+  <pre> >> make cleandoc</pre>
+<br>
+<br>
+
+<!--------------------------------------------------------------->
+<a name="documentation"><h2>Source code documentation</h2></a>
+
+  <p>
+  <strong>FLAGLET</strong> ships with source documentation that is
+  generated by <a href="http://www.doxygen.org">doxygen</a>.
+  The C documentation is available <a href="c/files.html">here</a>.  The
+  Matlab routines that interface with the C implementation are self
+  documenting (documentation can be access through the help command in
+  Matlab), as discussed below. </p>
+
+<br>
+
+<!--------------------------------------------------------------->
+<a name="example"><h2>Testing and using the library</h2></a>
+
+
+  <p> A test program may be run to test and familiarize yourself with the framework. It is extensively documented and may serve as starting point to learn to use the functionalities of <strong>FLAGLET</strong>. The command
+  <pre> >> ./bin/flaglet_test</pre>
+	<p>will run various performance and accuracy tests for the spherical Laguerre and Fourier-Laguerre transform as well as for the sampling theorems.
+
+ <p>Finally, to check the version and build numbers of your version run:
+  <pre> >> ./bin/flaglet_about </pre>
+
+<br><br><br><br><br><br><br>
+
+</div>
+
+<!--------------------------- FOOTER --------------------------->
+<div id="footer">
+
+  <p>
+  <a href="#header">Back to top</a><br >
+  
+  <p>&copy; 2012 <a href="http://www.ixkael.com/blog">Boris Leistedt</a> & <a href="http://www.jasonmcewen.org">Jason McEwen</a> | Design by
+  <a href="http://andreasviklund.com/">Andreas Viklund</a> </p>
+
+
+
+</div>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of flaglet_denoising_demo2</title>
+  <meta name="keywords" content="flaglet_denoising_demo2">
+  <meta name="description" content="flaglet_denoising_demo2">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">src</a> &gt; <a href="#">main</a> &gt; <a href="index.html">matlab</a> &gt; flaglet_denoising_demo2.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for src/main/matlab&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>flaglet_denoising_demo2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>flaglet_denoising_demo2</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> flaglet_denoising_demo2
+ Denoising example (large-scale structure data)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="flaglet_axisym_analysis.html" class="code" title="function [f_wav, f_scal] = flaglet_axisym_analysis(f, varargin)">flaglet_axisym_analysis</a>	flaglet_axisym_analysis</li><li><a href="flaglet_axisym_synthesis.html" class="code" title="function f = flaglet_axisym_synthesis(f_wav, f_scal, varargin)">flaglet_axisym_synthesis</a>	flaglet_axisym_synthesis</li><li><a href="flaglet_plot_f.html" class="code" title="function flaglet_plot_f( f, varargin )">flaglet_plot_f</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% flaglet_denoising_demo2</span>
+0002 <span class="comment">% Denoising example (large-scale structure data)</span>
+0003 
+0004 <span class="comment">% Resolution parameters</span>
+0005 L = 128 ;
+0006 P = 128 ;
+0007 
+0008 <span class="comment">% Load LSS data</span>
+0009 load(<span class="string">'lss_flmp_312'</span>)
+0010 R = 420;
+0011 
+0012 f_lmp = zeros(P, L^2);
+0013 f_lmp(:,:) = f_lmp_full(1:P, 1:L^2);
+0014 
+0015 disp(<span class="string">'Flag_synthesis...'</span>)
+0016 f = flag_synthesis(f_lmp, <span class="string">'R'</span>, R, <span class="string">'reality'</span>, true);
+0017 
+0018 <span class="comment">% Wavelet decomposition parameters</span>
+0019 Downsample = true;
+0020 B_l = 2 ;
+0021 B_p = 2 ;
+0022 J_min_l = 0 ;
+0023 J_min_p = 0 ;
+0024 J_l = ceil(log(L) ./ log(B_l))
+0025 J_p = ceil(log(P) ./ log(B_p))
+0026 
+0027 disp(<span class="string">'Compute tilling of harmonic space...'</span>)
+0028 [kappa kappa0] = flaglet_axisym_tilling(B_l, B_p, L, P, J_min_l, J_min_p);
+0029 
+0030 disp(<span class="string">'Find noise covariance from SNR'</span>)
+0031 SNR_ini = 8.0;
+0032 f_power = sum(sum(abs(f_lmp).^2));
+0033 noise_power = f_power * ( 10.0^(-SNR_ini/10.0) );
+0034 factor = sum( ((1:P)./P).^2 ) * L * L ;
+0035 sigma_noise = sqrt( noise_power / factor )
+0036 
+0037 disp(<span class="string">'Generate random noise n_lmp of std dev sigma'</span>)
+0038 n_lmp = sigma_noise * randn(P, L^2);
+0039     <span class="keyword">for</span> en = 1:P
+0040       <span class="keyword">for</span> el = 0:L-1
+0041         ind = ssht_elm2ind(el, 0);
+0042         n_lmp(en,ind) = sigma_noise .* randn * (en/P) ;
+0043         <span class="keyword">for</span> m = 1:el
+0044           ind = ssht_elm2ind(el, m);
+0045           n_lmp(en,ind) = <span class="keyword">...</span>
+0046             sqrt(sigma_noise^2./2) .* randn * (en/P)  <span class="keyword">...</span>
+0047             + sqrt(-1) * sqrt(sigma_noise^2./2) .* randn * (en/P)  ;
+0048         <span class="keyword">end</span>
+0049       <span class="keyword">end</span>
+0050     <span class="keyword">end</span>
+0051     
+0052 noise_power = sum(sum(abs(n_lmp).^2));
+0053 SNR_before = 10*log10( f_power / noise_power )
+0054 
+0055 disp(<span class="string">'Construct the noise in real space...'</span>)
+0056 initial_noise = flag_synthesis(n_lmp, <span class="string">'R'</span>, R, <span class="string">'Reality'</span>, true);
+0057 
+0058 disp(<span class="string">'Add the noise to the initial dataset'</span>)
+0059 <span class="comment">%g_lmp = f_lmp + n_lmp ;</span>
+0060 g = f + initial_noise ;
+0061 
+0062 disp(<span class="string">'Perform wavelet decomposition...'</span>)
+0063 [g_wav, g_scal] = <a href="flaglet_axisym_analysis.html" class="code" title="function [f_wav, f_scal] = flaglet_axisym_analysis(f, varargin)">flaglet_axisym_analysis</a>(g, <span class="string">'B_l'</span>, B_l, <span class="string">'B_p'</span>, B_p, <span class="string">'L'</span>, L, <span class="string">'P'</span>, P, <span class="string">'J_min_l'</span>, J_min_l, <span class="string">'J_min_p'</span>, J_min_p, <span class="string">'Reality'</span>, true, <span class="string">'Downsample'</span>, Downsample);
+0064 
+0065 disp(<span class="string">'Construct noise model...'</span>)
+0066 noisemodel = cell(J_l+1, J_p+1);
+0067 <span class="keyword">for</span> jl = J_min_l:J_l
+0068     <span class="keyword">if</span> Downsample == true
+0069         bandlimit_l = min([ ceil(B_l^(jl+1)) L ]);
+0070     <span class="keyword">else</span>
+0071         bandlimit_l = L;
+0072     <span class="keyword">end</span>
+0073     <span class="keyword">for</span> jp = J_min_p:J_p
+0074         <span class="keyword">if</span> Downsample == true
+0075             bandlimit_p = min([ ceil(B_p^(jp+1)) P ]);
+0076         <span class="keyword">else</span>
+0077             bandlimit_p = P;
+0078         <span class="keyword">end</span>
+0079         [jl, jp]
+0080         temp = kappa{jl+1,jp+1};  
+0081         contrib = zeros(1, bandlimit_p);
+0082         nodes = slag_sampling(bandlimit_p, R);
+0083         <span class="keyword">for</span> r = 0:bandlimit_p-1
+0084             birs = [nodes(r+1), R];
+0085             <span class="keyword">for</span> n = 0:bandlimit_p-1
+0086                 fn = zeros(1,P);
+0087                 fn(n+1) = 1.0;
+0088                 [K_n_s, ~] = slag_synthesis(fn, <span class="string">'Nodes'</span>, birs) ;
+0089                 K_n_s = K_n_s(1);
+0090                 <span class="keyword">for</span> l = 0:bandlimit_l-1
+0091                     contrib(r+1) = <span class="keyword">...</span>
+0092                         contrib(r+1) + ((2*l+1)/(4*pi)) * (n/P) * (  K_n_s  * temp(n+1,l+1)).^2 ;
+0093                 <span class="keyword">end</span>
+0094                   
+0095             <span class="keyword">end</span>
+0096         <span class="keyword">end</span>
+0097         noisemodel{jl+1,jp+1} = sigma_noise * sqrt(contrib);
+0098     <span class="keyword">end</span>  
+0099 <span class="keyword">end</span>
+0100 
+0101 g_scal_rec = g_scal ;
+0102 
+0103 disp(<span class="string">'Threshold wavelet coefficients...'</span>)
+0104 g_wav_rec = cell(J_l+1-J_min_l, J_p+1-J_min_p);
+0105 nb = 0;
+0106 <span class="keyword">for</span> jl = J_min_l:J_l
+0107     <span class="keyword">if</span> Downsample == true
+0108         bandlimit_l = min([ ceil(B_l^(jl+1)) L ]);
+0109     <span class="keyword">else</span>
+0110         bandlimit_l = L;
+0111     <span class="keyword">end</span>
+0112     <span class="keyword">for</span> jp = J_min_p:J_p
+0113         <span class="keyword">if</span> Downsample == true
+0114             bandlimit_p = min([ ceil(B_p^(jp+1)) P ]);
+0115         <span class="keyword">else</span>
+0116             bandlimit_p = P;
+0117         <span class="keyword">end</span>
+0118         temp = g_wav{jl+1-J_min_l,jp+1-J_min_p};
+0119         treshold = 3 * noisemodel{jl+1,jp+1};
+0120         [jl, jp]
+0121         <span class="keyword">for</span> p = 1:2*bandlimit_l-1
+0122             <span class="keyword">for</span> t = 1:bandlimit_l
+0123                 <span class="keyword">for</span> r = 1:bandlimit_p
+0124                     <span class="keyword">if</span> abs(temp(r, t, p)) &lt; treshold(r) <span class="comment">% Hard thresholding</span>
+0125                         temp(r, t, p) = 0;
+0126                         nb = nb + 1;
+0127                     <span class="keyword">end</span>
+0128                 <span class="keyword">end</span>
+0129             <span class="keyword">end</span>
+0130         <span class="keyword">end</span>
+0131         g_wav_rec{jl+1-J_min_l,jp+1-J_min_p} = temp;
+0132     <span class="keyword">end</span>
+0133 <span class="keyword">end</span>
+0134 
+0135 disp(<span class="string">'Reconstruct the denoised field from the wavelets...'</span>)
+0136 g_denoised = <a href="flaglet_axisym_synthesis.html" class="code" title="function f = flaglet_axisym_synthesis(f_wav, f_scal, varargin)">flaglet_axisym_synthesis</a>(g_wav_rec, g_scal_rec, <span class="string">'B_l'</span>, B_l, <span class="string">'B_p'</span>, B_p, <span class="string">'L'</span>, L, <span class="string">'P'</span>, P, <span class="string">'J_min_l'</span>, J_min_l, <span class="string">'J_min_p'</span>, J_min_p, <span class="string">'Reality'</span>, true, <span class="string">'Downsample'</span>, Downsample);
+0137 g_lmp_denoised = flag_analysis(g_denoised, <span class="string">'Reality'</span>, true);
+0138 
+0139 remaining_noise = g_denoised - f;
+0140 f_power = sum(sum(abs(f_lmp).^2))
+0141 
+0142 noise_power = sum(sum(abs(n_lmp).^2))
+0143 n_lmp_denoised = flag_analysis(remaining_noise, <span class="string">'Reality'</span>, true);
+0144 remaining_noise_power = sum(sum(abs(n_lmp_denoised).^2))
+0145 
+0146 SNR_before = 10*log10( f_power / noise_power )
+0147 SNR_after = 10*log10( f_power / remaining_noise_power )
+0148 
+0149 
+0150 <span class="comment">% Shell to plot</span>
+0151 layer = 230;
+0152 Lplot = 256;
+0153 Pplot = 256;
+0154 
+0155 <span class="comment">% Layout parameters</span>
+0156 minbound = 5; 
+0157 maxbound = 100;
+0158 zoomfactor = 2.2;
+0159 
+0160 disp(<span class="string">'Plot...'</span>)
+0161 figure(<span class="string">'Position'</span>,[100 100 1000 850]) 
+0162 
+0163 subplot(2,2,1); 
+0164 <a href="flaglet_plot_f.html" class="code" title="function flaglet_plot_f( f, varargin )">flaglet_plot_f</a>( f, <span class="string">'L'</span>, Lplot, <span class="string">'P'</span>, Pplot, <span class="string">'layer'</span>, layer   )
+0165 zoom(zoomfactor)
+0166 caxis([minbound maxbound])
+0167 colormap(flipud(gray))
+0168 
+0169 subplot(2,2,2);
+0170 <a href="flaglet_plot_f.html" class="code" title="function flaglet_plot_f( f, varargin )">flaglet_plot_f</a>( initial_noise, <span class="string">'L'</span>, Lplot, <span class="string">'P'</span>, Pplot, <span class="string">'layer'</span>, layer  )
+0171 zoom(zoomfactor)
+0172 caxis([minbound 0.6*maxbound])
+0173 colormap(flipud(gray))
+0174 
+0175 subplot(2,2,3); 
+0176 <a href="flaglet_plot_f.html" class="code" title="function flaglet_plot_f( f, varargin )">flaglet_plot_f</a>( g, <span class="string">'L'</span>, Lplot, <span class="string">'P'</span>, Pplot, <span class="string">'layer'</span>, layer   )
+0177 zoom(zoomfactor)
+0178 caxis([minbound 0.6*maxbound])
+0179 colormap(flipud(gray))
+0180 
+0181 subplot(2,2,4); 
+0182 <a href="flaglet_plot_f.html" class="code" title="function flaglet_plot_f( f, varargin )">flaglet_plot_f</a>( g_denoised, <span class="string">'L'</span>, Lplot, <span class="string">'P'</span>, Pplot, <span class="string">'layer'</span>, layer   )
+0183 zoom(zoomfactor)
+0184 caxis([minbound maxbound])
+0185 colormap(flipud(gray))</pre></div>
+<hr><address>Generated on Mon 24-Sep-2012 12:26:33 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

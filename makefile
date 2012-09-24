@@ -46,6 +46,8 @@ FLAGLETBIN = $(FLAGLETDIR)/bin
 FLAGLETLIBN= flaglet
 FLAGLETSRC = $(FLAGLETDIR)/src/main/c
 FLAGLETOBJ = $(FLAGLETSRC)
+FLAGLETTESTSRC = $(FLAGLETDIR)/src/test/c
+FLAGLETTESTOBJ = $(FLAGLETTESTSRC)
 
 # === S2LET ===
 S2LETLIB = $(S2LETDIR)/lib
@@ -74,6 +76,7 @@ FLAGLETOBJMAT  = $(FLAGLETSRCMAT)
 FLAGLETOBJMEX  = $(FLAGLETSRCMAT)
 
 vpath %.c $(FLAGLETSRC)
+vpath %.c $(FLAGLETTESTSRC)
 vpath %.h $(FLAGLETINC)
 vpath %_mex.c $(FLAGLETSRCMAT)
 
@@ -95,6 +98,9 @@ FLAGLETOBJSMEX = $(FLAGLETOBJMEX)/flaglet_axisym_tiling_mex.$(MEXEXT)	\
 	$(FLAGLETOBJMEX)/flaglet_axisym_synthesis_mex.$(MEXEXT)
 
 $(FLAGLETOBJ)/%.o: %.c
+	$(CC) $(OPT) $(FFLAGS) -c $< -o $@
+
+$(FLAGLETTESTOBJ)/%.o: %.c
 	$(CC) $(OPT) $(FFLAGS) -c $< -o $@
 
 $(FLAGLETOBJMAT)/%_mex.o: %_mex.c $(FLAGLETLIB)/lib$(FLAGLETLIBN).a
@@ -121,7 +127,7 @@ $(FLAGLETLIB)/lib$(FLAGLETLIBN).a: $(FLAGLETOBJS)
 
 .PHONY: test
 test: lib $(FLAGLETBIN)/flaglet_test
-$(FLAGLETBIN)/flaglet_test: $(FLAGLETOBJ)/flaglet_test.o $(FLAGLETLIB)/lib$(FLAGLETLIBN).a
+$(FLAGLETBIN)/flaglet_test: $(FLAGLETTESTOBJ)/flaglet_test.o $(FLAGLETLIB)/lib$(FLAGLETLIBN).a
 	$(CC) $(OPT) $< -o $(FLAGLETBIN)/flaglet_test $(LDFLAGS)
 
 .PHONY: about
@@ -146,6 +152,7 @@ clean:	tidy cleandoc
 .PHONY: tidy
 tidy:
 	rm -f $(FLAGLETOBJ)/*.o
+	rm -f $(FLAGLETTESTOBJ)/*.o
 	rm -f $(FLAGLETOBJMEX)/*.o
 	rm -f *~ 
 

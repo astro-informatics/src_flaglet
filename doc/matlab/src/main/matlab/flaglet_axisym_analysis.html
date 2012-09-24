@@ -1,0 +1,190 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of flaglet_axisym_analysis</title>
+  <meta name="keywords" content="flaglet_axisym_analysis">
+  <meta name="description" content="flaglet_axisym_analysis">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">src</a> &gt; <a href="#">main</a> &gt; <a href="index.html">matlab</a> &gt; flaglet_axisym_analysis.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for src/main/matlab&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>flaglet_axisym_analysis
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>flaglet_axisym_analysis</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [f_wav, f_scal] = flaglet_axisym_analysis(f, varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> flaglet_axisym_analysis 
+ Compute axisymmetric wavelet transform, output in pixel space.
+
+ Default usage :
+
+   [f_wav, f_scal] = flaglet_axisym_analysis(f, &lt;options&gt;)
+
+ f is the input field -- MW sampling,
+ f_wav contains the output wavelet contributions,
+ f_scal contains the output scaling contributions,
+ B_l is the wavelet parameter for angular space,
+ B_p is the wavelet parameter for radial space,
+ L is the angular band-limit,
+ P is the radial band-limit,
+ J_min_l the first angular wavelet scale to use,
+ J_min_p the first radial wavelet scale to use,
+ R is the radial boundary-limit.
+
+ Options :
+  'B_l'               = { Dilation factor; B_l &gt; 1 (default=2) }
+  'B_p'               = { Dilation factor; B_p &gt; 1 (default=2) }
+  'L'               = { Angular harmonic band-limit; L &gt; 1 (default=guessed) }
+  'P'               = { Radial harmonic band-limit; P &gt; 1 (default=guessed) }
+  'J_min_l'           = { Minimum needlet scale to consider;
+                        0 &lt;= J_min_l &lt; log_B_l(L) (default=0) }
+  'J_min_p'           = { Minimum needlet scale to consider;
+                        0 &lt;= J_min_p &lt; log_B_p(P) (default=0) }
+  'R'               = { Radial boundary; R &gt; 0 (default=1.0) }
+  'Downsample'      = { true        [multiresolution algorithm (default)],
+                        false       [full resolution wavelets] }
+  'Reality'         = { false        [do not assume f real (default)],
+                        true         [assume f real (improves performance)] }
+
+ flaglet package to perform Wavelets transform on the Solid Sphere.
+ Copyright (C) 2012  Boris Leistedt &amp; Jason McEwen
+ See LICENSE.txt for license details</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="denoising_demo3.html" class="code" title="">denoising_demo3</a>	denoising_demo3</li><li><a href="flaglet_demo3.html" class="code" title="">flaglet_demo3</a>	flaglet_demo3</li><li><a href="flaglet_demo4.html" class="code" title="">flaglet_demo4</a>	flaglet_demo4</li><li><a href="flaglet_denoising_demo.html" class="code" title="">flaglet_denoising_demo</a>	flaglet_denoising_demo</li><li><a href="flaglet_denoising_demo2.html" class="code" title="">flaglet_denoising_demo2</a>	flaglet_denoising_demo2</li><li><a href="flaglet_fulltest.html" class="code" title="">flaglet_fulltest</a>	flaglet_fulltest - Run all tests</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [f_wav, f_scal] = flaglet_axisym_analysis(f, varargin)</a>
+0002 
+0003 <span class="comment">% flaglet_axisym_analysis</span>
+0004 <span class="comment">% Compute axisymmetric wavelet transform, output in pixel space.</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% Default usage :</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">%   [f_wav, f_scal] = flaglet_axisym_analysis(f, &lt;options&gt;)</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% f is the input field -- MW sampling,</span>
+0011 <span class="comment">% f_wav contains the output wavelet contributions,</span>
+0012 <span class="comment">% f_scal contains the output scaling contributions,</span>
+0013 <span class="comment">% B_l is the wavelet parameter for angular space,</span>
+0014 <span class="comment">% B_p is the wavelet parameter for radial space,</span>
+0015 <span class="comment">% L is the angular band-limit,</span>
+0016 <span class="comment">% P is the radial band-limit,</span>
+0017 <span class="comment">% J_min_l the first angular wavelet scale to use,</span>
+0018 <span class="comment">% J_min_p the first radial wavelet scale to use,</span>
+0019 <span class="comment">% R is the radial boundary-limit.</span>
+0020 <span class="comment">%</span>
+0021 <span class="comment">% Options :</span>
+0022 <span class="comment">%  'B_l'               = { Dilation factor; B_l &gt; 1 (default=2) }</span>
+0023 <span class="comment">%  'B_p'               = { Dilation factor; B_p &gt; 1 (default=2) }</span>
+0024 <span class="comment">%  'L'               = { Angular harmonic band-limit; L &gt; 1 (default=guessed) }</span>
+0025 <span class="comment">%  'P'               = { Radial harmonic band-limit; P &gt; 1 (default=guessed) }</span>
+0026 <span class="comment">%  'J_min_l'           = { Minimum needlet scale to consider;</span>
+0027 <span class="comment">%                        0 &lt;= J_min_l &lt; log_B_l(L) (default=0) }</span>
+0028 <span class="comment">%  'J_min_p'           = { Minimum needlet scale to consider;</span>
+0029 <span class="comment">%                        0 &lt;= J_min_p &lt; log_B_p(P) (default=0) }</span>
+0030 <span class="comment">%  'R'               = { Radial boundary; R &gt; 0 (default=1.0) }</span>
+0031 <span class="comment">%  'Downsample'      = { true        [multiresolution algorithm (default)],</span>
+0032 <span class="comment">%                        false       [full resolution wavelets] }</span>
+0033 <span class="comment">%  'Reality'         = { false        [do not assume f real (default)],</span>
+0034 <span class="comment">%                        true         [assume f real (improves performance)] }</span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">% flaglet package to perform Wavelets transform on the Solid Sphere.</span>
+0037 <span class="comment">% Copyright (C) 2012  Boris Leistedt &amp; Jason McEwen</span>
+0038 <span class="comment">% See LICENSE.txt for license details</span>
+0039 
+0040 sz = size(f);
+0041 Pguessed = sz(1);
+0042 Lguessed = sz(2);
+0043 
+0044 p = inputParser;
+0045 p.addRequired(<span class="string">'f'</span>, @isnumeric); 
+0046 p.addParamValue(<span class="string">'B_l'</span>, 2, @isnumeric);       
+0047 p.addParamValue(<span class="string">'B_p'</span>, 2, @isnumeric);          
+0048 p.addParamValue(<span class="string">'L'</span>, Lguessed, @isnumeric);   
+0049 p.addParamValue(<span class="string">'P'</span>, Pguessed, @isnumeric);    
+0050 p.addParamValue(<span class="string">'J_min_l'</span>, 0, @isnumeric);   
+0051 p.addParamValue(<span class="string">'J_min_p'</span>, 0, @isnumeric); 
+0052 p.addParamValue(<span class="string">'R'</span>, 1.0, @isnumeric); 
+0053 p.addParamValue(<span class="string">'Downsample'</span>, true, @islogical);
+0054 p.addParamValue(<span class="string">'Reality'</span>, false, @islogical);
+0055 p.parse(f, varargin{:});
+0056 args = p.Results;
+0057 
+0058 P = args.P;
+0059 L = args.L;
+0060 J_min_l = args.J_min_l;
+0061 J_min_p = args.J_min_p;
+0062 f_vec = zeros(P, L*(2*L-1));
+0063 <span class="keyword">for</span> p = 1:args.P
+0064     temp(:,:) = f(p,:,:);
+0065     f_vec(p,:) = flag_mw_arr2vec( temp );
+0066 <span class="keyword">end</span>
+0067 
+0068 [f_wav_vec, f_scal_vec] = flaglet_axisym_analysis_mex(f_vec, args.B_l, args.B_p, args.L, args.P, args.J_min_l, args.J_min_p, args.R, args.Reality, args.Downsample);
+0069 
+0070 J_l = ceil(log(L) ./ log(args.B_l));
+0071 J_p = ceil(log(P) ./ log(args.B_p));
+0072 f_wav = cell(J_l+1-J_min_l, J_p+1-J_min_p);
+0073 
+0074 offset = 0;
+0075 <span class="keyword">for</span> jp = J_min_p:J_p
+0076     <span class="keyword">if</span> args.Downsample == true
+0077         band_limit_p = min([ ceil(args.B_p^(jp+1)) P ]);
+0078      <span class="keyword">else</span>
+0079         band_limit_p = P;
+0080     <span class="keyword">end</span>
+0081     <span class="keyword">for</span> jl = J_min_l:J_l
+0082         <span class="keyword">if</span> args.Downsample == true
+0083             band_limit_l = min([ ceil(args.B_l^(jl+1)) L ]);
+0084         <span class="keyword">else</span>
+0085             band_limit_l = L;
+0086         <span class="keyword">end</span>
+0087         temp = zeros(band_limit_p, band_limit_l, 2*band_limit_l-1);
+0088         <span class="keyword">for</span> r = 0:band_limit_p-1
+0089             <span class="keyword">for</span> t = 0:band_limit_l-1
+0090                 <span class="keyword">for</span> p = 0:2*band_limit_l-2
+0091                     ind = offset + r * band_limit_l *( 2 * band_limit_l - 1 ) + t * ( 2 * band_limit_l - 1) + p + 1;
+0092                     temp(r+1,t+1,p+1) = f_wav_vec(1,ind);
+0093                 <span class="keyword">end</span>
+0094             <span class="keyword">end</span>
+0095         <span class="keyword">end</span>
+0096         f_wav{jl+1-J_min_l, jp+1-J_min_p} = temp;
+0097         offset = offset + band_limit_l * (2*band_limit_l-1) * band_limit_p;
+0098     <span class="keyword">end</span>
+0099 <span class="keyword">end</span>
+0100 
+0101 f_scal = zeros(P, L, (2*L-1));
+0102 <span class="keyword">for</span> p = 1:P
+0103     temp = f_scal_vec(p,:);
+0104     size(flag_mw_vec2arr( temp ));
+0105     f_scal(p,:,:) = flag_mw_vec2arr( temp );
+0106 <span class="keyword">end</span>
+0107 
+0108 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 24-Sep-2012 12:26:33 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

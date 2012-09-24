@@ -1,0 +1,175 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of flaglet_demo2</title>
+  <meta name="keywords" content="flaglet_demo2">
+  <meta name="description" content="flaglet_demo2">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">src</a> &gt; <a href="#">main</a> &gt; <a href="index.html">matlab</a> &gt; flaglet_demo2.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for src/main/matlab&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>flaglet_demo2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>flaglet_demo2</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> flaglet_demo2
+ Plot one wavelet and its radially translated version</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="flaglet_axisym_tiling.html" class="code" title="function [kappa kappa0] = flaglet_axisym_tiling(B_l, B_p, L, P, J_min_l, J_min_p)">flaglet_axisym_tiling</a>	flaglet_axisym_tiling - Compute tiling in l-n harmonic space.</li><li><a href="flaglet_plot_axisym_wavelet_kernel.html" class="code" title="function flaglet_plot_axisym_wavelet_kernel(kappa_ln, R, Rplot, P)">flaglet_plot_axisym_wavelet_kernel</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% flaglet_demo2</span>
+0002 <span class="comment">% Plot one wavelet and its radially translated version</span>
+0003 
+0004 R = 1.0 ;
+0005 Rplot1 = 0.49 ;
+0006 Rplot2 = 0.49 ;
+0007 Rplot3 = 0.49 ;
+0008 limit1 = 0.00008;
+0009 limit2 = 0.00004 ;
+0010 limit3 = 0.000018 ;
+0011 
+0012 s1 = 0.2 ;
+0013 s2 = 0.29 ;
+0014 s3 = 0.38 ;
+0015 
+0016 L = 92 ;
+0017 N = 64 ;
+0018 P = 256 ;
+0019 
+0020 B_l = 2 ;
+0021 B_n = 2 ;
+0022 J_min_l = 0 ;
+0023 J_min_n = 0 ;
+0024 
+0025 tau = flag_get_tau(N, R);
+0026 
+0027 [kappa kappa0] = <a href="flaglet_axisym_tiling.html" class="code" title="function [kappa kappa0] = flaglet_axisym_tiling(B_l, B_p, L, P, J_min_l, J_min_p)">flaglet_axisym_tiling</a>(B_l, B_n, L, N, J_min_l, J_min_n);
+0028 
+0029 <span class="comment">% Original</span>
+0030 kappa_ln = kappa{5,5};
+0031 row = 15;
+0032 
+0033 <span class="comment">% First translation</span>
+0034 kappa_ln_translated1 = kappa_ln  ;
+0035 birs = [ s1, R ];
+0036 <span class="keyword">for</span> n = 1:N
+0037     fn = zeros(1,N) ;
+0038     fn(n) = 1.0 ;
+0039     [K_n_s, ~] = slag_synthesis(fn, <span class="string">'Nodes'</span>, birs) ;
+0040     kappa_ln_translated1(n,:) = kappa_ln(n,:) * K_n_s(1) ;
+0041 <span class="keyword">end</span>
+0042 
+0043 <span class="comment">% Second translation</span>
+0044 kappa_ln_translated2 = kappa_ln ;
+0045 birs = [ s2, R ];
+0046 <span class="keyword">for</span> n = 1:N
+0047     fn = zeros(1,N) ;
+0048     fn(n) = 1.0 ;
+0049     [K_n_s, ~] = slag_synthesis(fn, <span class="string">'Nodes'</span>, birs) ;
+0050     kappa_ln_translated2(n,:) = kappa_ln(n,:) * K_n_s(1) ;
+0051 <span class="keyword">end</span>
+0052 
+0053 <span class="comment">% Third translation</span>
+0054 kappa_ln_translated3 = kappa_ln ;
+0055 birs = [ s3, R ];
+0056 <span class="keyword">for</span> n = 1:N
+0057     fn = zeros(1,N) ;
+0058     fn(n) = 1.0 ;
+0059     [K_n_s, ~] = slag_synthesis(fn, <span class="string">'Nodes'</span>, birs) ;
+0060     kappa_ln_translated3(n,:) = kappa_ln(n,:) * K_n_s(1) ;
+0061 <span class="keyword">end</span>
+0062 
+0063 figure(<span class="string">'Position'</span>,[100 100 300 1100])
+0064 
+0065 h = (R/P);
+0066 nodes = (0:h:R) ;
+0067 <span class="comment">%nodes = slag_sampling(N, R) ;</span>
+0068 <span class="comment">%fn_orig = transpose(kappa_ln(:,row)) ;</span>
+0069 <span class="comment">%[f ~] = slag_synthesis(fn_orig, 'Nodes', nodes);</span>
+0070 <span class="comment">%subplot(3,2,2)</span>
+0071 <span class="comment">%plot(nodes, f, 'black')</span>
+0072 <span class="comment">%xlabel('Radius')</span>
+0073 <span class="comment">%ylabel('Amplitude')</span>
+0074 <span class="comment">%title('Radial profile')</span>
+0075 <span class="comment">%axis([0.01 Rplot1 -limit1 limit1])</span>
+0076 <span class="comment">%[ min(f) max(f) mean(f) ]</span>
+0077 
+0078 fn_transl1 = transpose(kappa_ln_translated1(:,row)) ;
+0079 [f_transl1 ~] = slag_synthesis(fn_transl1, <span class="string">'Nodes'</span>, nodes);
+0080 subplot(3,1,1)
+0081 plot(nodes, f_transl1, <span class="string">'black'</span>)
+0082 xlabel(<span class="string">'x01'</span>)
+0083 ylabel(<span class="string">'y01'</span>)
+0084 axis([0.01 Rplot1 -limit1 limit1])
+0085 <span class="comment">%[ min(f_transl1) max(f_transl1) mean(f_transl1) ]</span>
+0086 
+0087 
+0088 fn_transl2 = transpose(kappa_ln_translated2(:,row)) ;
+0089 [f_transl2 ~] = slag_synthesis(fn_transl2, <span class="string">'Nodes'</span>, nodes);
+0090 subplot(3,1,2)
+0091 plot(nodes, f_transl2, <span class="string">'black'</span>)
+0092 xlabel(<span class="string">'x02'</span>)
+0093 ylabel(<span class="string">'y02'</span>)
+0094 axis([0.01 Rplot2 -limit2 limit2])
+0095 <span class="comment">%[ min(f_transl2) max(f_transl2) mean(f_transl2) ]</span>
+0096 
+0097 fn_transl3 = transpose(kappa_ln_translated3(:,row)) ;
+0098 [f_transl3 ~] = slag_synthesis(fn_transl3, <span class="string">'Nodes'</span>, nodes);
+0099 subplot(3,1,3)
+0100 plot(nodes, f_transl3, <span class="string">'black'</span>)
+0101 xlabel(<span class="string">'x03'</span>)
+0102 ylabel(<span class="string">'y03'</span>)
+0103 axis([0.01 Rplot3 -limit3 limit3])
+0104 <span class="comment">%[ min(f_transl2) max(f_transl2) mean(f_transl2) ]</span>
+0105 
+0106 colormap(hot(256))
+0107 
+0108 <span class="comment">%subplot(3,2,1)</span>
+0109 <span class="comment">%flaglet_plot_axisym_wavelet_kernel(kappa_ln, R, Rplot1, P)</span>
+0110 <span class="comment">%title('Original wavelet')</span>
+0111 
+0112 figure(<span class="string">'Position'</span>,[100 100 300 1100])
+0113 
+0114 subplot(3,1,1)
+0115 <a href="flaglet_plot_axisym_wavelet_kernel.html" class="code" title="function flaglet_plot_axisym_wavelet_kernel(kappa_ln, R, Rplot, P)">flaglet_plot_axisym_wavelet_kernel</a>(kappa_ln_translated1, R, Rplot1, P)
+0116 <span class="comment">%title(['Wavelet translated by ',num2str(s1)])</span>
+0117 
+0118 subplot(3,1,2)
+0119 <a href="flaglet_plot_axisym_wavelet_kernel.html" class="code" title="function flaglet_plot_axisym_wavelet_kernel(kappa_ln, R, Rplot, P)">flaglet_plot_axisym_wavelet_kernel</a>(kappa_ln_translated2, R, Rplot2, P)
+0120 <span class="comment">%title(['Wavelet translated by ',num2str(s2)])</span>
+0121 
+0122 subplot(3,1,3)
+0123 <a href="flaglet_plot_axisym_wavelet_kernel.html" class="code" title="function flaglet_plot_axisym_wavelet_kernel(kappa_ln, R, Rplot, P)">flaglet_plot_axisym_wavelet_kernel</a>(kappa_ln_translated3, R, Rplot3, P)
+0124 <span class="comment">%title(['Wavelet translated by ',num2str(s3)])</span>
+0125 
+0126 <span class="comment">%colormap(CubeHelix(256,0.5,-1.5,1.2,1.0))</span>
+0127 colormap(hot(256))</pre></div>
+<hr><address>Generated on Mon 24-Sep-2012 12:26:33 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

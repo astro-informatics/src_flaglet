@@ -1,0 +1,154 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of noise_prop_check_old</title>
+  <meta name="keywords" content="noise_prop_check_old">
+  <meta name="description" content="noise_prop_check">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">src</a> &gt; <a href="#">main</a> &gt; <a href="index.html">matlab</a> &gt; noise_prop_check_old.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for src/main/matlab&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>noise_prop_check_old
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>noise_prop_check</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">noise_prop_check</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="var3d.html" class="code" title="function val = var3d( f )">var3d</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%noise_prop_check</span>
+0002 
+0003 niter = 50;
+0004 
+0005 P = 8 ;
+0006 L = 8 ;
+0007 R = 420;
+0008 
+0009 sigma2_noise = 0.1 ;
+0010 
+0011 B_l = 2 ;
+0012 B_n = 2 ;
+0013 J_min_l = 0 ;
+0014 J_min_n = 0 ;
+0015 J_l = ceil(log(L) ./ log(B_l));
+0016 J_n = ceil(log(P) ./ log(B_n));
+0017 
+0018 nodes = slag_sampling(P-1, R);
+0019 <span class="comment">% Compute all functions K_p(r_i) with p=1:P and i=1:P</span>
+0020 K_n_rs = zeros(P, P);
+0021 <span class="keyword">for</span> p = 0:P-1
+0022     fp = zeros(1,P);
+0023     fp(p+1) = 1.0;
+0024     [temp, ~] = slag_synthesis(fp, <span class="string">'R'</span>, R, <span class="string">'Nodes'</span>, nodes) ;
+0025     K_n_rs(p+1, :) = temp; 
+0026 <span class="keyword">end</span>
+0027 
+0028 <span class="comment">% Compute coefficients K_{pp'} through gauss-laguerre quadrature</span>
+0029 K_pp = zeros(P, P);
+0030 [nodes, weights] = slag_gausslaguerre_quadrature(P, 2);
+0031 <span class="keyword">for</span> p1 = 1:P
+0032     <span class="keyword">for</span> p2 = 1:P
+0033         K_pp(p1, p2) = sum( K_n_rs(p1, :) .* K_n_rs(p2, :) .* weights ./ nodes.^2 );
+0034     <span class="keyword">end</span>
+0035 <span class="keyword">end</span>
+0036 
+0037 K_pp
+0038 
+0039 <span class="comment">% Compute tilling and wavelet generating functions</span>
+0040 [kappa kappa0] = b3let_axisym_tilling(B_l, B_n, L, N, J_min_l, J_min_n);
+0041 
+0042 
+0043 <span class="comment">% Compute all functions K_p(r_i) with p=1:P and i=1:P+1</span>
+0044 K_n_rs = zeros(P, P+1);
+0045 nodes = slag_sampling(P, R);
+0046 <span class="keyword">for</span> p = 0:P-1
+0047     fp = zeros(1,P);
+0048     fp(p+1) = 1.0;
+0049     [temp, ~] = slag_synthesis(fp, <span class="string">'R'</span>, R) ;
+0050     K_n_rs(p+1, :) = temp; 
+0051 <span class="keyword">end</span>
+0052 
+0053 
+0054 <span class="comment">% Compute noise model</span>
+0055 sigma2_jj_rs = zeros(J_l+1, J_n+1, P+1);
+0056 <span class="keyword">for</span> jl = 0:J_l
+0057     <span class="keyword">for</span> jn = 0:J_n
+0058         kappa_jj = kappa{jl+1,jn+1};
+0059         <span class="keyword">for</span> ell = 1:L
+0060             <span class="keyword">for</span> p1 = 1:P
+0061                 <span class="keyword">for</span> p2 = 1:P
+0062                     factor = ((2*ell-1)/(4*pi)) * kappa_jj(p1, ell) * conj(kappa_jj(p2, ell)) * K_pp(p1, p2);
+0063                     <span class="keyword">for</span> ri = 1:P+1
+0064                          sigma2_jj_rs(jl+1, jn+1, ri) = <span class="keyword">...</span>
+0065                              sigma2_jj_rs(jl+1, jn+1, ri) + <span class="keyword">...</span>
+0066                                 sigma2_noise * K_n_rs(p1, ri) * K_n_rs(p2, ri) * factor ; 
+0067                     <span class="keyword">end</span>
+0068                 <span class="keyword">end</span>
+0069             <span class="keyword">end</span>
+0070         <span class="keyword">end</span>
+0071     <span class="keyword">end</span>
+0072 <span class="keyword">end</span>
+0073 
+0074 <span class="comment">% Compute noise realisation</span>
+0075 n_std_mean = zeros(J_l+1, J_n+1, P+1);
+0076 n_lmp_var = zeros(P, L^2);
+0077 
+0078 <span class="keyword">for</span> iter = 1:niter
+0079     iter
+0080     
+0081     noise = zeros(P+1, L, 2*L-1);
+0082     <span class="keyword">for</span> ri = 0:P
+0083         noise(ri+1, :, :) = sqrt(sigma2_noise) * randn(L, 2*L-1) / nodes(ri+1) ;
+0084     <span class="keyword">end</span>
+0085     n_lmp = flag_analysis(noise, <span class="string">'R'</span>, R, <span class="string">'Reality'</span>, true);
+0086     n_lmp_var = n_lmp_var + n_lmp.^2 / niter;
+0087     
+0088     [n_wav, n_scal] = b3let_axisym_analysis(noise, <span class="string">'B_l'</span>, B_l, <span class="string">'B_n'</span>, B_n, <span class="string">'J_min_l'</span>, J_min_l, <span class="string">'J_min_n'</span>, J_min_n, <span class="string">'Reality'</span>, true);
+0089 
+0090     <span class="comment">% Wavelets</span>
+0091     n_std = zeros(1,P+1);
+0092     <span class="keyword">for</span> jl = 0:J_l
+0093         <span class="keyword">for</span> jn = 0:J_n
+0094             temp = n_wav{jl+1,jn+1};
+0095             <span class="keyword">for</span> r = 0:P
+0096                 layer = temp(r+1,:,:);
+0097                 n_std(r+1) = <a href="var3d.html" class="code" title="function val = var3d( f )">var3d</a>(layer);
+0098                 n_std_mean(jl+1, jn+1, r+1) = n_std_mean(jl+1, jn+1, r+1) + n_std(r+1) ./ niter ;
+0099             <span class="keyword">end</span>
+0100            
+0101         <span class="keyword">end</span>
+0102     <span class="keyword">end</span>
+0103         
+0104 <span class="keyword">end</span>
+0105 
+0106 sigma2_jj_rs ./ n_std_mean
+0107 mean( mean ( mean ( sigma2_jj_rs ./ n_std_mean ) ) )</pre></div>
+<hr><address>Generated on Mon 24-Sep-2012 12:26:33 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

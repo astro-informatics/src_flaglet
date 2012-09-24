@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of flaglet_demo1</title>
+  <meta name="keywords" content="flaglet_demo1">
+  <meta name="description" content="flaglet_demo1">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">src</a> &gt; <a href="#">main</a> &gt; <a href="index.html">matlab</a> &gt; flaglet_demo1.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for src/main/matlab&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>flaglet_demo1
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>flaglet_demo1</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> flaglet_demo1
+ Plot wavelets functions</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="flaglet_axisym_tiling.html" class="code" title="function [kappa kappa0] = flaglet_axisym_tiling(B_l, B_p, L, P, J_min_l, J_min_p)">flaglet_axisym_tiling</a>	flaglet_axisym_tiling - Compute tiling in l-n harmonic space.</li><li><a href="flaglet_plot_axisym_wavelet_kernel.html" class="code" title="function flaglet_plot_axisym_wavelet_kernel(kappa_ln, R, Rplot, P)">flaglet_plot_axisym_wavelet_kernel</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% flaglet_demo1</span>
+0002 <span class="comment">% Plot wavelets functions</span>
+0003 
+0004 s = 0.3;
+0005 
+0006 R = 1.0 ;
+0007 Rplot = 0.39 ;
+0008 
+0009 L = 92 ;
+0010 N = 92 ;
+0011 P = 128 ;
+0012 
+0013 scales_l = [4 5];
+0014 scales_n = [5 6];
+0015 
+0016 J_l = numel(scales_l);
+0017 J_n = numel(scales_n);
+0018 
+0019 
+0020 B_l = 2 ;
+0021 B_n = 2 ;
+0022 J_min_l = 0 ;
+0023 J_min_n = 0 ;
+0024 
+0025 
+0026 <span class="comment">% Translation</span>
+0027 K_n_s = zeros(N,L)  ;
+0028 birs = [ s, R ];
+0029 <span class="keyword">for</span> n = 1:N
+0030     fn = zeros(1,N) ;
+0031     fn(n) = 1.0 ;
+0032     [K_n_s_temp, ~] = slag_synthesis(fn, <span class="string">'Nodes'</span>, birs) ;
+0033     K_n_s(n,:) = K_n_s_temp(1) ;
+0034 <span class="keyword">end</span>
+0035 
+0036 [kappa kappa0] = <a href="flaglet_axisym_tiling.html" class="code" title="function [kappa kappa0] = flaglet_axisym_tiling(B_l, B_p, L, P, J_min_l, J_min_p)">flaglet_axisym_tiling</a>(B_l, B_n, L, N, J_min_l, J_min_n);
+0037 
+0038 figure(<span class="string">'Position'</span>,[100 100 750 800])
+0039 <span class="keyword">for</span> jl=scales_l
+0040     <span class="keyword">for</span> jn=scales_n
+0041         ind = (find(jl == scales_l)-1)*(J_n) + find(jn == scales_n);
+0042         subplot(J_l, J_n, ind)
+0043         temp = kappa{jl,jn} ;
+0044         temp = temp .* K_n_s ; 
+0045         <a href="flaglet_plot_axisym_wavelet_kernel.html" class="code" title="function flaglet_plot_axisym_wavelet_kernel(kappa_ln, R, Rplot, P)">flaglet_plot_axisym_wavelet_kernel</a>(temp, R, Rplot, P)
+0046         <span class="comment">%title(['jl=',int2str(jl),' jn=',int2str(jn)])</span>
+0047         caxis([-1 1])
+0048         <span class="comment">%xlabel(['x',int2str(ind)])</span>
+0049     <span class="keyword">end</span>
+0050 <span class="keyword">end</span>
+0051 colormap(hot(256))
+0052 
+0053</pre></div>
+<hr><address>Generated on Mon 24-Sep-2012 12:26:33 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

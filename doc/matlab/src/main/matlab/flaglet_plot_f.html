@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of flaglet_plot_f</title>
+  <meta name="keywords" content="flaglet_plot_f">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">src</a> &gt; <a href="#">main</a> &gt; <a href="index.html">matlab</a> &gt; flaglet_plot_f.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for src/main/matlab&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>flaglet_plot_f
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function flaglet_plot_f( f, varargin ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="denoising_demo3.html" class="code" title="">denoising_demo3</a>	denoising_demo3</li><li><a href="flaglet_demo3.html" class="code" title="">flaglet_demo3</a>	flaglet_demo3</li><li><a href="flaglet_demo4.html" class="code" title="">flaglet_demo4</a>	flaglet_demo4</li><li><a href="flaglet_denoising_demo.html" class="code" title="">flaglet_denoising_demo</a>	flaglet_denoising_demo</li><li><a href="flaglet_denoising_demo2.html" class="code" title="">flaglet_denoising_demo2</a>	flaglet_denoising_demo2</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function flaglet_plot_f( f, varargin )</a>
+0002 
+0003 sz = size(f);
+0004 N = sz(1);
+0005 L = sz(2);
+0006 
+0007 p = inputParser;
+0008 p.addParamValue(<span class="string">'layer'</span>, 0, @isnumeric);
+0009 p.addParamValue(<span class="string">'L'</span>, L, @isnumeric);
+0010 p.addParamValue(<span class="string">'P'</span>, N, @isnumeric);
+0011 p.parse(varargin{:});
+0012 args = p.Results;
+0013 
+0014 <span class="keyword">if</span> args.L &gt; L || args.P &gt; N
+0015     nodes = slag_sampling(args.P, 1.0);
+0016     f_ini = f;
+0017     disp(<span class="string">'flag analysis'</span>)
+0018     f_lmp = flag_analysis(f_ini, <span class="string">'R'</span>, 1.0, <span class="string">'reality'</span>, true);
+0019     f_lmp_zeropadded = zeros(N, args.L^2);
+0020     f_lmp_zeropadded(1:N, 1:L^2) = f_lmp(:,:);
+0021     disp(<span class="string">'flag synthesis'</span>)
+0022     f = flag_synthesis(f_lmp_zeropadded, <span class="string">'Nodes'</span>, nodes, <span class="string">'reality'</span>, true);
+0023     L = args.L;
+0024     N = args.P ;
+0025 <span class="keyword">end</span>
+0026 
+0027 [rs, thetas, phis] = flag_sampling(L, N, 1.0);
+0028 thetas = pi/2 - thetas; 
+0029 thetas = [ pi/2 thetas -pi-fliplr(thetas(1:L-1)) pi/2 ];
+0030 [rs, thetas] = ndgrid(rs, thetas);
+0031 x = rs .* cos(thetas);
+0032 y = rs .* sin(thetas);
+0033 
+0034 <span class="comment">%ind_neg = find(f &lt; 0);</span>
+0035 <span class="comment">%f(ind_neg) = f(ind_neg) / abs(min(min(min(f))));</span>
+0036  
+0037 <span class="comment">%ind_pos = find(f &gt; 0);</span>
+0038 <span class="comment">%f(ind_pos) = f(ind_pos) / max(max(max(f)));</span>
+0039 
+0040 v_p0 = zeros(N,2*L+1);
+0041 v_p0(:,1) = f(:,1,1);
+0042 v_p0(:,2:(L+1)) = f(:,:,L);
+0043 v_p0(:,(L+2):(2*L)) = fliplr(f(:,1:L-1,1));
+0044 v_p0(:,2*L+1) = f(:,1,1);
+0045 
+0046 grid off
+0047 hold on
+0048 h = surface(x,y,zeros(size(x)),v_p0,<span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);
+0049 <span class="comment">%[C,h] = contourf(x, y, v_p0, nlevels,  'EdgeColor', 'none');</span>
+0050 rotate(h,[0 1 0],90)
+0051 rotate(h,[1 0 0],90)
+0052 
+0053 
+0054 v_p90 = zeros(N,2*L+1);
+0055 v_p90(:,1) = f(:,1,floor(L/2));
+0056 v_p90(:,2:(L+1)) = f(:,:,floor(3*L/2));
+0057 v_p90(:,(L+2):(2*L)) = fliplr(f(:,1:L-1,floor(L/2)));
+0058 v_p90(:,2*L+1) = f(:,1,floor(L/2));
+0059 
+0060 h = surface(x,y,zeros(size(x)),v_p90,<span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);
+0061 <span class="comment">%[C,h] = contourf(x, y, v_p90, nlevels,  'EdgeColor', 'none');</span>
+0062 rotate(h,[0 1 0],90)
+0063 rotate(h,[0 0 1],90)
+0064 rotate(h,[0 1 0],90)
+0065 
+0066 [rs, thetas, phis] = flag_sampling(L, N, 1.0);
+0067 [rs, phis] = ndgrid(rs, [phis phis(1)]);
+0068 x = rs .* cos(phis);
+0069 y = rs .* sin(phis);
+0070 v_t0 = zeros(N,2*L);
+0071 <span class="keyword">for</span> p=1:2*L-1
+0072     v_t0(:,p) = f(:,floor(L/2),p);
+0073 <span class="keyword">end</span>
+0074 v_t0(:,2*L) = f(:,floor(L/2),1);
+0075 
+0076 h = surface(x,y,zeros(size(x)),v_t0,<span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);
+0077 <span class="comment">%[C,h] = contourf(x, y, v_t0, nlevels,  'EdgeColor', 'none');</span>
+0078 rotate(h,[0 0 1], -90)
+0079 
+0080 view(45,45)
+0081 colormap(hot(256))
+0082 
+0083 v = axis;
+0084 <span class="comment">%axis(0.75*v);</span>
+0085 axis off
+0086 grid off
+0087 
+0088 rs_line = 1.0;
+0089 thetas_line = 0:0.01:2*pi;
+0090 [rs_line, thetas_line] = ndgrid(rs_line, thetas_line);
+0091 xs_line = rs_line.*cos(thetas_line);
+0092 ys_line = rs_line.*sin(thetas_line);
+0093 line(xs_line,ys_line,zeros(size(xs_line)),<span class="string">'Color'</span>,[0 0 0])
+0094 line(zeros(size(xs_line)), xs_line,ys_line,<span class="string">'Color'</span>,[0 0 0])
+0095 line(xs_line,zeros(size(xs_line)), ys_line,<span class="string">'Color'</span>,[0 0 0])
+0096 
+0097 
+0098 <span class="keyword">if</span> args.layer ~= 0 &amp;&amp; args.layer &lt;= N+1
+0099     layerofinterest = args.layer;
+0100     v_sph = zeros(L, 2*L-1);
+0101     v_sph(:,:) = f(layerofinterest,:,:);
+0102 
+0103     [rs, thetas, phis] = flag_sampling(L, N, 1.0);
+0104     close = @(x) [x, x(:,1)];
+0105     v_sph = close(v_sph);
+0106     v_norm = (v_sph - min(min(v_sph)))/(max(max(v_sph))- min(min(v_sph)));
+0107     thetas = close(thetas);
+0108     phis = close(phis);
+0109 
+0110     [thetas, phis] = ndgrid(thetas, phis);
+0111     [x, y, z] = ssht_s2c(thetas, phis, rs(layerofinterest));
+0112     h = surf(x,y,z,v_sph);
+0113     rotate(h,[0 0 1], -90)
+0114     set(h, <span class="string">'LineStyle'</span>, <span class="string">'none'</span>)
+0115     
+0116     rs_line = rs(layerofinterest);
+0117     thetas_line = 0:0.01:2*pi;
+0118     [rs_line, thetas_line] = ndgrid(rs_line, thetas_line);
+0119     xs_line = rs_line.*cos(thetas_line);
+0120     ys_line = rs_line.*sin(thetas_line);
+0121     line(xs_line,ys_line,zeros(size(xs_line)),<span class="string">'Color'</span>,[0 0 0])
+0122     line(zeros(size(xs_line)), xs_line,ys_line,<span class="string">'Color'</span>,[0 0 0])
+0123     line(xs_line,zeros(size(xs_line)), ys_line,<span class="string">'Color'</span>,[0 0 0])
+0124 
+0125     
+0126 <span class="keyword">end</span>
+0127 
+0128 colormap(hsv)
+0129 
+0130 camlight
+0131 camlight(-80,10)
+0132 material dull
+0133 
+0134 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 24-Sep-2012 12:26:33 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

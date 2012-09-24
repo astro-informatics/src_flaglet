@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of flaglet_demo4</title>
+  <meta name="keywords" content="flaglet_demo4">
+  <meta name="description" content="flaglet_demo4">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">src</a> &gt; <a href="#">main</a> &gt; <a href="index.html">matlab</a> &gt; flaglet_demo4.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for src/main/matlab&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>flaglet_demo4
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>flaglet_demo4</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> flaglet_demo4
+
+ Plot wavelet decomposition of geophysics data
+
+ B3LET package to perform Wavelets transform on the Solid Sphere.
+ Copyright (C) 2012  Boris Leistedt &amp; Jason McEwen
+ See LICENSE.txt for license details</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="flaglet_axisym_analysis.html" class="code" title="function [f_wav, f_scal] = flaglet_axisym_analysis(f, varargin)">flaglet_axisym_analysis</a>	flaglet_axisym_analysis</li><li><a href="flaglet_plot_f.html" class="code" title="function flaglet_plot_f( f, varargin )">flaglet_plot_f</a>	</li><li><a href="gen_geomodel.html" class="code" title="function f = gen_geomodel( L, P )">gen_geomodel</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% flaglet_demo4</span>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% Plot wavelet decomposition of geophysics data</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% B3LET package to perform Wavelets transform on the Solid Sphere.</span>
+0006 <span class="comment">% Copyright (C) 2012  Boris Leistedt &amp; Jason McEwen</span>
+0007 <span class="comment">% See LICENSE.txt for license details</span>
+0008 
+0009 L = 50 ;
+0010 P = 50 ;
+0011 R = 3000;
+0012 
+0013 B_l = 4;
+0014 B_p = 4;
+0015 J_min_l = 2;
+0016 J_min_p = 2;
+0017 downsample = true;
+0018 
+0019 J_l = ceil(log(L)/log(B_l))
+0020 J_p = ceil(log(P)/log(B_p))
+0021 
+0022 f = <a href="gen_geomodel.html" class="code" title="function f = gen_geomodel( L, P )">gen_geomodel</a>(L, P);
+0023 
+0024 disp(<span class="string">'Flag_analysis...'</span>)
+0025 f_lmp = flag_analysis(f, <span class="string">'R'</span>, R, <span class="string">'reality'</span>, true);
+0026 
+0027 <span class="comment">% subplot(1,2,1)</span>
+0028 <span class="comment">% flaglet_plot_f( f_ini )</span>
+0029 <span class="comment">% caxis([minbound maxbound])</span>
+0030 <span class="comment">% subplot(1,2,2)</span>
+0031 <span class="comment">% flaglet_plot_f( f )</span>
+0032 <span class="comment">% caxis([minbound maxbound])</span>
+0033  
+0034 disp(<span class="string">'Wavelet analysis...'</span>)
+0035 [f_wav, f_scal] = <a href="flaglet_axisym_analysis.html" class="code" title="function [f_wav, f_scal] = flaglet_axisym_analysis(f, varargin)">flaglet_axisym_analysis</a>(f, <span class="string">'B_l'</span>, B_l, <span class="string">'B_p'</span>, B_p, <span class="string">'reality'</span>, true, <span class="string">'downsample'</span>, downsample, <span class="string">'J_min_l'</span>, J_min_l, <span class="string">'J_min_p'</span>, J_min_p);
+0036 
+0037 
+0038 
+0039 disp(<span class="string">'Plot...'</span>)
+0040 figure(<span class="string">'Position'</span>,[100 100 600 900]) 
+0041 
+0042 <span class="comment">% Layout parameters</span>
+0043 minbound = -1.0; 
+0044 maxbound = 1.0;
+0045 Lplot = 192;
+0046 Pplot = 192;
+0047 layer = 173;
+0048 zoomfactor = 2.2;
+0049 
+0050 J_l = [ 1 2 ];
+0051 J_n = [ 1 2 ];
+0052 nx = 2;
+0053 ny = 3;
+0054 
+0055 
+0056 ind = 1;
+0057 subplot(ny, nx, ind);
+0058 <a href="flaglet_plot_f.html" class="code" title="function flaglet_plot_f( f, varargin )">flaglet_plot_f</a>( f, <span class="string">'L'</span>, Lplot, <span class="string">'P'</span>, Pplot, <span class="string">'layer'</span>, layer )
+0059 zoom(zoomfactor)
+0060 colormap(flipud(gray))
+0061 caxis([-1.4 1.4])
+0062 title(<span class="string">'Data'</span>)
+0063 
+0064 ind = 2;
+0065 subplot(ny, nx, ind);
+0066 <a href="flaglet_plot_f.html" class="code" title="function flaglet_plot_f( f, varargin )">flaglet_plot_f</a>( f_scal, <span class="string">'L'</span>, Lplot, <span class="string">'P'</span>, Pplot, <span class="string">'layer'</span>, layer )
+0067 zoom(zoomfactor)
+0068 colormap(flipud(gray))
+0069 caxis([-1.2 1.2])
+0070 title(<span class="string">'Scaling part'</span>)
+0071 
+0072 <span class="keyword">for</span> jl = J_l
+0073     <span class="keyword">for</span> jn = J_n
+0074         ind = ind + 1; 
+0075         subplot(ny, nx, ind);
+0076         <a href="flaglet_plot_f.html" class="code" title="function flaglet_plot_f( f, varargin )">flaglet_plot_f</a>( f_wav{jl, jn}, <span class="string">'L'</span>, Lplot, <span class="string">'P'</span>, Pplot, <span class="string">'layer'</span>, layer )
+0077         zoom(zoomfactor)
+0078         <span class="comment">%colormap(flipud(gray))</span>
+0079         title([<span class="string">'Wavelet : jl='</span>,int2str(jl),<span class="string">' jn='</span>,int2str(jn)])
+0080         caxis([minbound maxbound])
+0081     <span class="keyword">end</span>
+0082 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 24-Sep-2012 12:26:33 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>
