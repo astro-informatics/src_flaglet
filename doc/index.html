@@ -82,11 +82,11 @@ Private release of <strong>FLAGLET</strong> 1.0.
 <a name="introduction"><h2>Introduction</h2></a>
 
   <p>
-  The <strong>FLAGLET</strong> code provides high performance routines for fast wavelet analysis of signals on the ball. 
+  The <strong>FLAGLET</strong> code provides high-performance routines for fast wavelet analysis of signals on the ball. 
 	It is primarily intended to work with the <a
- href="http://www.mrao.cam.ac.uk/~jdm57/ssht/index.html">SSHT</a> code built on the <a href="http://www.mrao.cam.ac.uk/~jdm57/publications.html#mcewen:fssht">MW sampling</a> 
+ href="http://www.mrao.cam.ac.uk/~jdm57/ssht/index.html">SSHT</a> code built on the <a href="http://www.mrao.cam.ac.uk/~jdm57/publications.html#mcewen:fssht">MW sampling theorem</a> 
   (<a href="http://arxiv.org/abs/1110.6298">ArXiv</a>
-  | <a href="http://dx.doi.org/10.1109/TSP.2011.2166394">DOI</a>) to perform exact spherical harmonic transform on the sphere. The resulting wavelet transform is also theoretically exact, i.e. it captures all the information of band-limited signals in the minimal number of samples. <strong>FLAGLET</strong> was also extended to support the <a href="http://healpix.jpl.nasa.gov/">HEALPIX</a> sampling scheme, in which case the transforms are not theoretically exact but achieve good numerical accuracy. 
+  | <a href="http://dx.doi.org/10.1109/TSP.2011.2166394">DOI</a>) to perform exact spherical harmonic transform on the sphere. The resulting wavelet transform is also theoretically exact, i.e. the original signal can be synthesises from its wavelet coefficients exactly since the wavelet coefficients capture all the information of band-limited signals. <strong>FLAGLET</strong> was also extended to support the <a href="http://healpix.jpl.nasa.gov/">HEALPIX</a> sampling scheme, in which case the transforms are not theoretically exact but achieve good numerical accuracy. 
 
   <p>
   This page outlines the main features of <strong>FLAGLET</strong>, installation details as well as the core functionalties and interfaces.  References, version, and license information then follows.
@@ -103,18 +103,18 @@ Private release of <strong>FLAGLET</strong> 1.0.
 <!--------------------------------------------------------------->  
 <a name="routines"><h2>Wavelet transform on the sphere</h2></a>
 
-  <p> In <strong>FLAGLET</strong>, the wavelet kernels are constructed through exact tilling of Fourier-Laguerre space, a conjunction of the harmonic (for the sphere) and the Laguerre multipoles (for the radial half-line). This 2D harmonic space is tiled into wavelet kernels ("flaglets") which are localised in both real and frequency spaces, as shown on the image below for a particular set of wavelet parameters (tiling of the Fourier-Laguerre space on the left, some flaglet kernels on the right).</p>
+  <p> In <strong>FLAGLET</strong>, the wavelets are constructed through exact tilling of Fourier-Laguerre space, a conjunction of the harmonic (for the sphere) and the Laguerre multipoles (for the radial half-line). This 2D harmonic space is tiled into wavelets ("flaglets") which are localised in both real and frequency spaces, as shown on the image below for a particular set of wavelet parameters (tiling of the Fourier-Laguerre space on the left, some flaglets on the right).</p>
 
  <p><img src="images/wavs2.jpg" width="340" height="370" border=0 align="center"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <img src="images/wavs1.jpg" width="340" height="370" border=0 align="center"> 
 
-  <p> With an exact spherical harmonic transform as the one provided in <strong>SSHT</strong> and the exact spherical Laguerre transform (see related publications), the wavelet transform implemented in <strong>FLAGLET</strong> is theoretically exact in both pixel and harmonic spaces. In other words one can decompose a band-limited signal in a set of flaglet maps that exactly capture all the information, and reconstruct the initial signal at floating-point precision. Due to the nature of the tiling in Fourier-Laguerre space, the individual flaglets have different band-limits and hence can be reconstructed at different resolutions, i.e. on the minimal number of samples. Due to the exactness of all transforms, these two approaches are equivalent and capture all the information contained in the initial band-limited map. </p>
+  <p> With an exact spherical harmonic transform as the one provided in <strong>SSHT</strong> and the exact spherical Laguerre transform (see related publications), the wavelet transform implemented in <strong>FLAGLET</strong> is theoretically exact in both pixel and harmonic spaces. In other words one can decompose a band-limited signal in a set of flaglet maps that exactly capture all the information, and reconstruct the initial signal at floating-point precision. Due to the nature of the tiling in Fourier-Laguerre space, the individual flaglets have different band-limits and hence can be reconstructed at different resolutions, i.e. with the minimal number of samples. Due to the exactness of all transforms, these two approaches are equivalent and capture all the information contained in the initial band-limited map. </p>
 
 <br>
 
 <!--------------------------------------------------------------->  
 <a name="installation"><h2>Installation and documentation</h2></a>
 
-  <p> The core functionalities of <strong>FLAGLET</strong> are written in C and self-documenting. The C library requires <strong>FLAG</strong>, <strong>S2LET</strong>, <a href="http://www.mrao.cam.ac.uk/~jdm57/ssht/index.html">SSHT</a> and <a href="http://www.fftw.org/">FFTW</a>. Interfaces are provided for all high-level routines in Matlab.   Several examples, tests and demos are provided fo the C library and the Matlab interfaces.</p>
+  <p> The core functionalities of <strong>FLAGLET</strong> are written in C and are self-documenting. The C library requires <strong>FLAG</strong>, <strong>S2LET</strong>, <a href="http://www.mrao.cam.ac.uk/~jdm57/ssht/index.html">SSHT</a> and <a href="http://www.fftw.org/">FFTW</a>. Interfaces are provided for all high-level routines in Matlab.   Several examples, tests and demos are provided fo the C library and the Matlab interfaces.</p>
 
   <h4>Compiling</h4>
 
@@ -128,7 +128,7 @@ Private release of <strong>FLAGLET</strong> 1.0.
   <br> - The C documentation is generated by <a href="http://www.doxygen.org">doxygen</a> and available <a href="c_doc.html">here</a>.
   <br> - The Matlab routines that interface with the C implementation are self
   documenting, and documentation can be accessed through the help command in
-  Matlab). HTML documentation is available <a href="matlab_doc.html">here</a> and was built with <a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a>.</p>
+  Matlab). HTML documentation is available <a href="matlab_doc.html">here</a> and is built with <a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a>.</p>
 <br>
 
 <!--------------------------------------------------------------->

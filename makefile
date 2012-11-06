@@ -13,7 +13,7 @@ GSLDIR	= ${GSL}
 # Directory for MATLAB
 MLAB	=  /Applications/MATLAB_R2011b.app
 # Directory for DOXYGEN
-DOXYGEN_PATH=/Applications/Doxygen.app/Contents/Resources/doxygen
+DOXYGEN_PATH=doxygen
 
 # Compiler and options
 CC	= gcc
