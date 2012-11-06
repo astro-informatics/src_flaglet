@@ -49,8 +49,8 @@ void flaglet_axisym_tiling(double *kappa_lp, double *kappa0_lp, int B_l, int B_p
 	double *phi2_l = (double*)calloc((J_l+2) * L, sizeof(double));
 	double *phi2_n = (double*)calloc((J_p+2) * P, sizeof(double));
 
-	s2let_tiling_phi2(phi2_l, B_l, L, J_min_l);
-	s2let_tiling_phi2(phi2_n, B_p, P, J_min_p);
+	s2let_tiling_phi2_needlet(phi2_l, B_l, L, J_min_l);
+	s2let_tiling_phi2_needlet(phi2_n, B_p, P, J_min_p);
 
 	int el_max = ceil(pow(B_l,J_min_l))+1;
 	int en_max = ceil(pow(B_p,J_min_p))+1;

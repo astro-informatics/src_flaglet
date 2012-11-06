@@ -118,7 +118,7 @@ default: lib test about tidy
 matlab: $(FLAGLETOBJSMEX)
 
 .PHONY: all
-all: lib matlab doc test about tidy
+all: lib matlab test about tidy
 
 .PHONY: lib
 lib: $(FLAGLETLIB)/lib$(FLAGLETLIBN).a
