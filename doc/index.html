@@ -79,10 +79,10 @@ Public release of <strong>FLAGLET</strong> 1.0b1
 <a name="introduction"><h2>Introduction</h2></a>
 
   <p>
-  The <a href="http://www.flaglets.org">FLAGLET</a> code provides high-performance routines for fast wavelet analysis of signals on the ball using the <a href="http://arxiv.org/abs/1205.0792">Flaglet transform</a>. It exploits <a href="http://www.s2let.org">S2LET</a>,  <a href="http://www.mrao.cam.ac.uk/~jdm57/flag">FLAG</a> and <a href="http://www.mrao.cam.ac.uk/~jdm57/ssht/index.html">SSHT</a> codes. The flaglet transform is theoretically exact, i.e. the original signal can be synthesises from its wavelet coefficients exactly since the wavelet coefficients capture all the information of band-limited signals. 
+  The <a href="http://www.flaglets.org">FLAGLET</a> code provides high-performance routines for fast wavelet analysis of signals on the ball using the <a href="#referencing">Flaglet transform</a> (<a href="http://arxiv.org/abs/1205.0792">ArXiv</a> | <a href="http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=6280687">DOI</a>). It exploits <a href="http://www.s2let.org">S2LET</a>,  <a href="http://www.mrao.cam.ac.uk/~jdm57/flag">FLAG</a> and <a href="http://www.mrao.cam.ac.uk/~jdm57/ssht/index.html">SSHT</a> codes. The flaglet transform is theoretically exact, i.e. the original signal can be synthesises from its wavelet coefficients exactly since the wavelet coefficients capture all the information of band-limited signals. 
 
   <p>
-  This page outlines the main features of <strong>FLAGLET</strong>, installation details as well as the core functionalties and interfaces.  References, version, and license information then follows.
+  This page outlines the main features of <strong>FLAGLET</strong>, installation details as well as the core functionalities and interfaces.  References, version, and license information then follows.
   
   <strong>FLAGLET</strong> requires the <a href="http://www.mrao.cam.ac.uk/~jdm57/flag">FLAG</a>, <a href="http://www.s2let.org">S2LET</a>, <a href="http://www.mrao.cam.ac.uk/~jdm57/ssht/index.html">SSHT</a> and <a href="http://www.fftw.org/">FFTW</a> libraries. 
 </p>
@@ -90,7 +90,7 @@ Public release of <strong>FLAGLET</strong> 1.0b1
 <br>
 
 <!--------------------------------------------------------------->  
-<a name="routines"><h2>Wavelet transform on the sphere</h2></a>
+<a name="Flaglets"><h2>Wavelet transform on the ball</h2></a>
 
   <p> The flaglets are constructed through an exact tilling of the Fourier-Laguerre space, a conjunction of the harmonic multipoles arising from the spherical harmonic transform on the sphere (performed by <a href="http://www.mrao.cam.ac.uk/~jdm57/ssht/index.html">SSHT</a>) and the spherical Laguerre transform on the radial half-line (performed in <a href="http://www.mrao.cam.ac.uk/~jdm57/flag">FLAG</a>). This 2D harmonic space is tiled into wavelets ("flaglets") following the scale-discretised approach and its implementation in <a href="http://www.s2let.org">S2LET</a>. The flaglets are localised in both real and frequency spaces, as shown on the image below for a particular set of wavelet parameters (tiling of the Fourier-Laguerre space on the left, some flaglets on the right).</p>
 
@@ -140,7 +140,7 @@ Public release of <strong>FLAGLET</strong> 1.0b1
    href="http://www.s2let.org/">http://www.flaglets.org/</a>)
   and the related academic paper:</p>
 
-<blockquote> B. Leistedt and J. D. McEwen, <a href="http://arxiv.org/abs/1205.0792">Exact wavelets on the ball</a>,  IEEE Trans. Sig. Proc., 60, 2012 (<a href="http://arxiv.org/abs/1205.0792">ArXiv</a>). </blockquote>
+<blockquote> B. Leistedt and J. D. McEwen, <a href="http://arxiv.org/abs/1205.0792">Exact wavelets on the ball</a>,  IEEE Trans. Sig. Proc., 60, 2012 (<a href="http://arxiv.org/abs/1205.0792">ArXiv</a> | <a href="http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=6280687">DOI</a>). </blockquote>
 
 <blockquote> B. Leistedt, J. D. McEwen, P. Vandergheynst and Y. Wiaux, <a href="TODO">S2LET: A code to perform fast wavelet analysis on the sphere</a>, Astronomy & Astrophysics, submitted, 2012 (<a href="http://arxiv.org/abs/???">ArXiv</a>)</blockquote>
 
