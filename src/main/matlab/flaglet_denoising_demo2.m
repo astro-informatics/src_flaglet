@@ -24,8 +24,8 @@ J_min_p = 0 ;
 J_l = ceil(log(L) ./ log(B_l))
 J_p = ceil(log(P) ./ log(B_p))
 
-disp('Compute tilling of harmonic space...')
-[kappa kappa0] = flaglet_axisym_tilling(B_l, B_p, L, P, J_min_l, J_min_p);
+disp('Compute tiling of harmonic space...')
+[kappa kappa0] = flaglet_axisym_tiling(B_l, B_p, L, P, J_min_l, J_min_p);
 
 disp('Find noise covariance from SNR')
 SNR_ini = 8.0;
