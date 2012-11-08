@@ -18,7 +18,7 @@
  * \param[in]  P Radial harmonic band-limit.
  * \retval none
  */
-void flaglet_axisym_allocate_tiling(double **kappa_lp, double **kappa0_lp, int B_l, int B_p, int L, int P)
+void flaglet_tiling_axisym_allocate(double **kappa_lp, double **kappa0_lp, int B_l, int B_p, int L, int P)
 {
 	int J_l = s2let_j_max(L, B_l);
 	int J_p = s2let_j_max(P, B_p);
@@ -39,7 +39,7 @@ void flaglet_axisym_allocate_tiling(double **kappa_lp, double **kappa0_lp, int B
  * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void flaglet_axisym_tiling(double *kappa_lp, double *kappa0_lp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+void flaglet_tiling_axisym(double *kappa_lp, double *kappa0_lp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
 	int l, n, jl, jp;
 	int J_l = s2let_j_max(L, B_l);
@@ -49,8 +49,8 @@ void flaglet_axisym_tiling(double *kappa_lp, double *kappa0_lp, int B_l, int B_p
 	double *phi2_l = (double*)calloc((J_l+2) * L, sizeof(double));
 	double *phi2_n = (double*)calloc((J_p+2) * P, sizeof(double));
 
-	s2let_tiling_phi2_needlet(phi2_l, B_l, L, J_min_l);
-	s2let_tiling_phi2_needlet(phi2_n, B_p, P, J_min_p);
+	s2let_tiling_phi2_s2dw(phi2_l, B_l, L, J_min_l);
+	s2let_tiling_phi2_s2dw(phi2_n, B_p, P, J_min_p);
 
 	int el_max = ceil(pow(B_l,J_min_l))+1;
 	int en_max = ceil(pow(B_p,J_min_p))+1;
@@ -131,7 +131,7 @@ void flaglet_axisym_tiling(double *kappa_lp, double *kappa0_lp, int B_l, int B_p
  * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval Achieved accuracy (should be lower than e-12).
  */
-double flaglet_axisym_check_identity(double *kappa_lp, double *kappa0_lp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+double flaglet_tiling_axisym_check_identity(double *kappa_lp, double *kappa0_lp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
 	int jl, jp, l, n;
 	int J_l = s2let_j_max(L, B_l);
@@ -147,7 +147,7 @@ double flaglet_axisym_check_identity(double *kappa_lp, double *kappa0_lp, int B_
 		}
 	}
 
-	double sum = 0;
+	double sum = 0.0;
 	for (n = 0; n < P; n++){
 		for (l = 0; l < L; l++){
 			for (jp = J_min_p; jp <= J_p; jp++){
@@ -163,6 +163,7 @@ double flaglet_axisym_check_identity(double *kappa_lp, double *kappa0_lp, int B_
 	}
 
 	free(ident);
+	
 	return sum;
 }
 

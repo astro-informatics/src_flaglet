@@ -51,9 +51,9 @@ void flaglet_axisym_wav_lmp(double *wav_lmp, double *scal_lmp, int B_l, int B_p,
 	double wav0, scal0;
 
 	double *kappa_ln, *kappa0_ln;
-	flaglet_axisym_allocate_tiling(&kappa_ln, &kappa0_ln, B_l, B_p, L, P);
+	flaglet_tiling_axisym_allocate(&kappa_ln, &kappa0_ln, B_l, B_p, L, P);
 	
-	flaglet_axisym_tiling(kappa_ln, kappa0_ln, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_tiling_axisym(kappa_ln, kappa0_ln, B_l, B_p, L, P, J_min_l, J_min_p);
 
 	for (jp = J_min_p; jp <= J_p; jp++){
 		for (jl = J_min_l; jl <= J_l; jl++){
@@ -459,8 +459,8 @@ void flaglet_axisym_wav_synthesis_lmp(complex double *flmp, const complex double
 void flaglet_axisym_wav_analysis_multires(complex double *f_wav, complex double *f_scal, const complex double *f, double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
 	complex double *flmp;
-	flag_allocate_flmn(&flmp, L, P);
-	flag_analysis(flmp, f, R, L, P);
+	flag_core_allocate_flmn(&flmp, L, P);
+	flag_core_analysis(flmp, f, R, L, P);
 
 	double *wav_lmp, *scal_lmp;
 	flaglet_axisym_allocate_wav_lmp(&wav_lmp, &scal_lmp, B_l, B_p, L, P);
@@ -480,7 +480,7 @@ void flaglet_axisym_wav_analysis_multires(complex double *f_wav, complex double 
 	int J_l = s2let_j_max(L, B_l);
 	int J_p = s2let_j_max(P, B_p);
 
-	flag_synthesis(f_scal, f_scal_lmp, nodes, P, L, P);
+	flag_core_synthesis(f_scal, f_scal_lmp, nodes, P, L, P);
 
 	offset_lmp = 0;
 	offset = 0;
@@ -491,7 +491,7 @@ void flaglet_axisym_wav_analysis_multires(complex double *f_wav, complex double 
 			bandlimit_l = MIN(s2let_bandlimit(B_l, jl), L);			
 			//offset_lmp = jp * (J_l + 1) * L * L * P   +  jl * L * L * P;
 			//offset = jp * (J_l + 1) * L * (2*L-1) * (P)  +  jl * L * (2*L-1) * (P);
-			flag_synthesis(f_wav + offset, f_wav_lmp + offset_lmp, nodes, bandlimit_p, bandlimit_l, bandlimit_p);
+			flag_core_synthesis(f_wav + offset, f_wav_lmp + offset_lmp, nodes, bandlimit_p, bandlimit_l, bandlimit_p);
 			offset_lmp += bandlimit_l * bandlimit_l * bandlimit_p ;
 			offset += bandlimit_l * (2 * bandlimit_l - 1) * bandlimit_p;
 		}
@@ -531,7 +531,7 @@ void flaglet_axisym_wav_synthesis_multires(complex double *f, const complex doub
 	int J_l = s2let_j_max(L, B_l);
 	int J_p = s2let_j_max(P, B_p);
 
-	flag_analysis(f_scal_lmp, f_scal, R, L, P);
+	flag_core_analysis(f_scal_lmp, f_scal, R, L, P);
 
 	offset_lmp = 0;
 	offset = 0;
@@ -541,7 +541,7 @@ void flaglet_axisym_wav_synthesis_multires(complex double *f, const complex doub
 			bandlimit_l = MIN(s2let_bandlimit(B_l, jl), L);
 			//offset_lmp = jp * (J_l + 1) * L * L * P   +  jl * L * L * P;
 			//offset = jp * (J_l + 1) * L * (2*L-1) * (P)   +  jl * L * (2*L-1) * (P);
-			flag_analysis(f_wav_lmp + offset_lmp, f_wav + offset, R, bandlimit_l, bandlimit_p);
+			flag_core_analysis(f_wav_lmp + offset_lmp, f_wav + offset, R, bandlimit_l, bandlimit_p);
 			offset_lmp += bandlimit_l * bandlimit_l * bandlimit_p ;
 			offset += bandlimit_l * (2 * bandlimit_l - 1) * bandlimit_p;
 		}
@@ -552,7 +552,7 @@ void flaglet_axisym_wav_synthesis_multires(complex double *f, const complex doub
 	flaglet_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
 	complex double *flmp;
-	flag_allocate_flmn(&flmp, L, P);
+	flag_core_allocate_flmn(&flmp, L, P);
 	flaglet_axisym_wav_synthesis_multires_lmp(flmp, f_wav_lmp, f_scal_lmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
 
@@ -562,7 +562,7 @@ void flaglet_axisym_wav_synthesis_multires(complex double *f, const complex doub
 	assert(weights != NULL);
 	flag_spherlaguerre_sampling(nodes, weights, R, P);
 
-	flag_synthesis(f, flmp, nodes, P, L, P);
+	flag_core_synthesis(f, flmp, nodes, P, L, P);
 
 	free(nodes);
 	free(weights);
@@ -595,8 +595,8 @@ void flaglet_axisym_wav_synthesis_multires(complex double *f, const complex doub
 void flaglet_axisym_wav_analysis_multires_real(double *f_wav, double *f_scal, const double *f, double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
 	complex double *flmp;
-	flag_allocate_flmn(&flmp, L, P);
-	flag_analysis_real(flmp, f, R, L, P);
+	flag_core_allocate_flmn(&flmp, L, P);
+	flag_core_analysis_real(flmp, f, R, L, P);
 
 	double *wav_lmp, *scal_lmp;
 	complex double *f_wav_lmp, *f_scal_lmp;
@@ -619,7 +619,7 @@ void flaglet_axisym_wav_analysis_multires_real(double *f_wav, double *f_scal, co
 	int bandlimit_p, bandlimit_l, offset_lmp, offset, jl, jp;
 	int J_l = s2let_j_max(L, B_l);
 	int J_p = s2let_j_max(P, B_p);
-	flag_synthesis_real(f_scal, f_scal_lmp, nodes, P, L, P);
+	flag_core_synthesis_real(f_scal, f_scal_lmp, nodes, P, L, P);
 
 	offset_lmp = 0;
 	offset = 0;
@@ -630,7 +630,7 @@ void flaglet_axisym_wav_analysis_multires_real(double *f_wav, double *f_scal, co
 			bandlimit_l = MIN(s2let_bandlimit(B_l, jl), L);
 			//offset_lmp = jp * (J_l + 1) * L * L * P   +  jl * L * L * P;
 			//offset = jp * (J_l + 1) * L * (2*L-1) * (P)  +  jl * L * (2*L-1) * (P);
-			flag_synthesis_real(f_wav + offset, f_wav_lmp + offset_lmp, nodes, bandlimit_p, bandlimit_l, bandlimit_p);
+			flag_core_synthesis_real(f_wav + offset, f_wav_lmp + offset_lmp, nodes, bandlimit_p, bandlimit_l, bandlimit_p);
 			offset_lmp += bandlimit_l * bandlimit_l * bandlimit_p ;
 			offset += bandlimit_l * (2 * bandlimit_l - 1) * bandlimit_p;
 		}
@@ -670,7 +670,7 @@ void flaglet_axisym_wav_synthesis_multires_real(double *f, const double *f_wav, 
 	int bandlimit_p, bandlimit_l, offset_lmp, offset, jl, jp;
 	int J_l = s2let_j_max(L, B_l);
 	int J_p = s2let_j_max(P, B_p);
-	flag_analysis_real(f_scal_lmp, f_scal, R, L, P);
+	flag_core_analysis_real(f_scal_lmp, f_scal, R, L, P);
 
 	offset_lmp = 0;
 	offset = 0;
@@ -680,7 +680,7 @@ void flaglet_axisym_wav_synthesis_multires_real(double *f, const double *f_wav, 
 			bandlimit_l = MIN(s2let_bandlimit(B_l, jl), L);
 			//offset_lmp = jp * (J_l + 1) * L * L * P   +  jl * L * L * P;
 			//offset = jp * (J_l + 1) * L * (2*L-1) * (P)   +  jl * L * (2*L-1) * (P);
-			flag_analysis_real(f_wav_lmp + offset_lmp, f_wav + offset, R, bandlimit_l, bandlimit_p);
+			flag_core_analysis_real(f_wav_lmp + offset_lmp, f_wav + offset, R, bandlimit_l, bandlimit_p);
 			offset_lmp += bandlimit_l * bandlimit_l * bandlimit_p ;
 			offset += bandlimit_l * (2 * bandlimit_l - 1) * bandlimit_p;
 		}
@@ -691,7 +691,7 @@ void flaglet_axisym_wav_synthesis_multires_real(double *f, const double *f_wav, 
 	flaglet_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
 	complex double *flmp;
-	flag_allocate_flmn(&flmp, L, P);
+	flag_core_allocate_flmn(&flmp, L, P);
 	flaglet_axisym_wav_synthesis_multires_lmp(flmp, f_wav_lmp, f_scal_lmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 	
 	double *nodes = (double*)calloc(P, sizeof(double));
@@ -700,7 +700,7 @@ void flaglet_axisym_wav_synthesis_multires_real(double *f, const double *f_wav, 
 	assert(weights != NULL);
 	flag_spherlaguerre_sampling(nodes, weights, R, P);
 
-	flag_synthesis_real(f, flmp, nodes, P, L, P);
+	flag_core_synthesis_real(f, flmp, nodes, P, L, P);
 
 	free(nodes);
 	free(weights);
@@ -732,8 +732,8 @@ void flaglet_axisym_wav_synthesis_multires_real(double *f, const double *f_wav, 
 void flaglet_axisym_wav_analysis(complex double *f_wav, complex double *f_scal, const complex double *f, double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
 	complex double *flmp;
-	flag_allocate_flmn(&flmp, L, P);
-	flag_analysis(flmp, f, R, L, P);
+	flag_core_allocate_flmn(&flmp, L, P);
+	flag_core_analysis(flmp, f, R, L, P);
 
 	double *wav_lmp, *scal_lmp;
 	complex double *f_wav_lmp, *f_scal_lmp;
@@ -756,7 +756,7 @@ void flaglet_axisym_wav_analysis(complex double *f_wav, complex double *f_scal, 
 	int offset_lmp, offset, jl, jp;
 	int J_l = s2let_j_max(L, B_l);
 	int J_p = s2let_j_max(P, B_p);
-	flag_synthesis(f_scal, f_scal_lmp, nodes, P, L, P);
+	flag_core_synthesis(f_scal, f_scal_lmp, nodes, P, L, P);
 
 	offset_lmp = 0;
 	offset = 0;
@@ -764,7 +764,7 @@ void flaglet_axisym_wav_analysis(complex double *f_wav, complex double *f_scal, 
 		for (jl = J_min_l; jl <= J_l; jl++){
 			//offset_lmp = jp * (J_l + 1) * L * L * P   +  jl * L * L * P;
 			//offset = jp * (J_l + 1) * L * (2*L-1) * (P)  +  jl * L * (2*L-1) * (P);
-			flag_synthesis(f_wav + offset, f_wav_lmp + offset_lmp, nodes, P, L, P);
+			flag_core_synthesis(f_wav + offset, f_wav_lmp + offset_lmp, nodes, P, L, P);
 			offset_lmp += L * L * P ;
 			offset += L * (2 * L - 1) * P;
 		}
@@ -803,7 +803,7 @@ void flaglet_axisym_wav_synthesis(complex double *f, const complex double *f_wav
 	int offset_lmp, offset, jl, jp;
 	int J_l = s2let_j_max(L, B_l);
 	int J_p = s2let_j_max(P, B_p);
-	flag_analysis(f_scal_lmp, f_scal, R, L, P);
+	flag_core_analysis(f_scal_lmp, f_scal, R, L, P);
 
 	offset_lmp = 0;
 	offset = 0;
@@ -811,7 +811,7 @@ void flaglet_axisym_wav_synthesis(complex double *f, const complex double *f_wav
 		for (jl = J_min_l; jl <= J_l; jl++){
 			//offset_lmp = jp * (J_l + 1) * L * L * P   +  jl * L * L * P;
 			//offset = jp * (J_l + 1) * L * (2*L-1) * (P)   +  jl * L * (2*L-1) * (P);
-			flag_analysis(f_wav_lmp + offset_lmp, f_wav + offset, R, L, P);
+			flag_core_analysis(f_wav_lmp + offset_lmp, f_wav + offset, R, L, P);
 			offset_lmp += L * L * P ;
 			offset += L * (2 * L - 1) * P;
 		}
@@ -822,7 +822,7 @@ void flaglet_axisym_wav_synthesis(complex double *f, const complex double *f_wav
 	flaglet_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
 	complex double *flmp;
-	flag_allocate_flmn(&flmp, L, P);
+	flag_core_allocate_flmn(&flmp, L, P);
 	flaglet_axisym_wav_synthesis_lmp(flmp, f_wav_lmp, f_scal_lmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 	
 	double *nodes = (double*)calloc(P, sizeof(double));
@@ -831,7 +831,7 @@ void flaglet_axisym_wav_synthesis(complex double *f, const complex double *f_wav
 	assert(weights != NULL);
 	flag_spherlaguerre_sampling(nodes, weights, R, P);
 
-	flag_synthesis(f, flmp, nodes, P, L, P);
+	flag_core_synthesis(f, flmp, nodes, P, L, P);
 
 	free(nodes);
 	free(weights);
@@ -864,8 +864,8 @@ void flaglet_axisym_wav_synthesis(complex double *f, const complex double *f_wav
 void flaglet_axisym_wav_analysis_real(double *f_wav, double *f_scal, const double *f, double R, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
 {
 	complex double *flmp;
-	flag_allocate_flmn(&flmp, L, P);
-	flag_analysis_real(flmp, f, R, L, P);
+	flag_core_allocate_flmn(&flmp, L, P);
+	flag_core_analysis_real(flmp, f, R, L, P);
 
 	double *wav_lmp, *scal_lmp;
 	complex double *f_wav_lmp, *f_scal_lmp;
@@ -888,7 +888,7 @@ void flaglet_axisym_wav_analysis_real(double *f_wav, double *f_scal, const doubl
 	int offset_lmp, offset, jl, jp;
 	int J_l = s2let_j_max(L, B_l);
 	int J_p = s2let_j_max(P, B_p);
-	flag_synthesis_real(f_scal, f_scal_lmp, nodes, P, L, P);
+	flag_core_synthesis_real(f_scal, f_scal_lmp, nodes, P, L, P);
 
 	offset_lmp = 0;
 	offset = 0;
@@ -896,7 +896,7 @@ void flaglet_axisym_wav_analysis_real(double *f_wav, double *f_scal, const doubl
 		for (jl = J_min_l; jl <= J_l; jl++){
 			//offset_lmp = jp * (J_l + 1) * L * L * P   +  jl * L * L * P;
 			//offset = jp * (J_l + 1) * L * (2*L-1) * (P)  +  jl * L * (2*L-1) * (P);
-			flag_synthesis_real(f_wav + offset, f_wav_lmp + offset_lmp, nodes, P, L, P);
+			flag_core_synthesis_real(f_wav + offset, f_wav_lmp + offset_lmp, nodes, P, L, P);
 			offset_lmp += L * L * P ;
 			offset += L * (2 * L - 1) * P;
 		}
@@ -936,7 +936,7 @@ void flaglet_axisym_wav_synthesis_real(double *f, const double *f_wav, const dou
 	int offset_lmp, offset, jl, jp;
 	int J_l = s2let_j_max(L, B_l);
 	int J_p = s2let_j_max(P, B_p);
-	flag_analysis_real(f_scal_lmp, f_scal, R, L, P);
+	flag_core_analysis_real(f_scal_lmp, f_scal, R, L, P);
 
 	offset_lmp = 0;
 	offset = 0;
@@ -944,7 +944,7 @@ void flaglet_axisym_wav_synthesis_real(double *f, const double *f_wav, const dou
 		for (jl = J_min_l; jl <= J_l; jl++){
 			//offset_lmp = jp * (J_l + 1) * L * L * P   +  jl * L * L * P;
 			//offset = jp * (J_l + 1) * L * (2*L-1) * (P)   +  jl * L * (2*L-1) * (P);
-			flag_analysis_real(f_wav_lmp + offset_lmp, f_wav + offset, R, L, P);
+			flag_core_analysis_real(f_wav_lmp + offset_lmp, f_wav + offset, R, L, P);
 			offset_lmp += L * L * P ;
 			offset += L * (2 * L - 1) * P;
 		}
@@ -955,7 +955,7 @@ void flaglet_axisym_wav_synthesis_real(double *f, const double *f_wav, const dou
 	flaglet_axisym_wav_lmp(wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 
 	complex double *flmp;
-	flag_allocate_flmn(&flmp, L, P);
+	flag_core_allocate_flmn(&flmp, L, P);
 	flaglet_axisym_wav_synthesis_lmp(flmp, f_wav_lmp, f_scal_lmp, wav_lmp, scal_lmp, B_l, B_p, L, P, J_min_l, J_min_p);
 	
 	double *nodes = (double*)calloc(P, sizeof(double));
@@ -964,7 +964,7 @@ void flaglet_axisym_wav_synthesis_real(double *f, const double *f_wav, const dou
 	assert(weights != NULL);
 	flag_spherlaguerre_sampling(nodes, weights, R, P);
 
-	flag_synthesis_real(f, flmp, nodes, P, L, P);
+	flag_core_synthesis_real(f, flmp, nodes, P, L, P);
 
 	free(nodes);
 	free(weights);

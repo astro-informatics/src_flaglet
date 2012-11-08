@@ -50,9 +50,9 @@ void flaglet_tiling_test(int B_l, int B_p, int L, int P, int J_min_l, int J_min_
 {		
 	//double kl, kn;
 	double *kappa_lp, *kappa0_lp;
-	flaglet_axisym_allocate_tiling(&kappa_lp, &kappa0_lp, B_l, B_p, L, P);
+	flaglet_tiling_axisym_allocate(&kappa_lp, &kappa0_lp, B_l, B_p, L, P);
 	
-	flaglet_axisym_tiling(kappa_lp, kappa0_lp, B_l, B_p, L, P, J_min_l, J_min_p);
+	flaglet_tiling_axisym(kappa_lp, kappa0_lp, B_l, B_p, L, P, J_min_l, J_min_p);
 	
 	/*
 	int jl, jp, l, n;
@@ -76,8 +76,8 @@ void flaglet_tiling_test(int B_l, int B_p, int L, int P, int J_min_l, int J_min_
 		printf("\n\n\n");}
 	*/
 
-	double sum = flaglet_axisym_check_identity(kappa_lp, kappa0_lp, B_l, B_p, L, P, J_min_l, J_min_p);
-	printf("  - Identity residuals : %e\n", sum);
+	double sum = flaglet_tiling_axisym_check_identity(kappa_lp, kappa0_lp, B_l, B_p, L, P, J_min_l, J_min_p);
+	printf("  - Identity residuals : %10.5e\n", sum);
 
 	free(kappa_lp);
 	free(kappa0_lp);
@@ -219,10 +219,10 @@ void flaglet_axisym_wav_test(double R, int B_l, int B_p, int L, int P, int J_min
 	clock_t time_start, time_end;
 
 	complex double *f, *f_rec, *flmp, *flmp_rec;
-	flag_allocate_flmn(&flmp, L, P);
-	flag_allocate_flmn(&flmp_rec, L, P);
-	flag_allocate_f(&f, L, P);
-	flag_allocate_f(&f_rec, L, P);
+	flag_core_allocate_flmn(&flmp, L, P);
+	flag_core_allocate_flmn(&flmp_rec, L, P);
+	flag_core_allocate_f(&f, L, P);
+	flag_core_allocate_f(&f_rec, L, P);
 
 	flaglet_random_flmp(flmp, L, P, seed);
 
@@ -232,7 +232,7 @@ void flaglet_axisym_wav_test(double R, int B_l, int B_p, int L, int P, int J_min
 	assert(weights != NULL);
 	flag_spherlaguerre_sampling(nodes, weights, R, P);
 
-	flag_synthesis(f, flmp, nodes, P, L, P);
+	flag_core_synthesis(f, flmp, nodes, P, L, P);
 
 	free(nodes);
 	free(weights);
@@ -258,7 +258,7 @@ void flaglet_axisym_wav_test(double R, int B_l, int B_p, int L, int P, int J_min
 		//printf("f[%i] = (%f,%f) - rec = (%f,%f)\n",n,creal(f[n]),cimag(f[n]),creal(f_rec[n]),cimag(f_rec[n]));
 	}*/
 
-	flag_analysis(flmp_rec, f_rec, R, L, P);
+	flag_core_analysis(flmp_rec, f_rec, R, L, P);
 
 	printf("  - Maximum abs error  : %6.5e\n", 
 		maxerr_cplx(flmp, flmp_rec, L*L*P));
@@ -287,10 +287,10 @@ void flaglet_axisym_wav_real_test(double R, int B_l, int B_p, int L, int P, int 
 
 	complex *flmp, *flmp_rec;
 	double *f, *f_rec;
-	flag_allocate_flmn(&flmp, L, P);
-	flag_allocate_flmn(&flmp_rec, L, P);
-	flag_allocate_f_real(&f, L, P);
-	flag_allocate_f_real(&f_rec, L, P);
+	flag_core_allocate_flmn(&flmp, L, P);
+	flag_core_allocate_flmn(&flmp_rec, L, P);
+	flag_core_allocate_f_real(&f, L, P);
+	flag_core_allocate_f_real(&f_rec, L, P);
 
 	flaglet_random_flmp_real(flmp, L, P, seed);
 
@@ -300,7 +300,7 @@ void flaglet_axisym_wav_real_test(double R, int B_l, int B_p, int L, int P, int 
 	assert(weights != NULL);
 	flag_spherlaguerre_sampling(nodes, weights, R, P);
 
-	flag_synthesis_real(f, flmp, nodes, P, L, P);
+	flag_core_synthesis_real(f, flmp, nodes, P, L, P);
 
 	free(nodes);
 	free(weights);
@@ -328,7 +328,7 @@ void flaglet_axisym_wav_real_test(double R, int B_l, int B_p, int L, int P, int 
 	}
 	*/
 
-	flag_analysis_real(flmp_rec, f_rec, R, L, P);
+	flag_core_analysis_real(flmp_rec, f_rec, R, L, P);
 
 	printf("  - Maximum abs error  : %6.5e\n", 
 		maxerr_cplx(flmp, flmp_rec, L*L*P));
@@ -357,10 +357,10 @@ void flaglet_axisym_wav_multires_test(double R, int B_l, int B_p, int L, int P, 
 	clock_t time_start, time_end;
 
 	complex double *f, *f_rec, *flmp, *flmp_rec;
-	flag_allocate_flmn(&flmp, L, P);
-	flag_allocate_flmn(&flmp_rec, L, P);
-	flag_allocate_f(&f, L, P);
-	flag_allocate_f(&f_rec, L, P);
+	flag_core_allocate_flmn(&flmp, L, P);
+	flag_core_allocate_flmn(&flmp_rec, L, P);
+	flag_core_allocate_f(&f, L, P);
+	flag_core_allocate_f(&f_rec, L, P);
 
 	flaglet_random_flmp(flmp, L, P, seed);
 
@@ -370,7 +370,7 @@ void flaglet_axisym_wav_multires_test(double R, int B_l, int B_p, int L, int P, 
 	assert(weights != NULL);
 	flag_spherlaguerre_sampling(nodes, weights, R, P);
 
-	flag_synthesis(f, flmp, nodes, P, L, P);
+	flag_core_synthesis(f, flmp, nodes, P, L, P);
 
 	free(nodes);
 	free(weights);
@@ -390,7 +390,7 @@ void flaglet_axisym_wav_multires_test(double R, int B_l, int B_p, int L, int P, 
 	printf("  - Wavelet synthesis  : %4.4f seconds\n", 
 		(time_end - time_start) / (double)CLOCKS_PER_SEC);
 
-	flag_analysis(flmp_rec, f_rec, R, L, P);
+	flag_core_analysis(flmp_rec, f_rec, R, L, P);
 
 	printf("  - Maximum abs error  : %6.5e\n", 
 		maxerr_cplx(flmp, flmp_rec, L*L*P));
@@ -425,10 +425,10 @@ void flaglet_axisym_wav_multires_real_test(double R, int B_l, int B_p, int L, in
 
 	complex *flmp, *flmp_rec;
 	double *f, *f_rec;
-	flag_allocate_flmn(&flmp, L, P);
-	flag_allocate_flmn(&flmp_rec, L, P);
-	flag_allocate_f_real(&f, L, P);
-	flag_allocate_f_real(&f_rec, L, P);
+	flag_core_allocate_flmn(&flmp, L, P);
+	flag_core_allocate_flmn(&flmp_rec, L, P);
+	flag_core_allocate_f_real(&f, L, P);
+	flag_core_allocate_f_real(&f_rec, L, P);
 
 	flaglet_random_flmp_real(flmp, L, P, seed);
 
@@ -438,7 +438,7 @@ void flaglet_axisym_wav_multires_real_test(double R, int B_l, int B_p, int L, in
 	assert(weights != NULL);
 	flag_spherlaguerre_sampling(nodes, weights, R, P);
 
-	flag_synthesis_real(f, flmp, nodes, P, L, P);
+	flag_core_synthesis_real(f, flmp, nodes, P, L, P);
 
 	free(nodes);
 	free(weights);
@@ -466,7 +466,7 @@ void flaglet_axisym_wav_multires_real_test(double R, int B_l, int B_p, int L, in
 	}
 	*/
 
-	flag_analysis_real(flmp_rec, f_rec, R, L, P);
+	flag_core_analysis_real(flmp_rec, f_rec, R, L, P);
 
 	printf("  - Maximum abs error  : %6.5e\n", 
 		maxerr_cplx(flmp, flmp_rec, L*L*P));
@@ -508,7 +508,7 @@ void flaglet_axisym_wav_performance_test(double R, int NREPEAT, int NSCALE, int 
 		L *= 2;
 		P *= 2;
 	
-		flag_allocate_flmn(&flmp, L, P);
+		flag_core_allocate_flmn(&flmp, L, P);
 		
 		double *nodes = (double*)calloc(P, sizeof(double));
 		double *weights = (double*)calloc(P, sizeof(double));
@@ -521,11 +521,11 @@ void flaglet_axisym_wav_performance_test(double R, int NREPEAT, int NSCALE, int 
 
 			flaglet_random_flmp(flmp, L, P, seed);
 
-			flag_allocate_f(&f, L, P);
-			flag_allocate_flmn(&flmp_rec, L, P);
+			flag_core_allocate_f(&f, L, P);
+			flag_core_allocate_flmn(&flmp_rec, L, P);
 
 			time_start = clock();
-			flag_synthesis(f, flmp, nodes, P, L, P);
+			flag_core_synthesis(f, flmp, nodes, P, L, P);
 			time_end = clock();
 			//printf("  - (FLAG synthesis   : %4.4f seconds)\n", (time_end - time_start) / (double)CLOCKS_PER_SEC);
 
@@ -538,7 +538,7 @@ void flaglet_axisym_wav_performance_test(double R, int NREPEAT, int NSCALE, int 
 			tottime_analysis += (time_end - time_start) / (double)CLOCKS_PER_SEC;
 			//printf("  - Duration for wavelet analysis   : %4.4f seconds\n", (time_end - time_start) / (double)CLOCKS_PER_SEC);
 
-			flag_allocate_f(&f_rec, L, P);
+			flag_core_allocate_f(&f_rec, L, P);
 
 			time_start = clock();
 			flaglet_axisym_wav_synthesis(f_rec, f_wav, f_scal, R, B_l, B_p, L, P, J_min_l, J_min_p);
@@ -547,12 +547,12 @@ void flaglet_axisym_wav_performance_test(double R, int NREPEAT, int NSCALE, int 
 			//printf("  - Duration for wavelet synthesis   : %4.4f seconds\n", (time_end - time_start) / (double)CLOCKS_PER_SEC);
 			
 			time_start = clock();
-			flag_analysis(flmp_rec, f_rec, R, L, P);
+			flag_core_analysis(flmp_rec, f_rec, R, L, P);
 			time_end = clock();
 			//printf("  - (FLAG analysis   : %4.4f seconds)\n", (time_end - time_start) / (double)CLOCKS_PER_SEC);
 
-			accuracy += maxerr_cplx(flmp, flmp_rec, flag_flmn_size(L, P));
-			//printf("  - Max error on reconstruction  : %6.5e\n\n", maxerr_cplx(flmp, flmp_rec, flag_flmn_size(L, P)));
+			accuracy += maxerr_cplx(flmp, flmp_rec, flag_core_flmn_size(L, P));
+			//printf("  - Max error on reconstruction  : %6.5e\n\n", maxerr_cplx(flmp, flmp_rec, flag_core_flmn_size(L, P)));
 
 			free(f);
 			free(flmp_rec);
@@ -595,7 +595,7 @@ void flaglet_axisym_wav_multires_performance_test(double R, int NREPEAT, int NSC
 		L *= 2;
 		P *= 2;
 	
-		flag_allocate_flmn(&flmp, L, P);
+		flag_core_allocate_flmn(&flmp, L, P);
 		
 		double *nodes = (double*)calloc(P, sizeof(double));
 		double *weights = (double*)calloc(P, sizeof(double));
@@ -608,11 +608,11 @@ void flaglet_axisym_wav_multires_performance_test(double R, int NREPEAT, int NSC
 
 			flaglet_random_flmp(flmp, L, P, seed);
 
-			flag_allocate_f(&f, L, P);
-			flag_allocate_flmn(&flmp_rec, L, P);
+			flag_core_allocate_f(&f, L, P);
+			flag_core_allocate_flmn(&flmp_rec, L, P);
 
 			time_start = clock();
-			flag_synthesis(f, flmp, nodes, P, L, P);
+			flag_core_synthesis(f, flmp, nodes, P, L, P);
 			time_end = clock();
 			//printf("  - (FLAG synthesis   : %4.4f seconds)\n", (time_end - time_start) / (double)CLOCKS_PER_SEC);
 
@@ -625,7 +625,7 @@ void flaglet_axisym_wav_multires_performance_test(double R, int NREPEAT, int NSC
 			tottime_analysis += (time_end - time_start) / (double)CLOCKS_PER_SEC;
 			//printf("  - Duration for wavelet analysis   : %4.4f seconds\n", (time_end - time_start) / (double)CLOCKS_PER_SEC);
 
-			flag_allocate_f(&f_rec, L, P);
+			flag_core_allocate_f(&f_rec, L, P);
 
 			time_start = clock();
 			flaglet_axisym_wav_synthesis_multires(f_rec, f_wav, f_scal, R, B_l, B_p, L, P, J_min_l, J_min_p);
@@ -634,12 +634,12 @@ void flaglet_axisym_wav_multires_performance_test(double R, int NREPEAT, int NSC
 			//printf("  - Duration for wavelet synthesis   : %4.4f seconds\n", (time_end - time_start) / (double)CLOCKS_PER_SEC);
 			
 			time_start = clock();
-			flag_analysis(flmp_rec, f_rec, R, L, P);
+			flag_core_analysis(flmp_rec, f_rec, R, L, P);
 			time_end = clock();
 			//printf("  - (FLAG analysis   : %4.4f seconds)\n", (time_end - time_start) / (double)CLOCKS_PER_SEC);
 
-			accuracy += maxerr_cplx(flmp, flmp_rec, flag_flmn_size(L, P));
-			//printf("  - Max error on reconstruction  : %6.5e\n\n", maxerr_cplx(flmp, flmp_rec, flag_flmn_size(L, P)));
+			accuracy += maxerr_cplx(flmp, flmp_rec, flag_core_flmn_size(L, P));
+			//printf("  - Max error on reconstruction  : %6.5e\n\n", maxerr_cplx(flmp, flmp_rec, flag_core_flmn_size(L, P)));
 
 			free(f);
 			free(flmp_rec);
@@ -668,8 +668,8 @@ void flaglet_axisym_wav_multires_performance_test(double R, int NREPEAT, int NSC
 int main(int argc, char *argv[]) 
 {
 	const double R = 1.0;
-	const int L = 16;
-	const int P = 16;
+	const int L = 4;
+	const int P = 4;
 	const int B_l = 2;
 	const int B_p = 2;
 	const int J_min_l = 0;

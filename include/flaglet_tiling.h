@@ -7,10 +7,10 @@
 
 #include <complex.h> 
 
-void flaglet_axisym_allocate_tiling(double **kappa_lp, double **kappa0_lp, int B_l, int B_p, int L, int P);
+void flaglet_tiling_axisym_allocate(double **kappa_lp, double **kappa0_lp, int B_l, int B_p, int L, int P);
 
-void flaglet_axisym_tiling(double *kappa_lp, double *kappa0_lp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p);
+void flaglet_tiling_axisym(double *kappa_lp, double *kappa0_lp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p);
 
-double flaglet_axisym_check_identity(double *kappa_lp, double *kappa0_lp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p);
+double flaglet_tiling_axisym_check_identity(double *kappa_lp, double *kappa0_lp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p);
 
 #endif

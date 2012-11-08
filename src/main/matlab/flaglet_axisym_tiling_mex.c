@@ -150,7 +150,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
   double *kappa0 = (double*)calloc( L * N, sizeof(double));
 
   // Run S2LET function
-  flaglet_axisym_tiling(kappa, kappa0, B_l, B_n, L, N, J_min_l, J_min_n);
+  flaglet_tiling_axisym(kappa, kappa0, B_l, B_n, L, N, J_min_l, J_min_n);
 
   // Output kappa and kappa0
   double *kappa_out, *kappa0_out;

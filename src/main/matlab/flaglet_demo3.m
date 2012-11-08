@@ -11,10 +11,10 @@ P = 128 ;
 Lplot = 256;
 Pplot = 256;
 
-B_l = 2;
-B_p = 2;
-J_min_l = 6;
-J_min_p = 6;
+B_l = 4;
+B_p = 4;
+J_min_l = 2;
+J_min_p = 3;
 downsample = false;
 
 J_l = ceil(log(L)/log(B_l))
@@ -50,15 +50,15 @@ disp('Wavelet analysis...')
 disp('Plot...')
 figure('Position',[100 100 600 900]) 
 
-minbound = 10;
+minbound = 12;
 maxbound = 100;
 layer = 230;
+zoomfactor = 1.9;
 
-J_l = [ 1 2 ];
-J_n = [ 1 2 ];
-nx = 2;
-ny = 3;
-zoomfactor = 2.1;
+J_l = J_min_l:(J_l-1)%[ 1 2 ];
+J_n = J_min_p:J_p%[ 1 2 ];
+nx = 3%length(J_l)+1;
+ny = 2%length(J_n);
 
 ind = 1;
 subplot(ny, nx, ind);
@@ -76,8 +76,8 @@ colormap(flipud(gray))
 caxis([minbound maxbound])
 %title('Scaling part')
 
-for jl = J_l
-    for jn = J_n
+for jl = J_l - J_min_l + 1
+    for jn = J_n - J_min_p + 1
         ind = ind + 1; 
         subplot(ny, nx, ind);
         flaglet_plot_f( f_wav{jl, jn}, 'L', Lplot, 'P', Pplot, 'layer', layer )
@@ -87,3 +87,4 @@ for jl = J_l
         caxis([minbound maxbound])
     end
 end
+
