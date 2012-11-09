@@ -143,7 +143,7 @@ cleandoc:
 	rm -rf $(FLAGLETDIR)/doc/c/*
 
 .PHONY: clean
-clean:	tidy cleandoc
+clean:	tidy
 	rm -f $(FLAGLETLIB)/lib$(FLAGLETLIBN).a
 	rm -f $(FLAGLETOBJMEX)/*_mex.$(MEXEXT)
 	rm -f $(FLAGLETBIN)/flaglet_test
