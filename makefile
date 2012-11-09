@@ -17,7 +17,7 @@ DOXYGEN_PATH=doxygen
 
 # Compiler and options
 CC	= gcc
-OPT	= -Wall -O3 -g -DFLAGLET_VERSION=\"1.0\" -DFLAGLET_BUILD=\"`svnversion -n .`\"
+OPT	= -Wall -O3 -g -DFLAGLET_VERSION=\"1.0b1\" -DFLAGLET_BUILD=\"`svnversion -n .`\"
 UNAME := $(shell uname)
 
 # ======================================== #
