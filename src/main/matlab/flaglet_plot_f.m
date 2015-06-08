@@ -1,5 +1,6 @@
 function flaglet_plot_f( f, varargin )
 
+LineWidth = 1.5;
 sz = size(f);
 N = sz(1);
 L = sz(2);
@@ -8,6 +9,8 @@ p = inputParser;
 p.addParamValue('layer', 0, @isnumeric);
 p.addParamValue('L', L, @isnumeric);
 p.addParamValue('P', N, @isnumeric);
+p.addParamValue('Rplot', 1.0, @isnumeric);
+p.addParamValue('ShowSlices', true, @islogical);
 p.parse(varargin{:});
 args = p.Results;
 
@@ -25,7 +28,11 @@ if args.L > L || args.P > N
 end
 
 [rs, thetas, phis] = flag_sampling(L, N, 1.0);
-thetas = pi/2 - thetas; 
+indplot = find(rs <= args.Rplot);
+rs = rs(indplot);
+Nplot = length(indplot);
+f = f(indplot,:,:);
+thetas = pi/2 - thetas;
 thetas = [ pi/2 thetas -pi-fliplr(thetas(1:L-1)) pi/2 ];
 [rs, thetas] = ndgrid(rs, thetas);
 x = rs .* cos(thetas);
@@ -37,7 +44,7 @@ y = rs .* sin(thetas);
 %ind_pos = find(f > 0);
 %f(ind_pos) = f(ind_pos) / max(max(max(f)));
 
-v_p0 = zeros(N,2*L+1);
+v_p0 = zeros(Nplot,2*L+1);
 v_p0(:,1) = f(:,1,1);
 v_p0(:,2:(L+1)) = f(:,:,L);
 v_p0(:,(L+2):(2*L)) = fliplr(f(:,1:L-1,1));
@@ -45,55 +52,65 @@ v_p0(:,2*L+1) = f(:,1,1);
 
 grid off
 hold on
-h = surface(x,y,zeros(size(x)),v_p0,'EdgeColor', 'none');
-%[C,h] = contourf(x, y, v_p0, nlevels,  'EdgeColor', 'none');
-rotate(h,[0 1 0],90)
-rotate(h,[1 0 0],90)
 
+if args.ShowSlices == true 
+    
+    h = surface(x,y,zeros(size(x)),v_p0,'EdgeColor', 'none');
+    %[C,h] = contourf(x, y, v_p0, nlevels,  'EdgeColor', 'none');
+    rotate(h,[0 1 0],90)
+    rotate(h,[1 0 0],90)
 
-v_p90 = zeros(N,2*L+1);
-v_p90(:,1) = f(:,1,floor(L/2));
-v_p90(:,2:(L+1)) = f(:,:,floor(3*L/2));
-v_p90(:,(L+2):(2*L)) = fliplr(f(:,1:L-1,floor(L/2)));
-v_p90(:,2*L+1) = f(:,1,floor(L/2));
+    v_p90 = zeros(Nplot,2*L+1);
+    v_p90(:,1) = f(:,1,floor(L/2));
+    v_p90(:,2:(L+1)) = f(:,:,floor(3*L/2));
+    v_p90(:,(L+2):(2*L)) = fliplr(f(:,1:L-1,floor(L/2)));
+    v_p90(:,2*L+1) = f(:,1,floor(L/2));
 
-h = surface(x,y,zeros(size(x)),v_p90,'EdgeColor', 'none');
-%[C,h] = contourf(x, y, v_p90, nlevels,  'EdgeColor', 'none');
-rotate(h,[0 1 0],90)
-rotate(h,[0 0 1],90)
-rotate(h,[0 1 0],90)
+    h = surface(x,y,zeros(size(x)),v_p90,'EdgeColor', 'none');
+    %[C,h] = contourf(x, y, v_p90, nlevels,  'EdgeColor', 'none');
+    rotate(h,[0 1 0],90)
+    rotate(h,[0 0 1],90)
+    rotate(h,[0 1 0],90)
 
-[rs, thetas, phis] = flag_sampling(L, N, 1.0);
-[rs, phis] = ndgrid(rs, [phis phis(1)]);
-x = rs .* cos(phis);
-y = rs .* sin(phis);
-v_t0 = zeros(N,2*L);
-for p=1:2*L-1
-    v_t0(:,p) = f(:,floor(L/2),p);
+    [rs, thetas, phis] = flag_sampling(L, N, 1.0);
+    indplot = find(rs <= args.Rplot);
+    rs = rs(indplot);
+    [rs, phis] = ndgrid(rs, [phis phis(1)]);
+    x = rs .* cos(phis);
+    y = rs .* sin(phis);
+    v_t0 = zeros(Nplot,2*L);
+    for p=1:2*L-1
+        v_t0(:,p) = f(:,floor(L/2),p);
+    end
+    v_t0(:,2*L) = f(:,floor(L/2),1);
+
+    h = surface(x,y,zeros(size(x)),v_t0,'EdgeColor', 'none');
+    %[C,h] = contourf(x, y, v_t0, nlevels,  'EdgeColor', 'none');
+    rotate(h,[0 0 1], -90)
+
+    rs_line = args.Rplot;
+    thetas_line = 0:0.01:2*pi;
+    [rs_line, thetas_line] = ndgrid(rs_line, thetas_line);
+    xs_line = rs_line.*cos(thetas_line);
+    ys_line = rs_line.*sin(thetas_line);
+
+    line(xs_line,ys_line,zeros(size(xs_line)),'Color',[0 0 0],'LineWidth',LineWidth)
+    line(zeros(size(xs_line)), xs_line,ys_line,'Color',[0 0 0],'LineWidth',LineWidth)
+    line(xs_line,zeros(size(xs_line)), ys_line,'Color',[0 0 0],'LineWidth',LineWidth)
+
 end
-v_t0(:,2*L) = f(:,floor(L/2),1);
 
-h = surface(x,y,zeros(size(x)),v_t0,'EdgeColor', 'none');
-%[C,h] = contourf(x, y, v_t0, nlevels,  'EdgeColor', 'none');
-rotate(h,[0 0 1], -90)
-
-view(45,45)
-colormap(hot(256))
+if args.ShowSlices == true 
+    view(45,45)
+else
+    view(90,0)
+end
+%colormap(hot(256))
 
 v = axis;
-%axis(0.75*v);
+axis([-1 1 -1 1 -1 1] * args.Rplot);
 axis off
 grid off
-
-rs_line = 1.0;
-thetas_line = 0:0.01:2*pi;
-[rs_line, thetas_line] = ndgrid(rs_line, thetas_line);
-xs_line = rs_line.*cos(thetas_line);
-ys_line = rs_line.*sin(thetas_line);
-line(xs_line,ys_line,zeros(size(xs_line)),'Color',[0 0 0])
-line(zeros(size(xs_line)), xs_line,ys_line,'Color',[0 0 0])
-line(xs_line,zeros(size(xs_line)), ys_line,'Color',[0 0 0])
-
 
 if args.layer ~= 0 && args.layer <= N+1
     layerofinterest = args.layer;
@@ -113,23 +130,24 @@ if args.layer ~= 0 && args.layer <= N+1
     rotate(h,[0 0 1], -90)
     set(h, 'LineStyle', 'none')
     
-    rs_line = rs(layerofinterest);
-    thetas_line = 0:0.01:2*pi;
-    [rs_line, thetas_line] = ndgrid(rs_line, thetas_line);
-    xs_line = rs_line.*cos(thetas_line);
-    ys_line = rs_line.*sin(thetas_line);
-    mycolor = [0 0 0];
-    line(xs_line,ys_line,zeros(size(xs_line)),'Color',mycolor)
-    line(zeros(size(xs_line)), xs_line,ys_line,'Color',mycolor)
-    line(xs_line,zeros(size(xs_line)), ys_line,'Color',mycolor)
-
+    
+    if args.ShowSlices == true 
+        rs_line = rs(layerofinterest);
+        thetas_line = 0:0.01:2*pi;
+        [rs_line, thetas_line] = ndgrid(rs_line, thetas_line);
+        xs_line = rs_line.*cos(thetas_line);
+        ys_line = rs_line.*sin(thetas_line);
+        mycolor = [0 0 0];
+        line(xs_line,ys_line,zeros(size(xs_line)),'Color',mycolor,'LineWidth',LineWidth)
+        line(zeros(size(xs_line)), xs_line,ys_line,'Color',mycolor,'LineWidth',LineWidth)
+        line(xs_line,zeros(size(xs_line)), ys_line,'Color',mycolor,'LineWidth',LineWidth)
+    end
     
 end
 
-colormap(hsv)
-
-camlight
-camlight(-80,10)
-material dull
+%colormap(hsv)
+%camlight
+%camlight(-80,10)
+%material dull
 
 end

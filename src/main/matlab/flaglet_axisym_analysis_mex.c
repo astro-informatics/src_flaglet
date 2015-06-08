@@ -232,9 +232,9 @@ void mexFunction( int nlhs, mxArray *plhs[],
   if(downsample){
     int jn, jl, bandlimit_n, bandlimit_l;
       for (jn = J_min_n; jn <= J_n; jn++){
-        bandlimit_n = MIN(s2let_bandlimit(B_n, jn), N);
+        bandlimit_n = MIN(s2let_bandlimit(jn, J_min_n, B_n, N), N);
         for (jl = J_min_l; jl <= J_l; jl++){
-          bandlimit_l = MIN(s2let_bandlimit(B_l, jl), L);
+          bandlimit_l = MIN(s2let_bandlimit(jl, J_min_l, B_l, L), L);
           totalsize += bandlimit_l * (2 * bandlimit_l - 1) * bandlimit_n;
         }
      }

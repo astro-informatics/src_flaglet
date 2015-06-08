@@ -7,23 +7,22 @@
 #include <math.h>
 #include <s2let.h>
 
-/*!
- * Allocates tiling in FLAG - harmonic space.
- *
- * \param[out]  kappa_lp Kernel functions for the wavelets.
- * \param[out]  kappa0_lp Kernel for the scaling function.
- * \param[in]  B_l Wavelet parameter for angular harmonic space.
- * \param[in]  B_p Wavelet parameter for radial harmonic space.
- * \param[in]  L Angular harmonic band-limit.
- * \param[in]  P Radial harmonic band-limit.
- * \retval none
- */
-void flaglet_tiling_axisym_allocate(double **kappa_lp, double **kappa0_lp, int B_l, int B_p, int L, int P)
+
+int flaglet_j_max(int L, int B)
 {
-	int J_l = s2let_j_max(L, B_l);
-	int J_p = s2let_j_max(P, B_p);
-	*kappa_lp = (double*)calloc( (J_p+1) * (J_l+1) * L * P, sizeof(double));
-	*kappa0_lp = (double*)calloc( L * P, sizeof(double));
+  return ceil(log(L) / log(B));
+}
+
+void flaglet_tiling_axisym_allocate(double **kappa_lmp, double **kappa0_lmp, const flaglet_parameters_t *parameters)
+{
+	int L = parameters->L;
+	int P = parameters->P;
+	int B_l = parameters->B_l;
+	int B_p = parameters->B_p;
+	int J_l = flaglet_j_max(L, B_l);
+	int J_p = flaglet_j_max(P, B_p);
+	*kappa_lmp = (double*)calloc( (J_p+1) * (J_l+1) * L * L * P, sizeof(double));
+	*kappa0_lmp = (double*)calloc( L * L * P, sizeof(double));
 }
 
 /*!
@@ -39,18 +38,31 @@ void flaglet_tiling_axisym_allocate(double **kappa_lp, double **kappa0_lp, int B
  * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval none
  */
-void flaglet_tiling_axisym(double *kappa_lp, double *kappa0_lp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+void flaglet_tiling_axisym(double *kappa_lp, double *kappa0_lp, const flaglet_parameters_t *parameters)
 {
 	int l, n, jl, jp;
-	int J_l = s2let_j_max(L, B_l);
-	int J_p = s2let_j_max(P, B_p);
+	int L = parameters->L;
+	int P = parameters->P;
+	int B_l = parameters->B_l;
+	int B_p = parameters->B_p;
+	int J_l = flaglet_j_max(L, B_l);
+	int J_p = flaglet_j_max(P, B_p);
+	int J_min_l = parameters->J_min_l;
+	int J_min_p = parameters->J_min_p;
 	double temp;
 
 	double *phi2_l = (double*)calloc((J_l+2) * L, sizeof(double));
 	double *phi2_n = (double*)calloc((J_p+2) * P, sizeof(double));
 
-	s2let_tiling_phi2_s2dw(phi2_l, B_l, L, J_min_l);
-	s2let_tiling_phi2_s2dw(phi2_n, B_p, P, J_min_p);
+	s2let_parameters_t s2let_parameters = {};
+	fill_s2let_angular_parameters(&s2let_parameters, parameters);
+
+	s2let_parameters.L = L;
+	s2let_parameters.B = B_l;
+	s2let_tiling_phi2_s2dw(phi2_l, &s2let_parameters);
+	s2let_parameters.L = P;
+	s2let_parameters.B = B_p;
+	s2let_tiling_phi2_s2dw(phi2_n, &s2let_parameters);
 
 	int el_max = ceil(pow(B_l,J_min_l))+1;
 	int en_max = ceil(pow(B_p,J_min_p))+1;
@@ -87,12 +99,14 @@ void flaglet_tiling_axisym(double *kappa_lp, double *kappa0_lp, int B_l, int B_p
 		}
 	}
 
-	/*for (n = 0; n < P; n++){
+	/*
+	for (n = 0; n < P; n++){
 		for (l = 0; l < L; l++){
 			printf("  %f  ",kappa0_lp[n * L + l]);
 		}
 		printf("\n");
-	}*/
+	}
+	*/
 
 	for (jp = J_min_p; jp <= J_p; jp++){
 		for (jl = J_min_l; jl <= J_l; jl++){
@@ -131,11 +145,17 @@ void flaglet_tiling_axisym(double *kappa_lp, double *kappa0_lp, int B_l, int B_p
  * \param[in]  J_min_p First wavelet scale to be used in radial space.
  * \retval Achieved accuracy (should be lower than e-12).
  */
-double flaglet_tiling_axisym_check_identity(double *kappa_lp, double *kappa0_lp, int B_l, int B_p, int L, int P, int J_min_l, int J_min_p)
+double flaglet_tiling_axisym_check_identity(double *kappa_lp, double *kappa0_lp, const flaglet_parameters_t *parameters)
 {
 	int jl, jp, l, n;
-	int J_l = s2let_j_max(L, B_l);
-	int J_p = s2let_j_max(P, B_p);
+	int L = parameters->L;
+	int P = parameters->P;
+	int B_l = parameters->B_l;
+	int B_p = parameters->B_p;
+	int J_l = flaglet_j_max(L, B_l);
+	int J_p = flaglet_j_max(P, B_p);
+	int J_min_l = parameters->J_min_l;
+	int J_min_p = parameters->J_min_p;
 		
 	double *ident;
 	ident = (double*)calloc(L * P, sizeof(double));

@@ -74,13 +74,13 @@ f_wav = cell(J_l+1-J_min_l, J_p+1-J_min_p);
 offset = 0;
 for jp = J_min_p:J_p
     if args.Downsample == true
-        band_limit_p = min([ ceil(args.B_p^(jp+1)) P ]);
+        band_limit_p = min([ s2let_bandlimit(jp,J_min_p,args.B_p,P) P ]);
      else
         band_limit_p = P;
     end
     for jl = J_min_l:J_l
         if args.Downsample == true
-            band_limit_l = min([ ceil(args.B_l^(jl+1)) L ]);
+            band_limit_l = min([ s2let_bandlimit(jl,J_min_l,args.B_l,L) L ]);
         else
             band_limit_l = L;
         end
