@@ -16,13 +16,12 @@ AUTHORS
      J. D. McEwen (www.jasonmcewen.org)
 
 REFERENCES
-     B. Leistedt and J. D. McEwen,
-     Exact Wavelets on the Ball, 
-     IEEE Trans. Sig. Proc., 60, 2012 (arXiv:1205.0792)
+     B. Leistedt and J. D. McEwen, Exact Wavelets on the Ball, IEEE
+     Trans. Sig. Proc., 60, 2012 (arXiv:1205.0792)
 
      B. Leistedt, Y. Wiaux, P. Vandergheynst and J. D. McEwen,
      S2LET: A code to perform fast wavelet analysis on the sphere, 
-     Astronomy & Astrophysics, 2012 (arXiv:1211.1680)
+     Astronomy & Astrophysics, 558, A128, 2013 (arXiv:1211.1680)
      
      J. D. McEwen and Y. Wiaux, A novel sampling theorem on the
      sphere, IEEE Trans. Sig. Proc., 59, 2011 (arXiv:1110.6298).
@@ -34,10 +33,10 @@ INSTALLATION
      See documentation
 
 REQUIREMENTS
-     FLAG (http://www.mrao.cam.ac.uk/~jdm57/flag)
+     FLAG (http://astro-informatics.github.io/flag)
      S2LET (http://www.s2let.org)
-     SSHT (http://www.mrao.cam.ac.uk/~jdm57/ssht/index.html)
-     FFTW (http://www.fftw.org/)
+     SSHT (http://www.spinsht.org)
+     FFTW (http://www.fftw.org)
 
 DOWNLOAD
      http://www.flaglets.org
