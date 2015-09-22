@@ -2,6 +2,8 @@
 
 # Directory for FLAG
 FLAGDIR	= ${FLAG}
+# Directory for SO3
+SO3DIR = ${SO3}
 # Directory for S2LET
 S2LETDIR = ${S2LET}
 # Directory for SSHT
@@ -11,13 +13,13 @@ FFTWDIR	= ${FFTW}
 # Directory for GSL
 GSLDIR	= ${GSL}
 # Directory for MATLAB
-MLAB	=  /Applications/MATLAB_R2011b.app
+MLAB	=  ${MATLAB}
 # Directory for DOXYGEN
 DOXYGEN_PATH=doxygen
 
 # Compiler and options
 CC	= gcc
-OPT	= -Wall -O3 -g -DFLAGLET_VERSION=\"1.0b1\" -DFLAGLET_BUILD=\"`svnversion -n .`\"
+OPT	= -Wall -O3 -g
 UNAME := $(shell uname)
 
 # ======================================== #
@@ -48,6 +50,11 @@ FLAGLETSRC = $(FLAGLETDIR)/src/main/c
 FLAGLETOBJ = $(FLAGLETSRC)
 FLAGLETTESTSRC = $(FLAGLETDIR)/src/test/c
 FLAGLETTESTOBJ = $(FLAGLETTESTSRC)
+
+# === SO3 ===
+SO3LIB = $(SO3DIR)/lib/c
+SO3INC = $(SO3DIR)/include/c
+SO3LIBN= so3
 
 # === S2LET ===
 S2LETLIB = $(S2LETDIR)/lib
@@ -80,22 +87,17 @@ vpath %.c $(FLAGLETTESTSRC)
 vpath %.h $(FLAGLETINC)
 vpath %_mex.c $(FLAGLETSRCMAT)
 
-LDFLAGS = -L$(FLAGLETLIB) -l$(FLAGLETLIBN) -L$(FLAGLIB) -l$(FLAGLIBN) -L$(S2LETLIB) -l$(S2LETLIBN) -L$(FFTWLIB) -l$(FFTWLIBNM) -L$(SSHTLIB) -l$(SSHTLIBN) -lm -lc
+LDFLAGS = -L$(FLAGLETLIB) -l$(FLAGLETLIBN) -L$(FLAGLIB) -l$(FLAGLIBN) -L$(S2LETLIB) -l$(S2LETLIBN) -L$(SO3LIB) -l$(SO3LIBN) -L$(FFTWLIB) -l$(FFTWLIBNM) -L$(SSHTLIB) -l$(SSHTLIBN) -lm -lc
 
-LDFLAGSMEX = -L$(FLAGLETLIB) -l$(FLAGLETLIBN) -L$(FLAGLIB) -l$(FLAGLIBN) -L$(S2LETLIB) -l$(S2LETLIBN) -I/usr/local/include -L$(FFTWLIB) -l$(FFTWLIBNM) -L$(SSHTLIB) -l$(SSHTLIBN)
+LDFLAGSMEX = -L$(FLAGLETLIB) -l$(FLAGLETLIBN) -L$(FLAGLIB) -l$(FLAGLIBN) -L$(S2LETLIB) -l$(S2LETLIBN) -L$(SO3LIB) -l$(SO3LIBN) -I/usr/local/include -L$(FFTWLIB) -l$(FFTWLIBNM) -L$(SSHTLIB) -l$(SSHTLIBN)
 
-FFLAGS  = -I$(FLAGLETINC) -I$(FFTWINC) -I$(SSHTINC) -I$(FLAGINC) -I$(S2LETINC) 
+FFLAGS  = -I$(FLAGLETINC) -I$(FFTWINC) -I$(SSHTINC) -I$(FLAGINC) -I$(S2LETINC) -I$(SO3INC)
 
-FLAGLETOBJS= $(FLAGLETOBJ)/flaglet_axisym.o	\
-	$(FLAGLETOBJ)/flaglet_tiling.o
+FLAGLETOBJS = $(FLAGLETOBJ)/flaglet_transform.o $(FLAGLETOBJ)/flaglet_tiling.o
 
-FLAGLETOBJSMAT = $(FLAGLETOBJMAT)/flaglet_axisym_tiling_mex.o	\
-	$(FLAGLETOBJMAT)/flaglet_axisym_analysis_mex.o	\
-	$(FLAGLETOBJMAT)/flaglet_axisym_synthesis_mex.o
+FLAGLETOBJSMAT = $(FLAGLETOBJMAT)/flaglet_tiling_mex.o $(FLAGLETOBJMAT)/flaglet_axisym_analysis_mex.o $(FLAGLETOBJMAT)/flaglet_axisym_synthesis_mex.o
 
-FLAGLETOBJSMEX = $(FLAGLETOBJMEX)/flaglet_axisym_tiling_mex.$(MEXEXT)	\
-	$(FLAGLETOBJMEX)/flaglet_axisym_analysis_mex.$(MEXEXT)	\
-	$(FLAGLETOBJMEX)/flaglet_axisym_synthesis_mex.$(MEXEXT)
+FLAGLETOBJSMEX = $(FLAGLETOBJMEX)/flaglet_tiling_mex.$(MEXEXT) $(FLAGLETOBJMAT)/flaglet_axisym_analysis_mex.$(MEXEXT) $(FLAGLETOBJMAT)/flaglet_axisym_synthesis_mex.$(MEXEXT)
 
 $(FLAGLETOBJ)/%.o: %.c
 	$(CC) $(OPT) $(FFLAGS) -c $< -o $@
@@ -104,7 +106,7 @@ $(FLAGLETTESTOBJ)/%.o: %.c
 	$(CC) $(OPT) $(FFLAGS) -c $< -o $@
 
 $(FLAGLETOBJMAT)/%_mex.o: %_mex.c $(FLAGLETLIB)/lib$(FLAGLETLIBN).a
-	$(CC) $(OPT) $(FFLAGS) -c $< -o $@ -I${MLABINC} 
+	$(CC) $(OPT) $(FFLAGS) -c $< -o $@ -I${MLABINC}
 
 $(FLAGLETOBJMEX)/%_mex.$(MEXEXT): $(FLAGLETOBJMAT)/%_mex.o $(FLAGLETLIB)/lib$(FLAGLETLIBN).a
 	$(MEX) $< -o $@ $(LDFLAGSMEX) $(MEXFLAGS) -L$(MLABLIB)
@@ -112,7 +114,7 @@ $(FLAGLETOBJMEX)/%_mex.$(MEXEXT): $(FLAGLETOBJMAT)/%_mex.o $(FLAGLETLIB)/lib$(FL
 # ======================================== #
 
 .PHONY: default
-default: lib test about tidy
+default: lib test tidy
 
 .PHONY: matlab
 matlab: $(FLAGLETOBJSMEX)
@@ -132,7 +134,7 @@ $(FLAGLETBIN)/flaglet_test: $(FLAGLETTESTOBJ)/flaglet_test.o $(FLAGLETLIB)/lib$(
 
 .PHONY: about
 about: $(FLAGLETBIN)/flaglet_about
-$(FLAGLETBIN)/flaglet_about: $(FLAGLETOBJ)/flaglet_about.o 
+$(FLAGLETBIN)/flaglet_about: $(FLAGLETOBJ)/flaglet_about.o
 	$(CC) $(OPT) $< -o $(FLAGLETBIN)/flaglet_about
 
 .PHONY: doc
@@ -154,5 +156,5 @@ tidy:
 	rm -f $(FLAGLETOBJ)/*.o
 	rm -f $(FLAGLETTESTOBJ)/*.o
 	rm -f $(FLAGLETOBJMEX)/*.o
-	rm -f *~ 
+	rm -f *~
 

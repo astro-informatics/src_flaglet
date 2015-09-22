@@ -50,7 +50,7 @@ void flaglet_wav_lmp(complex double *wav_lmp, double *scal_lmp, const flaglet_pa
 	s2let_parameters_t s2let_parameters = {};
 	fill_s2let_angular_parameters(&s2let_parameters, parameters);
 
-	int jl, jp, l, p, m, indjjlmp, indlmp, indlm;
+	int jl, jp, l, p, m, indjjlmp, indlm;
 	int J_l = flaglet_j_max(L, parameters->B_l);
 	int J_p = flaglet_j_max(P, parameters->B_p);
 
@@ -97,7 +97,7 @@ double flaglet_tiling_wavelet_check_identity(complex double *wav_lmp, double *sc
     int P = parameters->P;
     int spin = parameters->spin;
 
-    int indlmp, indjjlmp, indlm, jl, jp, l, p, m;
+    int indjjlmp, indlm, jl, jp, l, p, m;
 	int J_l = flaglet_j_max(L, parameters->B_l);
 	int J_p = flaglet_j_max(P, parameters->B_p);
     double error = 0.0; // maximum error for all el
@@ -355,10 +355,11 @@ void flaglet_allocate_f_wav(complex double **f_wav, complex double **f_scal, con
  */
 void flaglet_analysis(complex double *f_wav, complex double *f_scal, const complex double *f, const flaglet_parameters_t *parameters)
 {
-	int R = parameters->R;
+	double tau = parameters->tau;
 	int L = parameters->L;
 	int P = parameters->P;
 	int N = parameters->N;
+	int spin = parameters->spin;
 	int J_l = flaglet_j_max(L, parameters->B_l);
 	int J_p = flaglet_j_max(P, parameters->B_p);
 	so3_parameters_t so3_parameters = {};
@@ -366,7 +367,7 @@ void flaglet_analysis(complex double *f_wav, complex double *f_scal, const compl
 
 	complex double *flmp, *f_wav_p;
 	flag_core_allocate_flmn(&flmp, L, P);
-	flag_core_analysis(flmp, f, R, L, P);
+	flag_core_analysis(flmp, f, L, tau, P, spin);
 
 	complex double *wav_lmp;
 	double *scal_lmp;
@@ -382,9 +383,9 @@ void flaglet_analysis(complex double *f_wav, complex double *f_scal, const compl
 
 	double *nodes = (double*)calloc(P, sizeof(double));
 	double *weights = (double*)calloc(P, sizeof(double));
-	flag_spherlaguerre_sampling(nodes, weights, R, P);
+	flag_spherlaguerre_sampling(nodes, weights, tau, P);
 
-	flag_core_synthesis(f_scal, f_scal_lmp, nodes, P, L, P);
+	flag_core_synthesis(f_scal, f_scal_lmp, nodes, P, L, tau, P, spin);
 
 	int bandlimit_p = P;
 	int bandlimit_l = L;
@@ -394,7 +395,7 @@ void flaglet_analysis(complex double *f_wav, complex double *f_scal, const compl
 	for (jp = parameters->J_min_p; jp <= J_p; jp++){
 		if (!parameters->upsample) {
 			bandlimit_p = MIN(flaglet_radial_bandlimit(jp, parameters), P);
-			flag_spherlaguerre_sampling(nodes, weights, R, bandlimit_p);
+			flag_spherlaguerre_sampling(nodes, weights, tau, bandlimit_p);
 		}
 		for (jl = parameters->J_min_l; jl <= J_l; jl++){
 			if (!parameters->upsample) {
@@ -416,7 +417,7 @@ void flaglet_analysis(complex double *f_wav, complex double *f_scal, const compl
 		        );
 		        offset_lmnp += lmn_size;
 		    }
-	        flag_spherlaguerre_mapped_synthesis(f_wav + offset, f_wav_p, nodes, bandlimit_p, bandlimit_p, f_size);
+	        flag_spherlaguerre_mapped_synthesis(f_wav + offset, f_wav_p, nodes, bandlimit_p, tau, bandlimit_p, f_size);
 			offset += f_size * bandlimit_p;
 	        free(f_wav_p);
 		}
@@ -440,10 +441,11 @@ void flaglet_synthesis(complex double *f, const complex double *f_wav, const com
 	flaglet_allocate_f_wav_lmnp(&f_wav_lmnp, &f_scal_lmp, parameters);
 
 	int Nj, offset_lmnp, offset, jl, jp, lmn_size, f_size, p;
-	int R = parameters->R;
+	double tau = parameters->tau;
 	int L = parameters->L;
 	int P = parameters->P;
 	int N = parameters->N;
+	int spin = parameters->spin;
 	int J_l = flaglet_j_max(L, parameters->B_l);
 	int J_p = flaglet_j_max(P, parameters->B_p);
 	so3_parameters_t so3_parameters = {};
@@ -454,16 +456,16 @@ void flaglet_synthesis(complex double *f, const complex double *f_wav, const com
 
 	int bandlimit_p = P;
 	int bandlimit_l = L;
-	flag_spherlaguerre_sampling(nodes, weights, R, P);
+	flag_spherlaguerre_sampling(nodes, weights, tau, P);
 
-	flag_core_analysis(f_scal_lmp, f_scal, R, L, P);
+	flag_core_analysis(f_scal_lmp, f_scal, L, tau, P, spin);
 
 	offset_lmnp = 0;
 	offset = 0;
 	for (jp = parameters->J_min_p; jp <= J_p; jp++){
 		if (!parameters->upsample) {
 			bandlimit_p = MIN(flaglet_radial_bandlimit(jp, parameters), P);
-			flag_spherlaguerre_sampling(nodes, weights, R, bandlimit_p);
+			flag_spherlaguerre_sampling(nodes, weights, tau, bandlimit_p);
 		}
 		for (jl = parameters->J_min_l; jl <= J_l; jl++){
 			 if (!parameters->upsample){
@@ -478,7 +480,7 @@ void flaglet_synthesis(complex double *f, const complex double *f_wav, const com
 			f_size = so3_sampling_f_size(&so3_parameters);
 
 			f_wav_p = (complex double*)calloc( f_size * bandlimit_p, sizeof(complex double));
-			flag_spherlaguerre_mapped_analysis(f_wav_p, f_wav + offset, nodes, weights, bandlimit_p, f_size);
+			flag_spherlaguerre_mapped_analysis(f_wav_p, f_wav + offset, nodes, weights, tau, bandlimit_p, f_size);
 			for (p = 0; p < bandlimit_p; p++){
 		        so3_core_forward_via_ssht(
 		            f_wav_lmnp + offset_lmnp,
@@ -501,8 +503,8 @@ void flaglet_synthesis(complex double *f, const complex double *f_wav, const com
 	flag_core_allocate_flmn(&flmp, L, P);
 	flaglet_synthesis_lmnp(flmp, f_wav_lmnp, f_scal_lmp, wav_lmp, scal_lmp, parameters);
 
-	flag_spherlaguerre_sampling(nodes, weights, R, P);
-	flag_core_synthesis(f, flmp, nodes, P, L, P);
+	flag_spherlaguerre_sampling(nodes, weights, tau, P);
+	flag_core_synthesis(f, flmp, nodes, P, L, tau, P, spin);
 
 	free(nodes);
 	free(weights);

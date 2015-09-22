@@ -21,7 +21,7 @@ typedef struct {
 
     int reality;
 
-    double R;
+    double tau;
 
 } flaglet_parameters_t;
 
