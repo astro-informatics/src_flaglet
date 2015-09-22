@@ -16,15 +16,15 @@ AUTHORS
      J. D. McEwen (www.jasonmcewen.org)
 
 REFERENCES
-     B. Leistedt and J. D. McEwen, Exact Wavelets on the Ball, IEEE
-     Trans. Sig. Proc., 60, 2012 (arXiv:1205.0792)
+     B. Leistedt, J. D. McEwen, T. Kitching, H. V. Peiris, 3D weak lensing with spin wavelets on the ball.
 
-     B. Leistedt, Y. Wiaux, P. Vandergheynst and J. D. McEwen,
-     S2LET: A code to perform fast wavelet analysis on the sphere, 
-     Astronomy & Astrophysics, 558, A128, 2013 (arXiv:1211.1680)
-     
-     J. D. McEwen and Y. Wiaux, A novel sampling theorem on the
-     sphere, IEEE Trans. Sig. Proc., 59, 2011 (arXiv:1110.6298).
+     B. Leistedt and J. D. McEwen, Exact wavelets on the ball, IEEE Trans. Sig. Proc., 60, 2012.
+
+     J. D. McEwen, M. Büttner, B. Leistedt, H. V. Peiris, Y. Wiaux, P. Vandergheynst, Spin scale-discretised wavelets on the sphere, IEEE TSP, 2015.
+
+     J. D. McEwen, M. Büttner, B. Leistedt, H. V. Peiris, Y. Wiaux, A novel sampling theorem on the rotation group, IEEE TSP, 2015.
+
+     B. Leistedt, J. D. McEwen, P. Vandergheynst and Y. Wiaux, S2LET: A code to perform fast wavelet analysis on the sphere, Astronomy & Astrophysics, submitted, 2012.
 
 DOCUMENTATION
      See doc/index.html
@@ -35,6 +35,7 @@ INSTALLATION
 REQUIREMENTS
      FLAG (http://astro-informatics.github.io/flag)
      S2LET (http://www.s2let.org)
+     SO3 (http://www.sothree.org)
      SSHT (http://www.spinsht.org)
      FFTW (http://www.fftw.org)
 
@@ -50,7 +51,7 @@ NOTE
 
 LICENSE
      FLAGLET package to perform fast wavelet transform on the sphere<br>
-     Copyright (C) 2012 Boris Leistedt & Jason McEwen
+     Copyright (C) 2012-2015 Boris Leistedt & Jason McEwen
 
      This program is free software; you can redistribute it and/or
      modify it under the terms of the GNU General Public License
