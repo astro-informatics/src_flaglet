@@ -23,7 +23,6 @@ harmonics, sphere, transforms, fourier, fast, algorithms, mcewen, leistedt, wave
   <a href="#installation">Installation</a> |
   <a href="#download">Download</a> |
   <a href="#referencing">Referencing</a> |  
-  <a href="#version">Version</a> |
   <a href="#license">License</a> |
   <a href="#authors">Authors</a> 
   </p>
@@ -64,8 +63,11 @@ harmonics, sphere, transforms, fourier, fast, algorithms, mcewen, leistedt, wave
 <h2>News</h2>
 
 <ul>
+<li><strong>September 2015</strong><br />
+Release of v2.0b1: added support of spin directional flaglets and compatibility with S2LET v2.0b1
+</li>
 <li><strong>November 2012</strong><br />
-Public release of <strong>FLAGLET</strong> 1.0b1
+Public release of <strong>FLAGLET</strong> v1.0b1
 </li>
 </ul>
 
@@ -79,12 +81,12 @@ Public release of <strong>FLAGLET</strong> 1.0b1
 <a name="introduction"><h2>Introduction</h2></a>
 
   <p>
-  The <a href="http://www.flaglets.org">FLAGLET</a> code provides high-performance routines for fast wavelet analysis of signals on the ball using the <a href="#referencing">Flaglet transform</a> (<a href="http://arxiv.org/abs/1205.0792">ArXiv</a> | <a href="http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=6280687">DOI</a>). It exploits <a href="http://www.s2let.org">S2LET</a>,  <a href="http://www.mrao.cam.ac.uk/~jdm57/flag">FLAG</a> and <a href="http://www.mrao.cam.ac.uk/~jdm57/ssht/index.html">SSHT</a> codes. The flaglet transform is theoretically exact, i.e. the original signal can be synthesises from its wavelet coefficients exactly since the wavelet coefficients capture all the information of band-limited signals. 
+  The <a href="http://www.flaglets.org">FLAGLET</a> code provides high-performance routines for fast wavelet analysis of signals on the ball using the Flaglet transform described in <a href=#referencing>Leistedt and McEwen (2012)</a>. It exploits <a href="http://www.s2let.org">S2LET</a>,  <a href="http://www.mrao.cam.ac.uk/~jdm57/flag">FLAG</a> and <a href="http://www.mrao.cam.ac.uk/~jdm57/ssht/index.html">SSHT</a> codes. The flaglet transform is theoretically exact, i.e. the original signal can be synthesises from its wavelet coefficients exactly since the wavelet coefficients capture all the information of band-limited signals. The FLAGLET transform was extended to support spin, directional features in <a href=#referencing>Leistedt et al (2015)</a>.
 
   <p>
   This page outlines the main features of <strong>FLAGLET</strong>, installation details as well as the core functionalities and interfaces.  References, version, and license information then follows.
   
-  <strong>FLAGLET</strong> requires the <a href="http://www.mrao.cam.ac.uk/~jdm57/flag">FLAG</a>, <a href="http://www.s2let.org">S2LET</a>, <a href="http://www.mrao.cam.ac.uk/~jdm57/ssht/index.html">SSHT</a> and <a href="http://www.fftw.org/">FFTW</a> libraries. 
+  <strong>FLAGLET</strong> requires the <a href="http://www.mrao.cam.ac.uk/~jdm57/flag">FLAG</a>, <a href="http://www.s2let.org">S2LET</a>, <a href="http://www.sothree.org">SO3</a>, <a href="http://astro-informatics.github.io/ssht/">SSHT</a> and <a href="http://www.fftw.org/">FFTW</a> libraries. 
 </p>
 
 <br>
@@ -125,13 +127,12 @@ Public release of <strong>FLAGLET</strong> 1.0b1
 
   <p>We make the source code of the <strong>FLAGLET</strong> package
   available under the license described <a
-   href="#license">below</a>. To receive a copy of <strong>FLAGLET</strong> by email please
-  complete the download form, available by clicking the following
-  icon:
+   href="#license">below</a>, downloadable here:
 
   <p align=center>
-  <a href=http://www.mrao.cam.ac.uk/~jdm57/download.html> <img src="images/download_icon.gif"> </a>
+  <a href="https://github.com/astro-informatics/flaglet"> <img src="images/download_icon.gif"> </a>
   </p>
+
 <br>
 
 <!--------------------------------------------------------------->
@@ -142,26 +143,22 @@ Public release of <strong>FLAGLET</strong> 1.0b1
    href="http://www.s2let.org/">http://www.flaglets.org/</a>)
   and the related academic papers:</p>
 
-<blockquote> B. Leistedt and J. D. McEwen, <a href="http://www.mrao.cam.ac.uk/~jdm57/publications.html#leistedt:flaglets">Exact wavelets on the ball</a>,  IEEE Trans. Sig. Proc., 60, 2012 (<a href="http://arxiv.org/abs/1205.0792">ArXiv</a> | <a href="http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=6280687">DOI</a>). </blockquote>
+<blockquote> B. Leistedt, J. D. McEwen, T. Kitching, H. V. Peiris, <strong>3D weak lensing with spin wavelets on the ball</strong>, submitted to PRD. </blockquote>
 
-<blockquote> B. Leistedt, J. D. McEwen, P. Vandergheynst and Y. Wiaux, <a href="http://www.mrao.cam.ac.uk/~jdm57/publications.html#leistedt:s2let_axisym">S2LET: A code to perform fast wavelet analysis on the sphere</a>, Astronomy & Astrophysics, submitted, 2012 (<a href="http://arxiv.org/abs/1211.1680">ArXiv</a>). </blockquote>
+<blockquote> J. D. McEwen, M. B&uuml;ttner, B. Leistedt, H. V. Peiris, Y. Wiaux, P. Vandergheynst, <strong>Spin scale-discretised wavelets on the sphere</strong>, IEEE TSP, 2015 (ArXiv). </blockquote>
+
+<blockquote> J. D. McEwen, M. B&uuml;ttner, B. Leistedt, H. V. Peiris, Y. Wiaux, <strong>A novel sampling theorem on the rotation group</strong>, IEEE TSP, 2015 (<a href="http://arxiv.org/abs/1508.03101">ArXiv</a>). </blockquote>
+
+<blockquote> B. Leistedt and J. D. McEwen, <strong>Exact wavelets on the ball</strong>,  IEEE Trans. Sig. Proc., 60, 2012 (<a href="http://arxiv.org/abs/1205.0792">ArXiv</a> | <a href="http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=6280687">DOI</a>). </blockquote>
+
+<blockquote> B. Leistedt, J. D. McEwen, P. Vandergheynst and Y. Wiaux, <strong>S2LET: A code to perform fast wavelet analysis on the sphere</strong>, Astronomy & Astrophysics, submitted, 2012 (<a href="http://arxiv.org/abs/1211.1680">ArXiv</a>). </blockquote>
 
 <p>If the MW sampling is used please also cite the following paper: </p>
 
 <blockquote> J. D. McEwen and
- Y. Wiaux, <a href="http://www.mrao.cam.ac.uk/~jdm57/publications.html#mcewen:fssht">A
- novel sampling theorem on the sphere</a>, IEEE Trans. Signal Proc., 59, 5876-5887, 2011 (<a href="http://arxiv.org/abs/1110.6298">ArXiv</a>
+ Y. Wiaux, <strong>A novel sampling theorem on the sphere</strong>, IEEE Trans. Signal Proc., 59, 5876-5887, 2011 (<a href="http://arxiv.org/abs/1110.6298">ArXiv</a>
  | <a href="http://dx.doi.org/10.1109/TSP.2011.2166394">DOI</a>). </blockquote>
 
-
-<!--------------------------------------------------------------->
-<a name="version"><h2>Version</h2></a>
-
-  <p>
-  Current version: 1.0b1<br>
-  Release date: November 2012
-
-<br>
 
 <!--------------------------------------------------------------->
 <a name="license"><h2>License</h2></a>
@@ -198,25 +195,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
   <p> <strong>FLAGLET</strong> was developed by Boris Leistedt and
  Jason McEwen at University College London (<a
   href="http://www.ucl.ac.uk/" target="_top">UCL</a>).</p>
-
-  <table width="100%"><tr>
-  <td width="50%">
-	<img src="images/photo_boris.jpeg" width="100"
-  alt="Example frontpage image" class="left photobox" />
-
-  Boris Leistedt<br>
-  <a href="http://http://ixkael.com/blog/">Academic web page</a>
-  &raquo;</p>
-  </td>
-  <td width="50%">
-  <img src="images/photo_jason.jpg" width="100"
-  alt="Example frontpage image" class="left photobox" />
-
-  Dr Jason McEwen<br>
-  <a href="http://www.jasonmcewen.org/">Academic web page</a>
-  &raquo;</p>
-</td>
-  </tr></table>
  
 
 <br><br><br><br><br><br><br>
