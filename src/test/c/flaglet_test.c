@@ -14,13 +14,22 @@
 #include <s2let.h>
 #include <ssht.h>
 
-void flaglet_random_flmp(complex double *flmp, int L, int P, int seed)
+void flaglet_random_flmp(complex double *flmp, int L, int P, int spin, int seed)
 {
-	int i;
+	int i, en, el, m, offset;
 	srand( time(NULL) );
 	for (i=0; i<L*L*P; i++){
 		flmp[i] = (2.0*ran2_dp(seed) - 1.0) + I * (2.0*ran2_dp(seed) - 1.0);
 	}
+	for (en=0; en<P; en++) {
+		offset = en * L * L;
+		for (el=0; el<=abs(spin); el++) {
+    		for (m=-el; m<=el; m++) {
+    			ssht_sampling_elm2ind(&i, el, m);
+    			flmp[offset+i] = 0;
+    		}
+    	}
+    }
 }
 
 void flaglet_random_flmp_real(complex double *flmp, int L, int P, int seed)
@@ -94,6 +103,7 @@ void flaglet_lm_test(const flaglet_parameters_t *parameters, int seed)
 	double *scal_lmp;
 	int L = parameters->L;
 	int P = parameters->P;
+	int spin = parameters->spin;
 
 	flaglet_allocate_wav_lmp(&wav_lmp, &scal_lmp, parameters);
 
@@ -111,7 +121,7 @@ void flaglet_lm_test(const flaglet_parameters_t *parameters, int seed)
 	flmp = (complex double*)calloc(L * L * P, sizeof(complex double));
 	flmp_rec = (complex double*)calloc(L * L * P, sizeof(complex double));
 
-	flaglet_random_flmp(flmp, L, P, seed);
+	flaglet_random_flmp(flmp, L, P, seed, spin);
 
 	printf("flaglet_allocate_f_wav_lmnp...");
 	flaglet_allocate_f_wav_lmnp(&f_wav_lmnp, &f_scal_lmp, parameters);
@@ -159,11 +169,12 @@ void flaglet_lm_test(const flaglet_parameters_t *parameters, int seed)
 
 
 
-void flaglet_test(double R, const flaglet_parameters_t *parameters, int seed)
+void flaglet_test(double tau, const flaglet_parameters_t *parameters, int seed)
 {
 	clock_t time_start, time_end;
 	int L = parameters->L;
 	int P = parameters->P;
+	int spin = parameters->spin;
 
 	complex double *f, *f_rec, *flmp, *flmp_rec;
 	flag_core_allocate_flmn(&flmp, L, P);
@@ -171,15 +182,15 @@ void flaglet_test(double R, const flaglet_parameters_t *parameters, int seed)
 	flag_core_allocate_f(&f, L, P);
 	flag_core_allocate_f(&f_rec, L, P);
 
-	flaglet_random_flmp(flmp, L, P, seed);
+	flaglet_random_flmp(flmp, L, P, seed, spin);
 
 	double *nodes = (double*)calloc(P, sizeof(double));
 	double *weights = (double*)calloc(P, sizeof(double));
 	assert(nodes != NULL);
 	assert(weights != NULL);
-	flag_spherlaguerre_sampling(nodes, weights, R, P);
+	flag_spherlaguerre_sampling(nodes, weights, tau, P);
 
-	flag_core_synthesis(f, flmp, nodes, P, L, P);
+	flag_core_synthesis(f, flmp, nodes, P, L, tau, P, spin);
 
 	free(nodes);
 	free(weights);
@@ -205,7 +216,7 @@ void flaglet_test(double R, const flaglet_parameters_t *parameters, int seed)
 		//printf("f[%i] = (%f,%f) - rec = (%f,%f)\n",n,creal(f[n]),cimag(f[n]),creal(f_rec[n]),cimag(f_rec[n]));
 	}*/
 
-	flag_core_analysis(flmp_rec, f_rec, R, L, P);
+	flag_core_analysis(flmp_rec, f_rec, L, tau, P, spin);
 
 
 	int n, l, m;
@@ -245,11 +256,11 @@ void flaglet_test(double R, const flaglet_parameters_t *parameters, int seed)
 
 int main(int argc, char *argv[])
 {
-	const double R = 10.0;
-	const int L = 6;
+	const double tau = 1.0;
+	const int L = 60;
 	const int N = 4;
-	const int spin = 0;
-	const int P = 6;
+	const int spin = 2;
+	const int P = 60;
 	const int B_l = 2;
 	const int B_p = 2;
 	const int J_min_l = 0;
@@ -263,7 +274,7 @@ int main(int argc, char *argv[])
 	parameters.B_p = B_p;
 	parameters.L = L;
 	parameters.P = P;
-	parameters.R = R;
+	parameters.tau = tau;
 	parameters.N = N;
 	parameters.spin = spin;
 	parameters.J_min_l = J_min_l;
@@ -280,7 +291,7 @@ int main(int argc, char *argv[])
 	flaglet_lm_test(&parameters, seed);
 	printf("==========================================================\n");
 	printf("> Testing wavelets in pixel space...\n");
-	flaglet_test(R, &parameters, seed);
+	flaglet_test(tau, &parameters, seed);
 	printf("==========================================================\n");
 
 	return 0;
