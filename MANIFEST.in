@@ -1,0 +1,5 @@
+include CMakeLists.txt
+include LICENSE.txt README
+include cmake/*.cmake
+include include/flag*.h
+recursive-include src/mian/c *.c *.h CMakeLists.txt

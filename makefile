@@ -1,80 +1,91 @@
+# FLAGLET package
+# Copyright (C) 2012
+# Boris Leistedt & Jason McEwen
 # ======================================== #
 
-# Directory for FLAG
-FLAGDIR	= ${FLAG}
-# Directory for SO3
-SO3DIR = ${SO3}
-# Directory for S2LET
+# Directory for FLAG (required)
+FLAGDIR = ${FLAG}
+# Directory for S2LET (required)
 S2LETDIR = ${S2LET}
-# Directory for SSHT
+# Directory for SO3 (required)
+SO3DIR = ${SO3}
+# Directory for SSHT (required)
 SSHTDIR	= ${SSHT}
-# Directory for FFTW
+# Directory for FFTW (required)
 FFTWDIR	= ${FFTW}
-# Directory for GSL
-GSLDIR	= ${GSL}
-# Directory for MATLAB
+# Directory for MATLAB (optional)
 MLAB	=  ${MATLAB}
-# Directory for DOXYGEN
-DOXYGEN_PATH=doxygen
+# Directory for DOXYGEN (optional)
+DOXYGEN_PATH = doxygen
 
-# Compiler and options
+UNAME 	:= $(shell uname)
+
+# Compilers and options for C
 CC	= gcc
-OPT	= -Wall -O3 -g
-UNAME := $(shell uname)
+OPT	= -Wall -g -fPIC -fopenmp -DFLAGLET_VERSION=\"0.0.1\" -DFLAGLET_BUILD=\"`git rev-parse HEAD`\"
+
+# Config for dynamic library
+ifeq ($(UNAME), Linux)
+  DYLIBEXT = so
+  DYLIBCMD = cc -flat_namespace -undefined suppress
+endif
+ifeq ($(UNAME), Darwin)
+  DYLIBEXT = dylib
+  DYLIBCMD = g++ -flat_namespace -dynamiclib -undefined suppress
+endif
 
 # ======================================== #
 
 # === MATLAB ===
+MLABINC	= ${MLAB}/extern/include
+MLABLIB	= ${MLAB}/extern/lib
+# --------------------
 ifeq ($(UNAME), Linux)
-  MLABINC	= ${MLAB}/extern/include
-  MLABLIB	= ${MLAB}/extern/lib
   MEXEXT	= mexa64
-  MEX 		= ${MLAB}/bin/mex
-  MEXFLAGS	= -cxx
 endif
 ifeq ($(UNAME), Darwin)
-  MLABINC	= ${MLAB}/extern/include
-  MLABLIB	= ${MLAB}/extern/lib
   MEXEXT	= mexmaci64
-  MEX 		= ${MLAB}/bin/mex
-  MEXFLAGS	= -cxx
 endif
+# --------------------
+MEX 		= ${MLAB}/bin/mex
+MEXFLAGS	= -cxx
 
 # === FLAGLET ===
 FLAGLETDIR = .
 FLAGLETLIB = $(FLAGLETDIR)/lib
 FLAGLETINC = $(FLAGLETDIR)/include
 FLAGLETBIN = $(FLAGLETDIR)/bin
-FLAGLETLIBN= flaglet
+FLAGLETLIBNM= flaglet
 FLAGLETSRC = $(FLAGLETDIR)/src/main/c
 FLAGLETOBJ = $(FLAGLETSRC)
 FLAGLETTESTSRC = $(FLAGLETDIR)/src/test/c
 FLAGLETTESTOBJ = $(FLAGLETTESTSRC)
 
+# === FLAG ===
+FLAGLIB   = $(FLAGDIR)/lib/c
+FLAGINC   = $(FLAGDIR)/include/c
+FLAGLIBNM = flag
+
+# === S2LET ===
+S2LETLIB = $(S2LETDIR)/lib/c
+S2LETINC = $(S2LETDIR)/include/c
+S2LETLIBNM = s2let
+
 # === SO3 ===
 SO3LIB = $(SO3DIR)/lib/c
 SO3INC = $(SO3DIR)/include/c
-SO3LIBN= so3
-
-# === S2LET ===
-S2LETLIB = $(S2LETDIR)/lib
-S2LETINC = $(S2LETDIR)/include
-S2LETLIBN= s2let
-
-# === FLAG ===
-FLAGLIB = $(FLAGDIR)/lib
-FLAGINC = $(FLAGDIR)/include
-FLAGLIBN= flag
+SO3LIBNM = so3
 
 # === SSHT ===
 SSHTLIB	= $(SSHTDIR)/lib/c
 SSHTINC	= $(SSHTDIR)/include/c
-SSHTLIBN= ssht
+SSHTLIBNM = ssht
 
 # === FFTW ===
-FFTWINC	    = $(FFTWDIR)/include
-FFTWLIB     = $(FFTWDIR)/lib
-FFTWLIBNM   = fftw3
+FFTWINC	     = $(FFTWDIR)/include
+FFTWLIB      = $(FFTWDIR)/lib
+FFTWLIBNM    = fftw3
+# FFTWOMPLIBNM = fftw3_omp
 
 # ======================================== #
 
@@ -87,17 +98,23 @@ vpath %.c $(FLAGLETTESTSRC)
 vpath %.h $(FLAGLETINC)
 vpath %_mex.c $(FLAGLETSRCMAT)
 
-LDFLAGS = -L$(FLAGLETLIB) -l$(FLAGLETLIBN) -L$(FLAGLIB) -l$(FLAGLIBN) -L$(S2LETLIB) -l$(S2LETLIBN) -L$(SO3LIB) -l$(SO3LIBN) -L$(FFTWLIB) -l$(FFTWLIBNM) -L$(SSHTLIB) -l$(SSHTLIBN) -lm -lc
+LDFLAGS = -L$(FLAGLETLIB) -l$(FLAGLETLIBNM) -L$(FLAGLIB) -l$(FLAGLIBNM) -L$(S2LETLIB) -l$(S2LETLIBNM) -L$(SO3LIB) -l$(SO3LIBNM) -L$(FFTWLIB) -l$(FFTWLIBNMM) -L$(SSHTLIB) -l$(SSHTLIBNM) -lm -lc
 
-LDFLAGSMEX = -L$(FLAGLETLIB) -l$(FLAGLETLIBN) -L$(FLAGLIB) -l$(FLAGLIBN) -L$(S2LETLIB) -l$(S2LETLIBN) -L$(SO3LIB) -l$(SO3LIBN) -I/usr/local/include -L$(FFTWLIB) -l$(FFTWLIBNM) -L$(SSHTLIB) -l$(SSHTLIBN)
+LDFLAGSMEX = -L$(FLAGLETLIB) -l$(FLAGLETLIBNM) -L$(FLAGLIB) -l$(FLAGLIBNM) -L$(S2LETLIB) -l$(S2LETLIBNM) -L$(SO3LIB) -l$(SO3LIBNM) -I/usr/local/include -L$(FFTWLIB) -l$(FFTWLIBNMM) -L$(SSHTLIB) -l$(SSHTLIBNM)
 
 FFLAGS  = -I$(FLAGLETINC) -I$(FFTWINC) -I$(SSHTINC) -I$(FLAGINC) -I$(S2LETINC) -I$(SO3INC)
 
-FLAGLETOBJS = $(FLAGLETOBJ)/flaglet_transform.o $(FLAGLETOBJ)/flaglet_tiling.o
+FLAGLETOBJS = $(FLAGLETOBJ)/flaglet_transform.o \
+			  $(FLAGLETOBJ)/flaglet_tiling.o \
+			  $(FLAGLETOBJ)/flaglet_axisym.o
 
-FLAGLETOBJSMAT = $(FLAGLETOBJMAT)/flaglet_tiling_mex.o $(FLAGLETOBJMAT)/flaglet_axisym_analysis_mex.o $(FLAGLETOBJMAT)/flaglet_axisym_synthesis_mex.o
+FLAGLETOBJSMAT = $(FLAGLETOBJMAT)/flaglet_tiling_mex.o \
+				 $(FLAGLETOBJMAT)/flaglet_analysis_mex.o \
+				 $(FLAGLETOBJMAT)/flaglet_synthesis_mex.o
 
-FLAGLETOBJSMEX = $(FLAGLETOBJMEX)/flaglet_tiling_mex.$(MEXEXT) $(FLAGLETOBJMAT)/flaglet_axisym_analysis_mex.$(MEXEXT) $(FLAGLETOBJMAT)/flaglet_axisym_synthesis_mex.$(MEXEXT)
+FLAGLETOBJSMEX = $(FLAGLETOBJMEX)/flaglet_tiling_mex.$(MEXEXT) \
+				 $(FLAGLETOBJMAT)/flaglet_analysis_mex.$(MEXEXT) \
+				 $(FLAGLETOBJMAT)/flaglet_synthesis_mex.$(MEXEXT)
 
 $(FLAGLETOBJ)/%.o: %.c
 	$(CC) $(OPT) $(FFLAGS) -c $< -o $@
@@ -105,11 +122,11 @@ $(FLAGLETOBJ)/%.o: %.c
 $(FLAGLETTESTOBJ)/%.o: %.c
 	$(CC) $(OPT) $(FFLAGS) -c $< -o $@
 
-$(FLAGLETOBJMAT)/%_mex.o: %_mex.c $(FLAGLETLIB)/lib$(FLAGLETLIBN).a
+$(FLAGLETOBJMAT)/%_mex.o: %_mex.c $(FLAGLETLIB)/lib$(FLAGLETLIBNM).a
 	$(CC) $(OPT) $(FFLAGS) -c $< -o $@ -I${MLABINC}
 
-$(FLAGLETOBJMEX)/%_mex.$(MEXEXT): $(FLAGLETOBJMAT)/%_mex.o $(FLAGLETLIB)/lib$(FLAGLETLIBN).a
-	$(MEX) $< -o $@ $(LDFLAGSMEX) $(MEXFLAGS) -L$(MLABLIB)
+$(FLAGLETOBJMEX)/%_mex.$(MEXEXT): $(FLAGLETOBJMAT)/%_mex.o $(FLAGLETLIB)/lib$(FLAGLETLIBNM).a
+	$(MEX) $< -output $@ $(LDFLAGSMEX) $(MEXFLAGS) -L$(MLABLIB)
 
 # ======================================== #
 
@@ -123,13 +140,13 @@ matlab: $(FLAGLETOBJSMEX)
 all: lib matlab test about tidy
 
 .PHONY: lib
-lib: $(FLAGLETLIB)/lib$(FLAGLETLIBN).a
-$(FLAGLETLIB)/lib$(FLAGLETLIBN).a: $(FLAGLETOBJS)
-	ar -r $(FLAGLETLIB)/lib$(FLAGLETLIBN).a $(FLAGLETOBJS)
+lib: $(FLAGLETLIB)/lib$(FLAGLETLIBNM).a
+$(FLAGLETLIB)/lib$(FLAGLETLIBNM).a: $(FLAGLETOBJS)
+	ar -r $(FLAGLETLIB)/lib$(FLAGLETLIBNM).a $(FLAGLETOBJS)
 
 .PHONY: test
 test: lib $(FLAGLETBIN)/flaglet_test
-$(FLAGLETBIN)/flaglet_test: $(FLAGLETTESTOBJ)/flaglet_test.o $(FLAGLETLIB)/lib$(FLAGLETLIBN).a
+$(FLAGLETBIN)/flaglet_test: $(FLAGLETTESTOBJ)/flaglet_test.o $(FLAGLETLIB)/lib$(FLAGLETLIBNM).a
 	$(CC) $(OPT) $< -o $(FLAGLETBIN)/flaglet_test $(LDFLAGS)
 
 .PHONY: about
@@ -146,7 +163,7 @@ cleandoc:
 
 .PHONY: clean
 clean:	tidy
-	rm -f $(FLAGLETLIB)/lib$(FLAGLETLIBN).a
+	rm -f $(FLAGLETLIB)/lib$(FLAGLETLIBNM).a
 	rm -f $(FLAGLETOBJMEX)/*_mex.$(MEXEXT)
 	rm -f $(FLAGLETBIN)/flaglet_test
 	rm -f $(FLAGLETBIN)/flaglet_about
@@ -157,4 +174,3 @@ tidy:
 	rm -f $(FLAGLETTESTOBJ)/*.o
 	rm -f $(FLAGLETOBJMEX)/*.o
 	rm -f *~
-
