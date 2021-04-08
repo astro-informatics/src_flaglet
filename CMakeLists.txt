@@ -13,7 +13,7 @@ option(fPIC "Compile with fPIC" OFF)
 option(conan_deps "Download dependencies using conan" ON)
 
 find_package(GSL REQUIRED)
-find_package(flag REQUIRED)
+find_package(Flag REQUIRED)
 set(FLAG_TARGET flag)
 
 if(WIN32)
