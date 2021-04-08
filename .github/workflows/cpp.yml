@@ -39,7 +39,7 @@ jobs:
     - name: Link to Flag package
       run: |
         cd ${{runner.workspace}}/build
-        git clone git+https://${{ secrets.ACCESS_TOKEN }}@github.com/astro-informatics/src_flag.git@adjoints
+        git clone https://${{ secrets.ACCESS_TOKEN }}:x-oauth-basic@github.com/astro-informatics/src_flag.git
         cd src_flag && mkdir build && cd build
         cmake ../ && make && make install
 
