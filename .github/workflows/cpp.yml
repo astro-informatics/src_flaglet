@@ -22,9 +22,6 @@ jobs:
       with:
         repository: astro-informatics/src_flag
         token: ${{ secrets.ACCESS_TOKEN }}
-        run: |
-          cd src_flag && mkdir build && cd build
-          cmake ../ && build && build install
 
     - name: Set up Python 3.8
       uses: actions/setup-python@v2
@@ -37,12 +34,13 @@ jobs:
         pip install --upgrade pip wheel conan
         cmake --version
         cmake -E make_directory ${{runner.workspace}}/build
+
     - name: Link to Flag package
-      # run: |
-      #   cd ${{runner.workspace}}/build
-      #   git clone --branch adjoints git@github.com:astro-informatics/src_flag.git
-      #   cd src_flag && mkdir build && cd build
-      #   cmake ../ && make && make install
+      run: |
+        cd ${{runner.workspace}}/build
+        git clone --branch adjoints https://${{ secrets.ACCESS_TOKEN }}@github.com:astro-informatics/src_flag.git
+        cd src_flag && mkdir build && cd build
+        cmake ../ && make && make install
 
     - name: Configure CMake
 #       # Use a bash shell so we can use the same syntax for environment variable
