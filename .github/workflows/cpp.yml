@@ -41,7 +41,7 @@ jobs:
         cd ${{runner.workspace}}/build
         git clone --branch adjoints https://${{ secrets.ACCESS_TOKEN }}:x-oauth-basic@github.com/astro-informatics/src_flag.git
         cd src_flag && mkdir build && cd build
-        cmake ../ && make && make install
+        cmake ../ && make 
 
     - name: Configure CMake
 #       # Use a bash shell so we can use the same syntax for environment variable
