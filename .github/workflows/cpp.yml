@@ -38,7 +38,7 @@ jobs:
     - name: Link to Flag package
       run: |
         cd ${{runner.workspace}}/build
-        git clone --branch adjoints https://${{ secrets.ACCESS_TOKEN }}@github.com:astro-informatics/src_flag.git
+        git clone --branch adjoints ${{ secrets.ACCESS_TOKEN }}@github.com:astro-informatics/src_flag.git
         cd src_flag && mkdir build && cd build
         cmake ../ && make && make install
 
