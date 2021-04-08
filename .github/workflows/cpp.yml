@@ -30,8 +30,10 @@ jobs:
         pip install --upgrade pip wheel conan
         cmake --version
         cmake -E make_directory ${{runner.workspace}}/build
+    - name: Link to Flag package
+      run: |
         cd ${{runner.workspace}}/build
-        git clone --b adjoints git@github.com:astro-informatics/src_flag.git
+        git clone --branch adjoints git@github.com:astro-informatics/src_flag.git
         cd src_flag && mkdir build && cd build
         cmake ../ && make && make install
     - name: Configure CMake
