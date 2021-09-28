@@ -1,5 +1,5 @@
 add_library(flaglet STATIC flaglet_axisym.c flaglet_tiling.c flaglet_transform.c)
-target_link_libraries(flaglet PUBLIC ${S2LET_TARGET} GSL::gsl GSL::gslcblas ${FLAG_TARGET})
+target_link_libraries(flaglet PUBLIC s2let::s2let GSL::gsl GSL::gslcblas ${FLAG_TARGET})
 target_include_directories(
   flaglet
   PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
