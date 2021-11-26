@@ -15,13 +15,12 @@ jobs:
     # cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/adjoints'
     steps:
     - name: Configure Flag permissions
       uses: actions/checkout@v2
       with:
         repository: astro-informatics/src_flag
-        ref: refs/heads/adjoints
+        ref: refs/heads/bintray_sunsetting
         token: ${{ secrets.ACCESS_TOKEN }}
 
     - name: Set up Python 3.8
@@ -39,7 +38,7 @@ jobs:
     - name: Link to Flag package
       run: |
         cd ${{runner.workspace}}/build
-        git clone --branch adjoints https://${{ secrets.ACCESS_TOKEN }}:x-oauth-basic@github.com/astro-informatics/src_flag.git
+        git clone --branch bintray_sunsetting https://${{ secrets.ACCESS_TOKEN }}:x-oauth-basic@github.com/astro-informatics/src_flag.git
         cd src_flag && mkdir build && cd build
         cmake ../ && make 
 
