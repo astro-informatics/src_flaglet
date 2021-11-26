@@ -18,10 +18,6 @@ jobs:
     steps:
     - name: Configure Flag permissions
       uses: actions/checkout@v2
-      # with:
-      #   repository: astro-informatics/src_flag
-      #   ref: refs/heads/bintray_sunsetting
-      #   token: ${{ secrets.ACCESS_TOKEN }}
 
     - name: Set up Python 3.8
       uses: actions/setup-python@v2
@@ -35,13 +31,18 @@ jobs:
         cmake --version
         cmake -E make_directory ${{runner.workspace}}/build
 
-    # - name: Link to Flag package
-    #   run: |
-    #     pwd
-    #     cd ${{runner.workspace}}/build
-    #     git clone --branch bintray_sunsetting https://${{ secrets.ACCESS_TOKEN }}:x-oauth-basic@github.com/astro-informatics/src_flag.git
-    #     cd src_flag && mkdir build && cd build
-    #     cmake ../ && make 
+    - name: Link to Flag package
+      with:
+          repository: astro-informatics/src_flag
+          ref: refs/heads/bintray_sunsetting
+          token: ${{ secrets.ACCESS_TOKEN }}
+      run: |
+        pwd
+        cd ${{runner.workspace}}/build
+        pwd
+        git clone --branch bintray_sunsetting https://${{ secrets.ACCESS_TOKEN }}:x-oauth-basic@github.com/astro-informatics/src_flag.git
+        cd src_flag && mkdir build && cd build
+        cmake ../ && make 
 
     - name: Configure CMake
 #       # Use a bash shell so we can use the same syntax for environment variable
