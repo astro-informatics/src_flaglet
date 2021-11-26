@@ -1,3 +1,3 @@
-"""FLAG module."""
+"""FLAGLET module."""
 
 from .bindings import *

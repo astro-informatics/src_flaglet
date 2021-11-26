@@ -1,6 +1,5 @@
 import numpy as np 
 from pytest import approx 
-
 import pyflaglet as flaglet
 
 def test_directional_transform():
@@ -18,8 +17,6 @@ def test_directional_transform():
 	   reality = 0, 
 		   tau = 1.0)
 
-	f_wav_size = flaglet.flaglet_wav_dim(parameters)
-	f_scal_size = flaglet.flaglet_scal_dim(parameters)
 	f_size = flaglet.flaglet_f_dim(parameters)
 
 	rng = np.random.default_rng()
@@ -49,8 +46,6 @@ def test_directional_analysis_adjoint_transform():
 	   reality = 0, 
 		   tau = 1.0)
 
-	f_wav_size = flaglet.flaglet_wav_dim(parameters)
-	f_scal_size = flaglet.flaglet_scal_dim(parameters)
 	f_size = flaglet.flaglet_f_dim(parameters)
 
 	rng = np.random.default_rng()
@@ -81,8 +76,6 @@ def test_directional_synthesis_adjoint_transform():
 	   reality = 0, 
 		   tau = 1.0)
 
-	f_wav_size = flaglet.flaglet_wav_dim(parameters)
-	f_scal_size = flaglet.flaglet_scal_dim(parameters)
 	f_size = flaglet.flaglet_f_dim(parameters)
 
 	rng = np.random.default_rng()

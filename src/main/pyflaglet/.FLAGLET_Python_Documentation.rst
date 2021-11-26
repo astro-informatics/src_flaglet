@@ -46,8 +46,8 @@ Then you can call it from any python script to perform forward and inverse flag 
 
     # Create a random complex signal (c indexing)
     f_size = flaglet.flaglet_f_dim(parameters)
-	rng = np.random.default_rng()
-	f = rng.normal(size=(f_size)) + 1j*rng.normal(size=(f_size))
+    rng = np.random.default_rng()
+    f = rng.normal(size=(f_size)) + 1j*rng.normal(size=(f_size))
 
     # Compute e.g. the Forward transform 
     f_wav_input, f_scal_input = flaglet.flaglet_ana(f, parameters)
@@ -65,85 +65,84 @@ REFERENCES
 .. code-block::
 
     @article{price:2021:bayesian,
-    author  = {Matthew~A.~Price and Jason~D.~McEwen},
-    title   = {Bayesian variational regularization on the ball},
-    journal = {ArXiv},
-    eprint  = {arXiv:2105.05518},
-    year    = 2021
+        author  = {Matthew~A.~Price and Jason~D.~McEwen},
+        title   = {Bayesian variational regularization on the ball},
+        journal = {ArXiv},
+        eprint  = {arXiv:2105.05518},
+        year    = 2021
     }
 
 .. code-block::
 
     @article{leistedt:2012:exact,
-    author  = {Boris~Leistedt and Jason~D.~McEwen},
-    title   = {Exact Wavelets on the Ball},
-    journal = {IEEE Trans. Sig. Proc.},
-    year    = 2012,
-    volume  = {60},
-    number  = {12},
-    pages   = {6257-6269},
-    doi     = {10.1109/TSP.2012.2215030},
+        author  = {Boris~Leistedt and Jason~D.~McEwen},
+        title   = {Exact Wavelets on the Ball},
+        journal = {IEEE Trans. Sig. Proc.},
+        year    = 2012,
+        volume  = {60},
+        number  = {12},
+        pages   = {6257-6269},
+        doi     = {10.1109/TSP.2012.2215030},
     }
 
 .. code-block::
 
     @article{McEwen:2011:novel,
-    author  = {Jason~D.~McEwen and Yves~Wiaux},
-    title   = {A novel sampling theorem on the
-     sphere},
-    journal = {IEEE Trans. Sig. Proc.},
-    year    = 2011,
-    volume  = {59},
-    number  = {12},
-    pages   = {5876-5887},
-    doi     = {10.1109/TSP.2011.2166394},
+        author  = {Jason~D.~McEwen and Yves~Wiaux},
+        title   = {A novel sampling theorem on the sphere},
+        journal = {IEEE Trans. Sig. Proc.},
+        year    = 2011,
+        volume  = {59},
+        number  = {12},
+        pages   = {5876-5887},
+        doi     = {10.1109/TSP.2011.2166394},
     }
 
 .. code-block::
 
     @article{Leistedt:2015:3dlensing,
-    author  = {Boris~Leistedt and Jason~D.~McEwen and Thomas~D.~Kitching and Hiranya~V.Peiris},
-    title   = {3D weak lensing with spin wavelets on the ball},
-    journal = {Physical Review D.},
-    year    = 2015,
-    volume  = {92},
-    number  = {12},
-    pages   = {123010},
-    doi     = {10.1103/PhysRevD.92.123010},
+        author  = {Boris~Leistedt and Jason~D.~McEwen and Thomas~D.~Kitching and Hiranya~V.Peiris},
+        title   = {3D weak lensing with spin wavelets on the ball},
+        journal = {Physical Review D.},
+        year    = 2015,
+        volume  = {92},
+        number  = {12},
+        pages   = {123010},
+        doi     = {10.1103/PhysRevD.92.123010},
     }
 
 .. code-block::
 
     @article{McEwen:2015:3dlensing,
-    author  = {Jason~D.~McEwen and Martin~Büttner and Boris~Leistedt and Hiranya~V.Peiris and Yves~Wiaux},
-    title   = {A Novel Sampling Theorem on the Rotation Group},
-    journal = {IEEE Sig. Proc. Letters},
-    year    = 2015,
-    volume  = {22},
-    number  = {12},
-    pages   = {2425-2429},
-    doi     = {10.1109/LSP.2015.2490676},
+        author  = {Jason~D.~McEwen and Martin~Büttner and Boris~Leistedt and Hiranya~V.Peiris and Yves~Wiaux},
+        title   = {A Novel Sampling Theorem on the Rotation Group},
+        journal = {IEEE Sig. Proc. Letters},
+        year    = 2015,
+        volume  = {22},
+        number  = {12},
+        pages   = {2425-2429},
+        doi     = {10.1109/LSP.2015.2490676},
     }
 
 .. code-block::
 
     @article{McEwen:2015:s2spinwavelets,
-    author  = {Jason~D.~McEwen and Boris~Leistedt and Martin~Büttner and Hiranya~V.Peiris and Yves~Wiaux },
-    title   = {Directional spin wavelets on the sphere},
-    journal = {arXiv e-prints},
-    eprint  = {1509.06749},
-    year    = 2015,
+        author  = {Jason~D.~McEwen and Boris~Leistedt and Martin~Büttner and Hiranya~V.Peiris and Yves~Wiaux },
+        title   = {Directional spin wavelets on the sphere},
+        journal = {arXiv e-prints},
+        eprint  = {1509.06749},
+        year    = 2015,
     }
 
 .. code-block::
 
     @article{leistedt:2013:s2let,
-    title={S2LET: A code to perform fast wavelet analysis on the sphere},
-    author={Boris~Leistedt and Jason~D.~McEwen and Pierre~Vandergheynst and Yves~Wiaux},
-    journal={Astronomy & Astrophysics},
-    volume={558},
-    pages={A128},
-    year=2013,
+        title   = {S2LET: A code to perform fast wavelet analysis on the sphere},
+        author  = {Boris~Leistedt and Jason~D.~McEwen and Pierre~Vandergheynst and Yves~Wiaux},
+        journal = {Astronomy & Astrophysics},
+        volume  = {558},
+        pages   = {A128},
+        year    = 2013,
     }
 
 LICENSE

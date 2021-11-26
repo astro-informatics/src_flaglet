@@ -15,7 +15,7 @@ class FlagletConan(ConanFile):
     generators = "cmake"
     exports_sources = [
         "src/main/c/*",
-        "include/flaglet*",
+        "include/*.h",
         "CMakeLists.txt",
         "cmake/*.cmake",
         "src/test/c/*.c",

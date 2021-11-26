@@ -10,7 +10,7 @@ long_description = (
 setup(
     name="pyflaglet",
     version="0.0.1",
-    author="Boris Leistedt & Jason McEwen",
+    author="Boris Leistedt & Jason McEwen & Matthew Price",
     install_requires=["numpy", "cython", "scipy"],
     extras_require={
         "dev": [
