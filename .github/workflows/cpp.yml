@@ -37,8 +37,8 @@ jobs:
 
     - name: Link to Flag package
       run: |
-        pwd
-        cd ${{runner.workspace}}/build
+        cd ${{runner.workspace}}
+        cd ..
         pwd
         git clone --branch bintray_sunsetting https://${{ secrets.ACCESS_TOKEN }}:x-oauth-basic@github.com/astro-informatics/src_flag.git
         cd src_flag && mkdir build && cd build
