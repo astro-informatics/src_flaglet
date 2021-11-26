@@ -42,7 +42,7 @@ jobs:
         git clone --branch bintray_sunsetting https://${{ secrets.ACCESS_TOKEN }}:x-oauth-basic@github.com/astro-informatics/src_flag.git
         cd src_flag && mkdir build && cd build
         cmake ../ && make && 
-        make install 
+        sudo make install 
 
     - name: Configure CMake
 #       # Use a bash shell so we can use the same syntax for environment variable
