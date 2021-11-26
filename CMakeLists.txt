@@ -12,10 +12,6 @@ option(cfitsio "Links to cfitsio" OFF)
 option(fPIC "Compile with fPIC" OFF)
 option(conan_deps "Download dependencies using conan" ON)
 
-find_package(GSL REQUIRED)
-find_package(Flag REQUIRED)
-set(FLAG_TARGET flag)
-
 if(WIN32)
   set(fpic OFF)
 endif()
@@ -34,6 +30,11 @@ elseif(EXISTS "${PROJECT_BINARY_DIR}/FindFFTW3.cmake")
 else()
   list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 endif()
+
+find_package(GSL REQUIRED)
+find_package(Flag REQUIRED)
+set(FLAG_TARGET flag)
+
 find_package(s2let REQUIRED)
 add_subdirectory(src/main/c)
 

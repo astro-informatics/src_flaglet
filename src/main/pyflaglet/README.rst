@@ -57,8 +57,8 @@ First install flag for python, then you can call it from any python script to pe
 
     # Create a random complex signal (c indexing)
     f_size = flaglet.flaglet_f_dim(parameters)
-	rng = np.random.default_rng()
-	f = rng.normal(size=(f_size)) + 1j*rng.normal(size=(f_size))
+    rng = np.random.default_rng()
+    f = rng.normal(size=(f_size)) + 1j*rng.normal(size=(f_size))
 
     # Compute e.g. the Forward transform 
     f_wav_input, f_scal_input = flaglet.flaglet_ana(f, parameters)
