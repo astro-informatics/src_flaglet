@@ -37,6 +37,7 @@ jobs:
 
     - name: Link to Flag package
       run: |
+        pwd
         cd ${{runner.workspace}}/build
         git clone --branch bintray_sunsetting https://${{ secrets.ACCESS_TOKEN }}:x-oauth-basic@github.com/astro-informatics/src_flag.git
         cd src_flag && mkdir build && cd build
@@ -51,6 +52,7 @@ jobs:
       # and build directories, but this is only available with CMake 3.13 and higher.  
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
       run: |
+        pwd
         sudo apt-get install -y doxygen
         sudo apt-get install libfftw3-dev libfftw3-doc
         pip install conan
