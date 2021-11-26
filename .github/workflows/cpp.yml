@@ -35,13 +35,13 @@ jobs:
         cmake --version
         cmake -E make_directory ${{runner.workspace}}/build
 
-    - name: Link to Flag package
-      run: |
-        pwd
-        cd ${{runner.workspace}}/build
-        git clone --branch bintray_sunsetting https://${{ secrets.ACCESS_TOKEN }}:x-oauth-basic@github.com/astro-informatics/src_flag.git
-        cd src_flag && mkdir build && cd build
-        cmake ../ && make 
+    # - name: Link to Flag package
+    #   run: |
+    #     pwd
+    #     cd ${{runner.workspace}}/build
+    #     git clone --branch bintray_sunsetting https://${{ secrets.ACCESS_TOKEN }}:x-oauth-basic@github.com/astro-informatics/src_flag.git
+    #     cd src_flag && mkdir build && cd build
+    #     cmake ../ && make 
 
     - name: Configure CMake
 #       # Use a bash shell so we can use the same syntax for environment variable
