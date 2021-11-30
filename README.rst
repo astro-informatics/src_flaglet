@@ -18,7 +18,7 @@
 
 .. |logo| raw:: html
 
-   <img src="./doc/images/logo.png" align="center" height="52" width="58">
+   <img src="./doc/images/logo.jpg" align="center" height="52" width="56">
 
 DESCRIPTION
 ================================
@@ -52,7 +52,7 @@ PYTHNON INSTALLATION
     pip install pyflaglet
     pip list
 
-or alternatively from source by first compiling the C++ code and running 
+or alternatively from source by first compiling the C code and running 
 
 .. code-block:: bash 
 
