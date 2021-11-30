@@ -1,10 +1,10 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.15)
 
 project(
   flaglet
-  VERSION "0.0.1"
+  VERSION "1.0.0"
   DESCRIPTION "Fast wavelets on the ball"
-  HOMEPAGE_URL "https://github.com/astro-informatics/flaglet"
+  HOMEPAGE_URL "https://github.com/astro-informatics/src_flaglet"
   LANGUAGES C)
 
 option(tests "Enable testing" ON)

@@ -1,6 +1,6 @@
 // FLAGLET package
-// Copyright (C) 2012
-// Boris Leistedt & Jason McEwen
+// Copyright (C) 2021
+// Boris Leistedt & Jason McEwen & Matthew Price
 
 #include "flaglet.h"
 #include <stdlib.h>

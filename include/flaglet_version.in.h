@@ -8,8 +8,9 @@ inline const char *flaglet_info() {
          "  authors:\n"
          "      - Boris Leistedt\n"
          "      - Jason McEwen\n"
+         "      - Matthew Price\n"
          "  license: GPL-3\n"
-         "  url: https://github.com/astro-informatics/flaglet\n"
+         "  url: https://github.com/astro-informatics/src_flaglet\n"
          "  version: @PROJECT_VERSION@\n";
 };
 // clang-format off

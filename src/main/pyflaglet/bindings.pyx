@@ -97,7 +97,7 @@ def flaglet_f_dim(dict parameters):
 	return flaglet_f_size(&parameters_t)
 
 
-def flaglet_ana(np.ndarray[double complex, ndim=1, mode="c"] f not None, dict parameters):
+def flaglet_forward(np.ndarray[double complex, ndim=1, mode="c"] f not None, dict parameters):
 	cdef flaglet_parameters_t parameters_t = {}
 	parameters_t.B_l = parameters["B_l"]
 	parameters_t.L = parameters["L"]
@@ -124,7 +124,7 @@ def flaglet_ana(np.ndarray[double complex, ndim=1, mode="c"] f not None, dict pa
 					 &parameters_t)
 	return f_wav, f_scal
 
-def flaglet_ana_adjoint(np.ndarray[double complex, ndim=1, mode="c"] f_wav not None, 
+def flaglet_forward_adjoint(np.ndarray[double complex, ndim=1, mode="c"] f_wav not None, 
 						np.ndarray[double complex, ndim=1, mode="c"] f_scal not None, 
 						dict parameters):
 	cdef flaglet_parameters_t parameters_t = {}
@@ -150,7 +150,7 @@ def flaglet_ana_adjoint(np.ndarray[double complex, ndim=1, mode="c"] f_wav not N
 	return f
 
 
-def flaglet_syn(np.ndarray[double complex, ndim=1, mode="c"] f_wav not None, 
+def flaglet_inverse(np.ndarray[double complex, ndim=1, mode="c"] f_wav not None, 
 				np.ndarray[double complex, ndim=1, mode="c"] f_scal not None, 
 				dict parameters):
 	cdef flaglet_parameters_t parameters_t = {}
@@ -175,7 +175,7 @@ def flaglet_syn(np.ndarray[double complex, ndim=1, mode="c"] f_wav not None,
 					  &parameters_t)
 	return f
 
-def flaglet_syn_adjoint(np.ndarray[double complex, ndim=1, mode="c"] f not None, dict parameters):
+def flaglet_inverse_adjoint(np.ndarray[double complex, ndim=1, mode="c"] f not None, dict parameters):
 	cdef flaglet_parameters_t parameters_t = {}
 	parameters_t.B_l = parameters["B_l"]
 	parameters_t.L = parameters["L"]

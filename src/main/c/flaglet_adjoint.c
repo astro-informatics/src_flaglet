@@ -1,3 +1,7 @@
+// FLAGLET package
+// Copyright (C) 2021
+// Boris Leistedt & Jason McEwen & Matthew Price
+
 void flaglet_analysis_adjoint(complex double *f, const complex double *f_wav, const complex double *f_scal, const flaglet_parameters_t *parameters)
 {
 	double tau = parameters->tau;

@@ -1,35 +1,51 @@
-***********************************************
-FLAGLET: Fourier-Laguerre Wavelets on the Ball
-***********************************************
-
 .. image:: https://img.shields.io/badge/GitHub-src_flaglet-brightgreen.svg?style=flat
     :target: https://github.com/astro-informatics/src_flaglet
-
 .. image:: https://github.com/astro-informatics/src_flaglet/actions/workflows/cpp.yml/badge.svg
     :target: https://github.com/astro-informatics/src_flaglet/actions/workflows/cpp.yml
-
 .. image:: https://readthedocs.org/projects/ansicolortags/badge/?version=latest
-    :target: https://astro-informatics.github.io/src_flaglet/
-
+    :target: https://astro-informatics.github.io/flaglet/
 .. image:: https://img.shields.io/badge/License-GPL-blue.svg
     :target: http://perso.crans.org/besson/LICENSE.html
-
 .. image:: http://img.shields.io/badge/arXiv-1205.0792-orange.svg?style=flat
     :target: https://arxiv.org/abs/1205.0792
-
 .. image:: http://img.shields.io/badge/arXiv-1110.6298-orange.svg?style=flat
     :target: https://arxiv.org/abs/1110.6298
-
 .. image:: http://img.shields.io/badge/arXiv-2105.05518-orange.svg?style=flat
     :target: https://arxiv.org/abs/2105.05518
 
+|logo| FLAGLET: Fourier-Laguerre Wavelets on the Ball
+=====================================================
+
+.. |logo| raw:: html
+
+   <img src="./doc/images/logo.png" align="center" height="52" width="58">
+
 DESCRIPTION
 ================================
-The FLAGLET code provides functionality to perform fast and exact wavelet transform on the ball. More details may be found in the extensive `documentation <https://astro-informatics.github.io/flaglet/>`_.
+The ``FLAGLET`` code provides functionality to perform fast and exact wavelet transform on the ball. More details may be found in the extensive `documentation <https://astro-informatics.github.io/flaglet/>`_.
 
-INSTALLATION
+C INSTALLATION
 ================================
-This package can easily be installed from PyPi by running
+The primary C version of this code can be installed from source by running
+
+.. code-block:: bash
+
+     git clone git@github.com:astro-informatics/src_flaglet.git
+     cd src_flaglet
+     mkdir build && cd build
+     cmake .. && make 
+
+Following which one can check the installation by running
+
+.. code-block:: bash
+
+     ctest
+
+within the build directory.
+
+PYTHNON INSTALLATION
+================================
+``FLAGLET`` can easily be installed from PyPi by running
 
 .. code-block:: bash
 
@@ -42,11 +58,21 @@ or alternatively from source by first compiling the C++ code and running
 
     pip install .
 
+from the root directory, following which the installation can be tested by running 
+
+.. code-block:: bash 
+
+     pytest 
+
 from the root directory.
+
+MATLAB INSTALLATION
+================================
+Mex wrappers are available, however they are currently being sunsetted, so installing previously tagged versions is advised.
 
 BASIC USAGE
 ================================
-First install flag for python, then you can call it from any python script to perform forward and inverse flag transforms and their adjoints by 
+First install ``FLAGLET`` for python, then you can call it from any python script to perform forward and inverse flaglet transforms and their adjoints by 
 
 .. code-block:: python
 
@@ -61,7 +87,7 @@ First install flag for python, then you can call it from any python script to pe
     f = rng.normal(size=(f_size)) + 1j*rng.normal(size=(f_size))
 
     # Compute e.g. the Forward transform 
-    f_wav_input, f_scal_input = flaglet.flaglet_ana(f, parameters)
+    f_wav, f_scal = flaglet.flaglet_forward(f, parameters)
 
 AUTHORS
 ================================
@@ -159,8 +185,12 @@ REFERENCES
 LICENSE
 ================================
 
-     FLAG package to perform fast wavelet transform on the sphere<br>
-     Copyright (C) 2012 Boris Leistedt & Jason McEwen
+``FLAGLET`` is released under the GPL-3 license (see `LICENSE.txt <https://github.com/astro-informatics/src_flaglet/blob/master/LICENSE.txt>`_).
+
+.. code-block::
+
+     FLAGLET package to perform fast wavelet transform on the sphere<br>
+     Copyright (C) 2021 Boris Leistedt & Jason McEwen & Matthew Price
 
      This program is free software; you can redistribute it and/or
      modify it under the terms of the GNU General Public License

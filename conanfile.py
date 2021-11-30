@@ -3,10 +3,10 @@ from conans import CMake, ConanFile
 
 class FlagletConan(ConanFile):
     name = "flaglet"
-    version = "0.0.1"
+    version = "1.0.0"
     license = "GPL-3"
-    url = "https://github.com/astro-informatics/flaglet"
-    homepage = "https://github.com/astro-informatics/flaglet"
+    url = "https://github.com/astro-informatics/src_flaglet"
+    homepage = "https://github.com/astro-informatics/src_flaglet"
     description = "Fast wavelet transform on the ball"
     settings = "os", "arch", "compiler", "build_type"
     topics = ("Physics", "Astrophysics", "Radio Interferometry")

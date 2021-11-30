@@ -22,10 +22,10 @@ def test_directional_transform():
 	rng = np.random.default_rng()
 	f = rng.normal(size=(f_size)) + 1j*rng.normal(size=(f_size))
 
-	f_wav_input, f_scal_input = flaglet.flaglet_ana(f, parameters)
-	f_input = flaglet.flaglet_syn(f_wav_input, f_scal_input, parameters)
-	f_wav_output, f_scal_output = flaglet.flaglet_ana(f_input, parameters)
-	f_output = flaglet.flaglet_syn(f_wav_output, f_scal_output, parameters)
+	f_wav_input, f_scal_input = flaglet.flaglet_forward(f, parameters)
+	f_input = flaglet.flaglet_inverse(f_wav_input, f_scal_input, parameters)
+	f_wav_output, f_scal_output = flaglet.flaglet_forward(f_input, parameters)
+	f_output = flaglet.flaglet_inverse(f_wav_output, f_scal_output, parameters)
 
 	assert f_output == approx(f_input)
 	assert f_wav_output == approx(f_wav_input)
@@ -52,12 +52,12 @@ def test_directional_analysis_adjoint_transform():
 	f_2 = rng.normal(size=(f_size)) + 1j*rng.normal(size=(f_size))
 	f_1 = rng.normal(size=(f_size)) + 1j*rng.normal(size=(f_size))
 
-	w1, s1 = flaglet.flaglet_ana(f_1, parameters)
-	f_1 = flaglet.flaglet_syn(w1, s1, parameters)
-	w2, s2 = flaglet.flaglet_ana(f_2, parameters)
+	w1, s1 = flaglet.flaglet_forward(f_1, parameters)
+	f_1 = flaglet.flaglet_inverse(w1, s1, parameters)
+	w2, s2 = flaglet.flaglet_forward(f_2, parameters)
 
-	w1, s1 = flaglet.flaglet_ana(f_1, parameters)
-	f_2 = flaglet.flaglet_ana_adjoint(w2, s2, parameters)
+	w1, s1 = flaglet.flaglet_forward(f_1, parameters)
+	f_2 = flaglet.flaglet_forward_adjoint(w2, s2, parameters)
 	
 	assert np.abs(np.vdot(f_2, f_1)) == approx(np.abs(np.vdot(w1, w2) + np.vdot(s1, s2)))
 
@@ -82,12 +82,12 @@ def test_directional_synthesis_adjoint_transform():
 	f_2 = rng.normal(size=(f_size)) + 1j*rng.normal(size=(f_size))
 	f_1 = rng.normal(size=(f_size)) + 1j*rng.normal(size=(f_size))
 
-	w1, s1 = flaglet.flaglet_ana(f_1, parameters)
-	f_1 = flaglet.flaglet_syn(w1, s1, parameters)
-	w2, s2 = flaglet.flaglet_ana(f_2, parameters)
+	w1, s1 = flaglet.flaglet_forward(f_1, parameters)
+	f_1 = flaglet.flaglet_inverse(w1, s1, parameters)
+	w2, s2 = flaglet.flaglet_forward(f_2, parameters)
 
-	w1, s1 = flaglet.flaglet_syn_adjoint(f_1, parameters)
-	f_2 = flaglet.flaglet_syn(w2, s2, parameters)
+	w1, s1 = flaglet.flaglet_inverse_adjoint(f_1, parameters)
+	f_2 = flaglet.flaglet_inverse(w2, s2, parameters)
 	
 	assert np.abs(np.vdot(f_1, f_2)) == approx(np.abs(np.vdot(w2, w1) + np.vdot(s2, s1)))
 

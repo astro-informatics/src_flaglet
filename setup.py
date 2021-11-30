@@ -9,7 +9,7 @@ long_description = (
 
 setup(
     name="pyflaglet",
-    version="0.0.1",
+    version="1.0.0",
     author="Boris Leistedt & Jason McEwen & Matthew Price",
     install_requires=["numpy", "cython", "scipy"],
     extras_require={
@@ -30,7 +30,7 @@ setup(
     description="Fast wavelet transform on the ball",
     long_description=long_description,
     long_description_content_type="text/x-rst",
-    url="https://github.com/astro-informatics/flaglet",
+    url="https://github.com/astro-informatics/src_flaglet",
     package_dir={"pyflaglet": "src/main/pyflaglet"},
     package_data={"pyflaglet": ["FLAGLET_Python_Documentation.rst"]},
     cmake_args=cmake_args,
