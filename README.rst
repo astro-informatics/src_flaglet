@@ -43,7 +43,7 @@ Following which one can check the installation by running
 
 within the build directory.
 
-PYTHNON INSTALLATION
+PYTHON INSTALLATION
 ================================
 ``FLAGLET`` can easily be installed from PyPi by running
 
