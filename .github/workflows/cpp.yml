@@ -1,0 +1,76 @@
+name: Tests
+
+on: [push]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Debug
+  CC:   gcc-10
+  CXX:  g++-10
+
+jobs:
+  build:
+    # The CMake configure and build commands are platform agnostic and should work equally
+    # well on Windows or Mac.  You can convert this to a matrix build if you need
+    # cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: ubuntu-latest
+    steps:
+    - name: Configure Flag permissions
+      uses: actions/checkout@v2
+
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+            
+    - name: Create Build Environment
+      run: |
+        pip install cmake==3.15.3
+        pip install --upgrade pip wheel conan
+        cmake --version
+        cmake -E make_directory ${{runner.workspace}}/build
+
+    - name: Link to Flag package
+      run: |
+        cd ${{runner.workspace}}
+        cd ..
+        git clone --branch master https://${{ secrets.ACCESS_TOKEN }}:x-oauth-basic@github.com/astro-informatics/src_flag.git
+        cd src_flag && mkdir build && cd build
+        cmake ../ && make && 
+        sudo make install 
+
+    - name: Configure CMake
+#       # Use a bash shell so we can use the same syntax for environment variable
+#       # access regardless of the host operating system
+#       shell: bash
+      working-directory: ${{runner.workspace}}/build
+      # Note the current convention is to use the -S and -B options here to specify source 
+      # and build directories, but this is only available with CMake 3.13 and higher.  
+      # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
+      run: |
+        sudo apt-get install -y doxygen
+        sudo apt-get install libfftw3-dev libfftw3-doc
+        pip install conan
+        cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -Dpython=False -Dconan_deps=True
+    - name: Build
+      continue-on-error: true
+      id: Build
+      working-directory: ${{runner.workspace}}/build
+      run: |
+        cmake --build . --config $BUILD_TYPE
+      # Execute the build.  You can specify a specific target with "--target <NAME>"
+#       run: make
+        
+    - name: rebuild
+      continue-on-error: true
+      working-directory: ${{runner.workspace}}/build
+      # Execute the build.  You can specify a specific target with "--target <NAME>"
+      if: steps.Build.outcome=='failure'         # check the step outcome, retry 1st time
+      run: cmake --build . --config $BUILD_TYPE
+
+    - name: Test
+      working-directory: ${{runner.workspace}}/build
+      # Execute tests defined by the CMake configuration.  
+      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+      run: ctest -C $BUILD_TYPE

@@ -1,0 +1,8 @@
+[requires]
+fftw/[>=3.3]
+s2let/[>=2.2.3]
+[generators]
+cmake
+[options]
+fftw:shared=False
+fftw:precision=double

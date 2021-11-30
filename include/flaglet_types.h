@@ -1,8 +1,16 @@
 #ifndef FLAGLET_TYPES
 #define FLAGLET_TYPES
 
-#include "s2let.h"
-#include "so3.h"
+#include <s2let/s2let.h>
+#include <so3/so3.h>
+
+#ifdef __cplusplus
+#include <complex>
+#define FLAGLET_COMPLEX(TYPE) std::complex<TYPE>
+extern "C" {
+#else
+#define FLAGLET_COMPLEX(TYPE) TYPE complex
+#endif
 
 typedef struct {
 
@@ -48,4 +56,7 @@ static inline void fill_so3_angular_parameters(so3_parameters_t *so3_parameters,
 }
 
 
+#ifdef __cplusplus
+}
+#endif
 #endif

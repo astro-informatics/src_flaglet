@@ -4,8 +4,9 @@
 #include "flaglet_types.h"
 #include "flaglet_transform.h"
 #include "flaglet_tiling.h"
-#include "s2let.h"
-#include <so3.h>
+#include "flaglet_axisym.h"
+#include <s2let/s2let.h>
+#include <so3/so3.h>
 
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 #define MIN(a,b) ((a) < (b) ? (a) : (b))

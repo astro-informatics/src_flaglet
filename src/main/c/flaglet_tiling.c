@@ -1,11 +1,11 @@
 // FLAGLET package
-// Copyright (C) 2012 
-// Boris Leistedt & Jason McEwen
+// Copyright (C) 2021
+// Boris Leistedt & Jason McEwen & Matthew Price
 
 #include "flaglet.h"
 #include <stdlib.h>
 #include <math.h>
-#include <s2let.h>
+#include <s2let/s2let.h>
 
 
 int flaglet_j_max(int L, int B)

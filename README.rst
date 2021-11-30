@@ -1,0 +1,208 @@
+.. image:: https://github.com/astro-informatics/src_flaglet/actions/workflows/cpp.yml/badge.svg
+    :target: https://github.com/astro-informatics/src_flaglet/actions/workflows/cpp.yml
+.. image:: https://readthedocs.org/projects/ansicolortags/badge/?version=latest
+    :target: https://astro-informatics.github.io/flaglet/
+.. image:: https://badge.fury.io/py/pyflaglet.svg
+    :target: https://badge.fury.io/py/pyflaglet
+.. image:: https://img.shields.io/badge/License-GPL-blue.svg
+    :target: http://perso.crans.org/besson/LICENSE.html
+.. image:: http://img.shields.io/badge/arXiv-1205.0792-orange.svg?style=flat
+    :target: https://arxiv.org/abs/1205.0792
+.. image:: http://img.shields.io/badge/arXiv-1110.6298-orange.svg?style=flat
+    :target: https://arxiv.org/abs/1110.6298
+.. image:: http://img.shields.io/badge/arXiv-2105.05518-orange.svg?style=flat
+    :target: https://arxiv.org/abs/2105.05518
+
+|logo| FLAGLET: Fourier-Laguerre Wavelets on the Ball
+=====================================================
+
+.. |logo| raw:: html
+
+   <img src="./doc/images/logo.jpg" align="center" height="52" width="56">
+
+DESCRIPTION
+================================
+The ``FLAGLET`` code provides functionality to perform fast and exact wavelet transform on the ball. More details may be found in the extensive `documentation <https://astro-informatics.github.io/flaglet/>`_.
+
+C INSTALLATION
+================================
+The primary C version of this code can be installed from source by running
+
+.. code-block:: bash
+
+     git clone git@github.com:astro-informatics/src_flaglet.git
+     cd src_flaglet
+     mkdir build && cd build
+     cmake .. && make 
+
+Following which one can check the installation by running
+
+.. code-block:: bash
+
+     ctest
+
+within the build directory.
+
+PYTHON INSTALLATION
+================================
+``FLAGLET`` can easily be installed from PyPi by running
+
+.. code-block:: bash
+
+    pip install pyflaglet
+    pip list
+
+or alternatively from source by first compiling the C code and running 
+
+.. code-block:: bash 
+
+    pip install .
+
+from the root directory, following which the installation can be tested by running 
+
+.. code-block:: bash 
+
+     pytest 
+
+from the root directory.
+
+MATLAB INSTALLATION
+================================
+Mex wrappers are available, however they are currently being sunsetted, so installing previously tagged versions is advised.
+
+BASIC USAGE
+================================
+First install ``FLAGLET`` for python, then you can call it from any python script to perform forward and inverse flaglet transforms and their adjoints by 
+
+.. code-block:: python
+
+    import pyflaglet as flaglet
+    import numpy as np 
+
+    parameters = flaglet.flaglet_parameters(<specify parameters>)
+
+    # Create a random complex signal (c indexing)
+    f_size = flaglet.flaglet_f_dim(parameters)
+    rng = np.random.default_rng()
+    f = rng.normal(size=(f_size)) + 1j*rng.normal(size=(f_size))
+
+    # Compute e.g. the Forward transform 
+    f_wav, f_scal = flaglet.flaglet_forward(f, parameters)
+
+AUTHORS
+================================
+
+`B. Leistedt <www.ixkael.com/blog>`_, 
+`J. D. McEwen <www.jasonmcewen.org>`_, and 
+`M. A. Price <https://scholar.google.com/citations?user=w7_VDLQAAAAJ&hl=en&authuser=1>`_
+
+REFERENCES
+================================
+
+.. code-block::
+
+    @article{price:2021:bayesian,
+        author  = {Matthew~A.~Price and Jason~D.~McEwen},
+        title   = {Bayesian variational regularization on the ball},
+        journal = {ArXiv},
+        eprint  = {arXiv:2105.05518},
+        year    = 2021
+    }
+
+.. code-block::
+
+    @article{leistedt:2012:exact,
+        author  = {Boris~Leistedt and Jason~D.~McEwen},
+        title   = {Exact Wavelets on the Ball},
+        journal = {IEEE Trans. Sig. Proc.},
+        year    = 2012,
+        volume  = {60},
+        number  = {12},
+        pages   = {6257-6269},
+        doi     = {10.1109/TSP.2012.2215030},
+    }
+
+.. code-block::
+
+    @article{McEwen:2011:novel,
+        author  = {Jason~D.~McEwen and Yves~Wiaux},
+        title   = {A novel sampling theorem on the sphere},
+        journal = {IEEE Trans. Sig. Proc.},
+        year    = 2011,
+        volume  = {59},
+        number  = {12},
+        pages   = {5876-5887},
+        doi     = {10.1109/TSP.2011.2166394},
+    }
+
+.. code-block::
+
+    @article{Leistedt:2015:3dlensing,
+        author  = {Boris~Leistedt and Jason~D.~McEwen and Thomas~D.~Kitching and Hiranya~V.Peiris},
+        title   = {3D weak lensing with spin wavelets on the ball},
+        journal = {Physical Review D.},
+        year    = 2015,
+        volume  = {92},
+        number  = {12},
+        pages   = {123010},
+        doi     = {10.1103/PhysRevD.92.123010},
+    }
+
+.. code-block::
+
+    @article{McEwen:2015:3dlensing,
+        author  = {Jason~D.~McEwen and Martin~Büttner and Boris~Leistedt and Hiranya~V.Peiris and Yves~Wiaux},
+        title   = {A Novel Sampling Theorem on the Rotation Group},
+        journal = {IEEE Sig. Proc. Letters},
+        year    = 2015,
+        volume  = {22},
+        number  = {12},
+        pages   = {2425-2429},
+        doi     = {10.1109/LSP.2015.2490676},
+    }
+
+.. code-block::
+
+    @article{McEwen:2015:s2spinwavelets,
+        author  = {Jason~D.~McEwen and Boris~Leistedt and Martin~Büttner and Hiranya~V.Peiris and Yves~Wiaux },
+        title   = {Directional spin wavelets on the sphere},
+        journal = {arXiv e-prints},
+        eprint  = {1509.06749},
+        year    = 2015,
+    }
+
+.. code-block::
+
+    @article{leistedt:2013:s2let,
+        title   = {S2LET: A code to perform fast wavelet analysis on the sphere},
+        author  = {Boris~Leistedt and Jason~D.~McEwen and Pierre~Vandergheynst and Yves~Wiaux},
+        journal = {Astronomy & Astrophysics},
+        volume  = {558},
+        pages   = {A128},
+        year    = 2013,
+    }
+
+LICENSE
+================================
+
+``FLAGLET`` is released under the GPL-3 license (see `LICENSE.txt <https://github.com/astro-informatics/src_flaglet/blob/master/LICENSE.txt>`_).
+
+.. code-block::
+
+     FLAGLET package to perform fast wavelet transform on the sphere<br>
+     Copyright (C) 2021 Boris Leistedt & Jason McEwen & Matthew Price
+
+     This program is free software; you can redistribute it and/or
+     modify it under the terms of the GNU General Public License
+     as published by the Free Software Foundation; either version 2
+     of the License, or (at your option) any later version.
+
+     This program is distributed in the hope that it will be useful,
+     but WITHOUT ANY WARRANTY; without even the implied warranty of
+     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     GNU General Public License for more details (LICENSE.txt).
+
+     You should have received a copy of the GNU General Public License
+     along with this program; if not, write to the Free Software
+     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+     MA  02110-1301, USA.
