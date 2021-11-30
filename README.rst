@@ -2,6 +2,8 @@
     :target: https://github.com/astro-informatics/src_flaglet/actions/workflows/cpp.yml
 .. image:: https://readthedocs.org/projects/ansicolortags/badge/?version=latest
     :target: https://astro-informatics.github.io/flaglet/
+.. image:: https://badge.fury.io/py/pyflaglet.svg
+    :target: https://badge.fury.io/py/pyflaglet
 .. image:: https://img.shields.io/badge/License-GPL-blue.svg
     :target: http://perso.crans.org/besson/LICENSE.html
 .. image:: http://img.shields.io/badge/arXiv-1205.0792-orange.svg?style=flat

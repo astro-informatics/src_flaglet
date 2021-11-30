@@ -32,7 +32,7 @@ Then you can call it from any python script to perform forward and inverse flagl
     import pyflaglet as flaglet
     import numpy as np 
 
-    parameters = flaglet.flaglet_parameters(<specify parameters>)
+    parameters = flaglet.flaglet_parameters(specify_parameters)
 
     # Create a random complex signal (c indexing)
     f_size = flaglet.flaglet_f_dim(parameters)
